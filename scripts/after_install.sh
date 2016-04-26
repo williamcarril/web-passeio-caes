@@ -1,6 +1,6 @@
 cd /var/www/tcc
-mkdir -p -- "vendor"
-chmod 777 vendor
-chmod 777 -R storage
-chmod 777 bootstrap/cache
+sudo mkdir -p -- "vendor"
+sudo chmod 777 vendor
+sudo chmod 777 -R storage
+sudo chmod 777 bootstrap/cache
 composer install
