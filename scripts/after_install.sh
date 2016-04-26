@@ -1,2 +1,2 @@
-cd /var/www/tcc
+cd ..
 composer install

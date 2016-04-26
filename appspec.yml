@@ -4,6 +4,10 @@ files:
   - source: /
     destination: /var/www/tcc
 hooks:
+  BeforeInstall:
+    - location: scripts/before_install.sh
+      timeout: 120
+      runas: ubuntu
   AfterInstall:
     - location: scripts/after_install.sh
       timeout: 600
