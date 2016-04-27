@@ -54,7 +54,7 @@ return [
 
         'mysql' => [
             'driver'    => 'mysql',
-            'host'      => env('DB_HOST', 'ec2-52-38-219-106.us-west-2.compute.amazonaws.com'),
+            'host'      => env('DB_HOST', 'passeiodecaes.no-ip.org'),
             'database'  => env('DB_DATABASE', 'passeiodecaes'),
             'username'  => env('DB_USERNAME', 'remote'),
             'password'  => env('DB_PASSWORD', 'tcc123w'),

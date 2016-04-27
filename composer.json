@@ -1,12 +1,13 @@
 {
-    "name": "williamcarri/passeiodecaes",
+    "name": "williamcarri/web-passeio-caes",
     "description": "Trabalho de conclusão de curso para a Faculdade de Tecnologia de São Caetano do Sul.",
     "keywords": ["framework", "laravel", "dogs"],
     "license": "MIT",
     "type": "project",
     "require": {
         "php": ">=5.5.9",
-        "laravel/framework": "5.1.*"
+        "laravel/framework": "5.1.*",
+        "sarav/laravel-multiauth": "^0.0.7"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
