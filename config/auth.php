@@ -63,5 +63,18 @@ return [
         'table' => 'password_resets',
         'expire' => 60,
     ],
+    
+    "multi" => [
+//        "client" => [
+//            "driver" => "eloquent",
+//            "model" => App\Model\Cliente::class,
+//            "table" => "cliente"
+//        ],
+//        "admin" => [
+//            "driver" => "eloquent",
+//            "model" => App\Model\Funcionario::class,
+//            "table" => "funcionario"
+//        ],
+    ],
 
 ];
