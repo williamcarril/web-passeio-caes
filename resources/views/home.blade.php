@@ -1,1 +1,1 @@
-@extends("tpl.default")
+@extends('layouts.default')
