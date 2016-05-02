@@ -2,7 +2,8 @@
 <html>
     <head>
         <title>Passeio de Cães</title>
-        <link rel="stylesheet" href="/css/style.min.css">
+        <link rel="stylesheet" href="{{asset("/css/style.min.css")}}">
+        <meta name="csrf-token" content="{{csrf_token()}}">
     </head>
     <body>
         @section("header")
@@ -15,7 +16,7 @@
         @section("footer")
             @include("layouts._footer")
         @show
-        <scripts src="/js/scripts.min.js"></scripts>
+        <script src="{{asset("/js/scripts.min.js")}}"></script>
         @section("scripts")
         @show
     </body>

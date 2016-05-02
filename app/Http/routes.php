@@ -12,11 +12,9 @@
  */
 
 Route::get('/', function () {
-    $model = new \App\Models\Funcionario();
-    echo json_encode($model->passeios);
-    exit;
-    if(!$model->save()) {
-        return response()->json($model->getErrors());
-    }
     return response()->view("home");
+});
+
+Route::group(["prefix" => "api"], function() {
+    Route::resource("modalidade", "ModalidadeController");
 });

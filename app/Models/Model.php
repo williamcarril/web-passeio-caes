@@ -87,6 +87,10 @@ class Model extends \Illuminate\Database\Eloquent\Model {
         return $this->errors;
     }
 
+    /**
+     * Sets error message bag
+     * @param MessageBag $errors
+     */
     public function setErrors(MessageBag $errors) {
         $this->errors = $errors;
     }
