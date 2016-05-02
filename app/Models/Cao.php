@@ -34,4 +34,16 @@ class Cao extends Model {
         return $this->belongsTo("\App\Models\Multimidia", "idMultimidia", "idMultimidia");
     }
 
+    public function passeios() {
+        return $this->belongsToMany("\App\Models\Passeio", "a_cao_passeio", "idCao", "idPasseio");
+    }
+
+    public function vacinacoes() {
+        return $this->hasMany("\App\Models\Vacinacao", "idCao", "idCao");
+    }
+    
+    public function vacinas() {
+        return $this->hasManyThrough("\App\Models\Vacina", "\App\Models\Vacinacao", "idCao", "idVacina", "idCao");
+    }
+
 }

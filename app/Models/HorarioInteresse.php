@@ -15,8 +15,8 @@ class HorarioInteresse extends Model {
     ];
     
     protected static $rules = [
-        "inicio" => ["required", "date_format:H:i:s", "dataInicial"],
-        "fim" => ["required", "date_format:H:i:s", "dataFinal"],
+        "inicio" => ["required", "date_format:H:i:s", "dataInicial:fim"],
+        "fim" => ["required", "date_format:H:i:s", "dataFinal:inicio"],
         "idCliente" => ["required", "exists:cliente,idCliente"]
     ];
     
@@ -26,27 +26,10 @@ class HorarioInteresse extends Model {
     ];
     
     protected $dates = ["inicio", "fim"];
-
-    public static function boot() {
-        parent::boot();
-        static::$customRules = [
-            "dataInicial" => function($attribute = null, $inicial = null, $parameters = [], $validator = null) {
-                $data = $validator->getData();
-                $final = isset($data["fim"]) ? $data["fim"] : null;
-                if(is_null($final)) {
-                    return true;
-                }
-                return $inicial <= $final;
-            },
-            "dataFinal" => function($attribute = [], $final = [], $parameters = [], $validator) {
-                $data = $validator->getData();
-                $inicial = isset($data["inicio"]) ? $data["inicio"] : null;
-                if(is_null($inicial)) {
-                    return true;
-                }
-                return $final >= $inicial;
-            }
-        ];
+    
+    public function dias() {
+        return $this->belongsToMany("App\Models\Dia", "a_horario_interesse_dia", "idHorarioInteresse", "idDia")
+                ->withPivot(["interesse"]);
     }
 
 }

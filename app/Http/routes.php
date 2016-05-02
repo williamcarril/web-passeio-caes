@@ -12,8 +12,9 @@
  */
 
 Route::get('/', function () {
-    $model = new \App\Models\HorarioInteresse();
-
+    $model = new \App\Models\Funcionario();
+    echo json_encode($model->passeios);
+    exit;
     if(!$model->save()) {
         return response()->json($model->getErrors());
     }

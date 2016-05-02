@@ -62,14 +62,16 @@ class Model extends \Illuminate\Database\Eloquent\Model {
      * Validates current attributes against rules
      */
     public function validate() {
-        $validator = \validator($this->attributes, static::$rules, static::$messages);
+        $validator = \validator($this->attributes, static::$rules, static::$messages);  
+        
+        $validator->addExtensions(static::$customRules);
+        
         foreach (static::$complexRules as $field => $validation) {
             $rules = $validation["rules"];
             $check = $validation["check"];
             $validator->sometimes($field, $rules, $check);
         }
 
-        $validator->addExtensions(static::$customRules);
         if ($validator->passes()) {
             return true;
         }

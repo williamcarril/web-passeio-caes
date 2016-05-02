@@ -27,4 +27,7 @@ class Funcionario extends Pessoa {
         return $this->morphMany("\App\Models\Cancelamento", "pessoa", "funcionario");
     }
 
+    public function passeios() {
+        return $this->hasMany("\App\Models\Passeio", "idFuncionario", "idPasseador");
+    }
 }

@@ -19,6 +19,13 @@ class Pessoa extends Model {
         "remember_token"
     ];
     protected $hidden = ['senha', 'remember_token'];
+    
+    protected $casts = [
+        "lat" => "float",
+        "lng" => "float",
+        "ativo" => "boolean"
+    ];
+    
     protected static $rules = [
         "nome" => ["required", "max:70"],
         "telefone" => ["max:12", "required", "numeric"],

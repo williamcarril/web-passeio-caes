@@ -2,9 +2,19 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+class Vacina extends Model {
 
-class Vacina extends Model
-{
-    //
+    protected $table = "vacina";
+    protected $primaryKey = "idVacina";
+    protected $fillable = [
+        "nome"
+    ];
+    protected static $rules = [
+        "nome" => ["required", "max:30"]
+    ];
+
+    public function vacinacoes() {
+        return $this->hasMany("\App\Models\Vacinacao", "idCao", "idCao");
+    }
+
 }

@@ -11,4 +11,7 @@ class Cliente extends Pessoa {
         return $this->morphMany("\App\Models\Cancelamento", "pessoa", "cliente");
     }
 
+    public function passeios() {
+        return $this->hasMany("\App\Models\Passeio", "idCliente", "idCliente");
+    }
 }
