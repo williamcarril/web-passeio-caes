@@ -1,19 +1,19 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>TCC</title>
+        <title>Passeio de Cães</title>
         <link rel="stylesheet" href="/css/style.min.css">
     </head>
     <body>
         @section("header")
-            @include("tpl._header")
+            @include("layouts._header")
         @show
         <div class="container">
             @section("main")
             @show
         </div>
         @section("footer")
-            @include("tpl._footer")
+            @include("layouts._footer")
         @show
         <scripts src="/js/scripts.min.js"></scripts>
         @section("scripts")
