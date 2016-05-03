@@ -26,7 +26,7 @@ class Validator {
      * @param string $attribute Nome do atributo validado (provavelmente será sempre 'cpf')
      * @param string $value CPF a ser validado
      * @param array $parameters Parâmetros adicionais passados
-     * @param Validator $validator Instância do validador padrão do Laravels
+     * @param \Illuminate\Contracts\Validation\Validator $validator Instância do validador padrão do Laravel
      * @return boolean
      */
     public function checkCpf($attribute = "", $value = "", $parameters = [], $validator = null) {
@@ -64,12 +64,125 @@ class Validator {
      * @param string $attribute Nome do atributo validado (provavelmente será sempre 'cpf')
      * @param string $value CEP a ser validado
      * @param array $parameters Parâmetros adicionais passados
-     * @param Validator $validator Instância do validador padrão do Laravels
+     * @param \Illuminate\Contracts\Validation\Validator $validator Instância do validador padrão do Laravel
      * @return boolean
      */
     public function checkCep($attribute = [], $value = [], $parameters = [], $validator = []) {
         $cep = preg_replace('/[^0-9]/', '', $value);
         return preg_match("/^[0-9]{8}$/", $cep);
+    }
+
+    /**
+     * Verifica se um valor é o maior ou igual ao maior em um conjunto de valores.
+     * @param string $attribute Nome do atributo a ser validado
+     * @param mixed $value Valor a ser validado
+     * @param array $parameters Nome dos campos que serão confrontados em relação ao valor validado
+     * @param \Illuminate\Contracts\Validation\Validator $validator Instância do validador padrão do Laravel
+     * @return boolean
+     */
+    public function checkGreaterOrEqualThan($attribute = null, $value = null, $parameters = [], $validator = null) {
+        $data = $validator->getData();
+        $isTheGreatest = true;
+        foreach ($parameters as $field) {
+            $smallerOrEqualValue = isset($data["$field"]) ? $data["$field"] : null;
+            if (is_null($smallerOrEqualValue)) {
+                continue;
+            }
+            $isTheGreatest &= ($value >= $smallerOrEqualValue);
+        }
+
+        return $isTheGreatest;
+    }
+
+    /**
+     * Verifica se um valor é o maior em um conjunto de valores.
+     * @param string $attribute Nome do atributo a ser validado
+     * @param mixed $value Valor a ser validado
+     * @param array $parameters Nome dos campos que serão confrontados em relação ao valor validado
+     * @param \Illuminate\Contracts\Validation\Validator $validator Instância do validador padrão do Laravel
+     * @return boolean
+     */
+    public function checkGreaterThan($attribute = null, $value = null, $parameters = [], $validator = null) {
+        $data = $validator->getData();
+        $isTheGreatest = true;
+        foreach ($parameters as $field) {
+            $smallerValue = isset($data["$field"]) ? $data["$field"] : null;
+            if (is_null($smallerValue)) {
+                continue;
+            }
+            $isTheGreatest &= ($value > $smallerValue);
+        }
+
+        return $isTheGreatest;
+    }
+
+    /**
+     * Verifica se um valor é o menor ou igual ao menor em um conjunto de valores.
+     * @param string $attribute Nome do atributo a ser validado
+     * @param mixed $value Valor a ser validado
+     * @param array $parameters Nome dos campos que serão confrontados em relação ao valor validado
+     * @param \Illuminate\Contracts\Validation\Validator $validator Instância do validador padrão do Laravel
+     * @return boolean
+     */
+    public function checkLessThan($attribute = null, $value = null, $parameters = [], $validator = null) {
+        $data = $validator->getData();
+        $isTheLeast = true;
+        foreach ($parameters as $field) {
+            $greaterValue = isset($data["$field"]) ? $data["$field"] : null;
+            if (is_null($greaterValue)) {
+                continue;
+            }
+            $isTheLeast &= ($value < $greaterValue);
+        }
+
+        return $isTheLeast;
+    }
+
+    /**
+     * Verifica se um valor é o menor em um conjunto de valores.
+     * @param string $attribute Nome do atributo a ser validado
+     * @param mixed $value Valor a ser validado
+     * @param array $parameters Nome dos campos que serão confrontados em relação ao valor validado
+     * @param \Illuminate\Contracts\Validation\Validator $validator Instância do validador padrão do Laravel
+     * @return boolean
+     */
+    public function checkLessOrEqualThan($attribute = null, $value = null, $parameters = [], $validator = null) {
+        $data = $validator->getData();
+        $isTheLeast = true;
+        foreach ($parameters as $field) {
+            $greaterValue = isset($data["$field"]) ? $data["$field"] : null;
+            if (is_null($greaterValue)) {
+                continue;
+            }
+            $isTheLeast &= ($value <= $greaterValue);
+        }
+
+        return $isTheLeast;
+    }
+    /**
+     * Verifica se um valor é um array de imagens.
+     * @param string $attribute Nome do atributo a ser validado
+     * @param mixed $value Valor a ser validado
+     * @param array $parameters Parâmetros adicionais. O primeiro será o tamanho máximo da imagem em kilobytes.
+     * @param \Illuminate\Contracts\Validation\Validator $validator Instância do validador padrão do Laravel
+     * @return boolean
+     */
+    public function checkImageArray($attribute = null, $value = null, $parameters = [], $validator = null) {
+        $maxSize = isset($parameters[0]) ? $parameters[0] : null;
+        $imageRules = ["image"];
+        if(!is_null($maxSize)) {
+            $imageRules[] = "size:$maxSize";
+        }
+        if(!is_array($value)) {
+            return false;
+        }
+        foreach($value as $image) {
+            $imageValidator = \validator($image, $imageRules);
+            if($imageValidator->fails()) {
+                return false;
+            }
+        }
+        return true;
     }
 
 }

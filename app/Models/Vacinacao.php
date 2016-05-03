@@ -14,10 +14,10 @@ class Vacinacao extends Model {
     ];
     
     protected static $rules = [
-        "idCao" => ["required", "exists:cao,idCao"],
-        "idVacina" => ["required", "exists:vacina,idVacina"],
-        "aplicacao" => ["required", "date", "dataInicial:proximaAplicacao"],
-        "proximaAplicacao" => ["date", "dataFinal:aplicacao"]
+        "idCao" => ["required", "exists:cao,idCao", "integer"],
+        "idVacina" => ["required", "exists:vacina,idVacina", "integer"],
+        "aplicacao" => ["required", "date", "less:proximaAplicacao"],
+        "proximaAplicacao" => ["date", "greater:aplicacao"]
     ];
     
     protected $dates = ["aplicacao", "proximaAplicacao"];

@@ -7,9 +7,9 @@ module.exports = function(grunt) {
     };
     var scripts = [
         //JQuery
-        "<%= path.npm %>jquery/**/jquery.js",
+        "<%= path.npm %>jquery/**/jquery.min.js",
         //Bootstrap
-        "<%= path.npm %>bootstrap/**/bootstrap.js",
+        "<%= path.npm %>bootstrap/**/bootstrap.min.js",
         //General JScript File
         "<%= path.dev %>js/main.js"
     ];

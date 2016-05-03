@@ -10,13 +10,22 @@
   | and give it the controller to call when that URI is requested.
   |
  */
+if (!\App::environment("production")) {
+    Route::group(["prefix" => "teste"], function() {
+        Route::get("/", function() {
+            $model = new \App\Models\HorarioInteresse();
+            $model->save();
+            return response()->json($model->getErrors());
+        });
+    });
+}
 
 Route::get('/', function () {
-    $model = new \App\Models\Funcionario();
-    echo json_encode($model->passeios);
-    exit;
-    if(!$model->save()) {
-        return response()->json($model->getErrors());
-    }
     return response()->view("home");
+});
+
+Route::group(["prefix" => "api"], function() {
+    Route::resource("modalidade", "ModalidadeController");
+    Route::resource("vacina", "VacinaController");
+    Route::resource("trajeto", "TrajetoController");
 });

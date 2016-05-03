@@ -10,7 +10,7 @@ class Vacina extends Model {
         "nome"
     ];
     protected static $rules = [
-        "nome" => ["required", "max:30"]
+        "nome" => ["required", "max:30", "unique:vacina,nome", "string"]
     ];
 
     public function vacinacoes() {

@@ -1,4 +1,4 @@
-<?php
+    <?php
 
 namespace App\Models;
 
@@ -27,17 +27,17 @@ class Pessoa extends Model {
     ];
     
     protected static $rules = [
-        "nome" => ["required", "max:70"],
+        "nome" => ["required", "max:70", "string"],
         "telefone" => ["max:12", "required", "numeric"],
         "ativo" => ["boolean", "required"],
-        "cpf" => ["cpf", "required"],
-        "rua" => ["max:70", "required"],
-        "bairro" => ["max:40", "required"],
-        "postal" => ["cep", "required"],
-        "numero" => ["max:12", "required"],
+        "cpf" => ["cpf", "required", "string"],
+        "rua" => ["max:70", "required", "string"],
+        "bairro" => ["max:40", "required", "string"],
+        "postal" => ["cep", "required", "string"],
+        "numero" => ["max:12", "required", "string"],
         "lat" => ["numeric", "required"],
         "lng" => ["numeric", "required"],
-        "email" => ["required", "email"]
+        "email" => ["required", "email", "string"]
     ];
 
     public function setTelefoneAttribute($value) {

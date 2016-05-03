@@ -62,10 +62,10 @@ class Model extends \Illuminate\Database\Eloquent\Model {
      * Validates current attributes against rules
      */
     public function validate() {
-        $validator = \validator($this->attributes, static::$rules, static::$messages);  
-        
+        $validator = \validator($this->attributes, static::$rules, static::$messages);
+
         $validator->addExtensions(static::$customRules);
-        
+
         foreach (static::$complexRules as $field => $validation) {
             $rules = $validation["rules"];
             $check = $validation["check"];
@@ -87,9 +87,14 @@ class Model extends \Illuminate\Database\Eloquent\Model {
         return $this->errors;
     }
 
+    /**
+     * Sets error message bag
+     * @param MessageBag $errors
+     */
     public function setErrors(MessageBag $errors) {
         $this->errors = $errors;
     }
+
     /**
      * Inverse of wasSaved
      * @return boolean
@@ -103,6 +108,26 @@ class Model extends \Illuminate\Database\Eloquent\Model {
      */
     public function clearErrors() {
         $this->errors = new MessageBag();
+    }
+
+    public static function getRules() {
+        return static::$rules;
+    }
+
+    public static function getCustomRules() {
+        return static::$customRules;
+    }
+
+    public static function getComplexRules() {
+        return static::$complexRules;
+    }
+
+    public static function getAllRules() {
+        return [
+            "rules" => static::getRules(),
+            "custom" => static::getCustomRules(),
+            "complex" => static::getComplexRules()
+        ];
     }
 
 }

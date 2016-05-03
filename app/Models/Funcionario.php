@@ -10,9 +10,9 @@ class Funcionario extends Pessoa {
     protected static function boot() {
         parent::boot();
         
-        static::$rules["idMultimidia"] = ["exists:multimidia,idMultimidia", "required"];
-        static::$rules["rg"] = ["required"];
-        static::$rules["tipo"] = ["required", "in:passeador,administrador"];
+        static::$rules["idMultimidia"] = ["exists:multimidia,idMultimidia", "required", "integer"];
+        static::$rules["rg"] = ["required", "string"];
+        static::$rules["tipo"] = ["required", "in:passeador,administrador", "string"];
     }
 
     public function __construct(array $attributes = array()) {

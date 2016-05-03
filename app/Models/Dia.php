@@ -8,7 +8,7 @@ class Dia extends Model {
     protected $guarded = ["nome"];
     
     protected static $rules = [
-        "nome" => ["required", "max:13"]
+        "nome" => ["required", "max:13", "string", "unique:dia,nome"]
     ];
 
     public function horariosDeInteresse() {
