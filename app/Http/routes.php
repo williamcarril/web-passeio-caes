@@ -10,6 +10,15 @@
   | and give it the controller to call when that URI is requested.
   |
  */
+if (!\App::environment("production")) {
+    Route::group(["prefix" => "teste"], function() {
+        Route::get("/", function() {
+            $model = new \App\Models\HorarioInteresse();
+            $model->save();
+            return response()->json($model->getErrors());
+        });
+    });
+}
 
 Route::get('/', function () {
     return response()->view("home");
@@ -17,4 +26,5 @@ Route::get('/', function () {
 
 Route::group(["prefix" => "api"], function() {
     Route::resource("modalidade", "ModalidadeController");
+    Route::resource("vacina", "VacinaController");
 });

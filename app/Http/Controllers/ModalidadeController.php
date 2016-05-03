@@ -13,7 +13,7 @@ class ModalidadeController extends ResourceController {
     }
 
     public function create() {
-        return response()->json(["nome", "descricao", "tipo"]);
+        return response()->json(Modalidade::getRules());
     }
 
     public function doStore(Request $request) {

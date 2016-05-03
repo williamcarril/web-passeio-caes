@@ -20,19 +20,19 @@ class Passeio extends Model {
         "status"
     ];
     protected static $rules = [
-        "idModalidade" => ["required", "exists:modalidade,idModalidade"],
-        "idTrajeto" => ["required", "exists:trajeto,idTrajeto"],
-        "idCliente" => ["required", "exists:cliente,idCliente"],
-        "idPasseador" => ["exists:funcionario,idFuncionario,tipo,passeador"],
-        "idMultimidia" => ["exists:multimidia,tipo,video"],
+        "idModalidade" => ["required", "exists:modalidade,idModalidade", "integer"],
+        "idTrajeto" => ["required", "exists:trajeto,idTrajeto", "integer"],
+        "idCliente" => ["required", "exists:cliente,idCliente", "integer"],
+        "idPasseador" => ["exists:funcionario,idFuncionario,tipo,passeador", "integer"],
+        "idMultimidia" => ["exists:multimidia,tipo,video", "integer"],
         "preco" => ["required", "numeric"],
         "gravado" => ["boolean", "required"],
-        "inicio" => ["required", "date_format:H:i:s", "dataInicial:fim"],
-        "fim" => ["required", "date_format:H:i:s", "dataFinal:inicio"],
+        "inicio" => ["required", "date_format:H:i:s", "less_or_equal:fim"],
+        "fim" => ["required", "date_format:H:i:s", "greater_or_equal:inicio"],
         "data" => ["required", "date"],
-        "status" => ["required", "in:pendente,cancelado,em_andamento,feito"]
+        "status" => ["required", "in:pendente,cancelado,em_andamento,feito", "string"]
     ];
-    protected $dates = ["data", "inicio", "fim"];
+    protected $dates = ["data"];
     protected $casts = [
         "preco" => "float",
         "gravado" => "boolean"

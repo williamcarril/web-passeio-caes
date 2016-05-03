@@ -15,17 +15,15 @@ class HorarioInteresse extends Model {
     ];
     
     protected static $rules = [
-        "inicio" => ["required", "date_format:H:i:s", "dataInicial:fim"],
-        "fim" => ["required", "date_format:H:i:s", "dataFinal:inicio"],
-        "idCliente" => ["required", "exists:cliente,idCliente"]
+        "inicio" => ["required", "date_format:H:i:s", "less_or_equal:fim"],
+        "fim" => ["required", "date_format:H:i:s", "greater_or_equal:inicio"],
+        "idCliente" => ["required", "exists:cliente,idCliente", "integer"]
     ];
     
     protected $attributes = [
         "inicio" => "00:00:00",
         "fim" => "23:59:59"
     ];
-    
-    protected $dates = ["inicio", "fim"];
     
     public function dias() {
         return $this->belongsToMany("App\Models\Dia", "a_horario_interesse_dia", "idHorarioInteresse", "idDia")

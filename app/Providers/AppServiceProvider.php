@@ -15,24 +15,10 @@ class AppServiceProvider extends ServiceProvider {
     public function boot() {
         \Validator::extend('cpf', "App\\Util\\Validator@checkCpf");
         \Validator::extend('cep', "App\\Util\\Validator@checkCep");
-        \Validator::extend("dataInicial", function($attribute = null, $inicial = null, $parameters = [], $validator = null) {
-            $data = $validator->getData();
-            $field = isset($parameters[0]) ? $parameters[0] : "fim";
-            $final = isset($data["$field"]) ? $data["$field"] : null;
-            if (is_null($final)) {
-                return true;
-            }
-            return $inicial <= $final;
-        });
-        \Validator::extend("dataFinal", function($attribute = [], $final = [], $parameters = [], $validator) {
-            $data = $validator->getData();
-            $field = isset($parameters[0]) ? $parameters[0] : "inicio";
-            $inicial = isset($data["$field"]) ? $data["$field"] : null;
-            if (is_null($inicial)) {
-                return true;
-            }
-            return $final >= $inicial;
-        });
+        \Validator::extend("greater", "App\\Util\\Validator@checkGreaterThan");
+        \Validator::extend("greater_or_equal", "App\\Util\\Validator@checkGreaterOrEqualThan");
+        \Validator::extend("less", "App\\Util\\Validator@checkLessThan");
+        \Validator::extend("less_or_equal", "App\\Util\\Validator@checkLessOrEqualThan");
         
         Relation::morphMap([
             'cliente' => \App\Models\Cliente::class,

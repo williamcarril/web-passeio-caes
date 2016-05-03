@@ -18,12 +18,12 @@ class Cao extends Model {
         "idMultimidia"
     ];
     protected static $rules = [
-        "nome" => ["required", "max:50"],
-        "raca" => ["required", "max:25"],
-        "porte" => ["required", "in:pequeno,medio,grande"],
-        "genero" => ["in:macho,femea"],
-        "idCliente" => ["required", "exists:cliente,idCliente"],
-        "idMultimidia" => ["exists:multimidia,idMultimida"]
+        "nome" => ["required", "max:50", "string"],
+        "raca" => ["required", "max:25", "string"],
+        "porte" => ["required", "in:pequeno,medio,grande", "string"],
+        "genero" => ["in:macho,femea", "string"],
+        "idCliente" => ["required", "exists:cliente,idCliente", "integer"],
+        "idMultimidia" => ["exists:multimidia,idMultimida", "integer"]
     ];
 
     public function cliente() {

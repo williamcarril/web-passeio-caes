@@ -16,12 +16,12 @@ class Cancelamento extends Model {
         "tipoPessoa"
     ];
     protected static $rules = [
-        "idPessoa" => ["required"],
-        "justificativa" => ["required"],
-        "status" => ["in:pendente,feito"],
-        "tipoPessoa" => ["required", "in:funcionario,cliente"],
+        "idPessoa" => ["required", "integer"],
+        "justificativa" => ["required", "string"],
+        "status" => ["in:pendente,feito", "string"],
+        "tipoPessoa" => ["required", "in:funcionario,cliente", "string"],
         "data" => ["required", "date"],
-        "idPasseio" => ["required", "exists:passeio,idPasseio"]
+        "idPasseio" => ["required", "exists:passeio,idPasseio", "integer"]
     ];
     
     protected $dates = ["data"];

@@ -25,13 +25,13 @@ class Trajeto extends Model {
         "lng" => "float",
     ];
     protected static $rules = [
-        "nome" => ["required", "max:70"],
+        "nome" => ["required", "max:70", "string"],
         "raioAtuacao" => ["integer", "required"],
         "ativo" => ["boolean", "required"],
-        "rua" => ["required", "max:70"],
-        "bairro" => ["required", "max:40"],
-        "postal" => ["required", "size:8"],
-        "numero" => ["required", "max:12"],
+        "rua" => ["required", "max:70", "string"],
+        "bairro" => ["required", "max:40", "string"],
+        "postal" => ["required", "size:8", "string"],
+        "numero" => ["required", "max:12", "string"],
         "lat" => ["required", "numeric"],
         "lng" => ["required", "numeric"]
     ];
