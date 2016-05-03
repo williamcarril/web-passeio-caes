@@ -19,6 +19,7 @@ class AppServiceProvider extends ServiceProvider {
         \Validator::extend("greater_or_equal", "App\\Util\\Validator@checkGreaterOrEqualThan");
         \Validator::extend("less", "App\\Util\\Validator@checkLessThan");
         \Validator::extend("less_or_equal", "App\\Util\\Validator@checkLessOrEqualThan");
+        \Validator::extend("image_array", "App\\Util\\Validator@checkImageArray");
         
         Relation::morphMap([
             'cliente' => \App\Models\Cliente::class,

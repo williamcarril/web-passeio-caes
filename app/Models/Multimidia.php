@@ -21,7 +21,8 @@ class Multimidia extends Model {
         "nome" => ["required", "max:70", "string"],
         "data" => ["required", "date"],
         "arquivo" => ["required", "max:255", "string"],
-        "tipo" => ["required", "in:imagem,video", "string"]
+        "tipo" => ["required", "in:imagem,video", "string"],
+        "descricao" => ["string"]
     ];
     
     public function setDataAttribute($value) {

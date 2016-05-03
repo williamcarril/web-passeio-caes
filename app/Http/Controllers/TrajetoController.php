@@ -3,24 +3,16 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Http\Requests;
+use App\Models\Trajeto;
 
 class TrajetoController extends ResourceController {
 
     public function create() {
-        $fields = [
-            "nome",
-            "descricao",
-            "raioAtuacao",
-            "ativo",
-            "rua",
-            "bairro",
-            "postal",
-            "numero",
-            "lat",
-            "lng"
+        $rules = Trajeto::getRules();
+        $rules["fotos"] = [
+            "image_array"
         ];
-        return response()->json($fields);
+        return response()->json($rules);
     }
 
     public function doDestroy($id) {

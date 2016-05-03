@@ -48,6 +48,7 @@ class Trajeto extends Model {
     }
 
     public function fotos() {
-        return $this->belongsToMany("\App\Models\Multimidia", "a_trajeto_foto", "idTrajeto", "idMultimidia");
+        return $this->belongsToMany("\App\Models\Multimidia", "a_trajeto_foto", "idTrajeto", "idMultimidia")
+                ->withPivot(["ordem"]);
     }
 }

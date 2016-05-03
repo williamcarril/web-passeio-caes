@@ -159,5 +159,30 @@ class Validator {
 
         return $isTheLeast;
     }
+    /**
+     * Verifica se um valor é um array de imagens.
+     * @param string $attribute Nome do atributo a ser validado
+     * @param mixed $value Valor a ser validado
+     * @param array $parameters Parâmetros adicionais. O primeiro será o tamanho máximo da imagem em kilobytes.
+     * @param \Illuminate\Contracts\Validation\Validator $validator Instância do validador padrão do Laravel
+     * @return boolean
+     */
+    public function checkImageArray($attribute = null, $value = null, $parameters = [], $validator = null) {
+        $maxSize = isset($parameters[0]) ? $parameters[0] : null;
+        $imageRules = ["image"];
+        if(!is_null($maxSize)) {
+            $imageRules[] = "size:$maxSize";
+        }
+        if(!is_array($value)) {
+            return false;
+        }
+        foreach($value as $image) {
+            $imageValidator = \validator($image, $imageRules);
+            if($imageValidator->fails()) {
+                return false;
+            }
+        }
+        return true;
+    }
 
 }

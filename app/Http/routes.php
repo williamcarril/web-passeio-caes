@@ -27,4 +27,5 @@ Route::get('/', function () {
 Route::group(["prefix" => "api"], function() {
     Route::resource("modalidade", "ModalidadeController");
     Route::resource("vacina", "VacinaController");
+    Route::resource("trajeto", "TrajetoController");
 });

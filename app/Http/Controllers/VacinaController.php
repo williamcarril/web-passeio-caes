@@ -8,8 +8,7 @@ use App\Models\Vacina;
 class VacinaController extends ResourceController {
 
     public function create() {
-        $fields = ["nome"];
-        return response()->json($fields);
+        return response()->json(Vacina::getRules());
     }
 
     public function doDestroy($id) {
