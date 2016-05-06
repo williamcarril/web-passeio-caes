@@ -25,7 +25,7 @@ class Trajeto extends Model {
         "lng" => "float",
     ];
     protected static $rules = [
-        "nome" => ["required", "max:70", "string"],
+        "nome" => ["required", "max:70", "string", "unique:trajeto,nome"],
         "raioAtuacao" => ["integer", "required"],
         "ativo" => ["boolean", "required"],
         "rua" => ["required", "max:70", "string"],

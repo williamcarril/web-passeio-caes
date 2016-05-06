@@ -24,7 +24,7 @@ class Passeio extends Model {
         "idTrajeto" => ["required", "exists:trajeto,idTrajeto", "integer"],
         "idCliente" => ["required", "exists:cliente,idCliente", "integer"],
         "idPasseador" => ["exists:funcionario,idFuncionario,tipo,passeador", "integer"],
-        "idMultimidia" => ["exists:multimidia,tipo,video", "integer"],
+        "idMultimidia" => ["exists:multimidia,idMultimidia,tipo,video", "integer"],
         "preco" => ["required", "numeric"],
         "gravado" => ["boolean", "required"],
         "inicio" => ["required", "date_format:H:i:s", "less_or_equal:fim"],
