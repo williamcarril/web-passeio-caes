@@ -1,0 +1,25 @@
+{
+  "name": "web-passeio-caes",
+  "version": "1.0.0",
+  "authors": [
+    "William Carril e Victor Nagase"
+  ],
+  "description": "",
+  "keywords": [
+    "php",
+    "laravel"
+  ],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "tests",
+    "package.json"
+  ],
+  "private": true,
+  "license": "MIT",
+  "devDependencies": {
+    "jquery": "^2.2.3",
+    "bootstrap": "^3.3.6"
+  }
+}

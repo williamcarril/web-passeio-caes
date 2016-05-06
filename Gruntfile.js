@@ -1,21 +1,22 @@
 module.exports = function(grunt) {
     require("load-grunt-tasks")(grunt);
     var path = {
-        dev: "resources/assets/",
-        dist: "public/",
-        npm: "node_modules/"
+        "dev": "resources/assets/",
+        "dist": "public/",
+        "npm": "node_modules/",
+        "bower": "node_modules/"
     };
     var scripts = [
         //JQuery
-        "<%= path.npm %>jquery/**/jquery.min.js",
+        "<%= path.bower %>jquery/dist/**/jquery.min.js",
         //Bootstrap
-        "<%= path.npm %>bootstrap/**/bootstrap.min.js",
+        "<%= path.bower %>bootstrap/dist/**/bootstrap.min.js",
         //General JScript File
         "<%= path.dev %>js/main.js"
     ];
     var css = [
         //Bootstrap
-        "<%= path.npm %>bootstrap/**/bootstrap.css",
+        "<%= path.bower %>bootstrap/dist/**/bootstrap.css",
         //General CSS File
         "<%= path.dev %>style.css"
     ];
@@ -50,7 +51,7 @@ module.exports = function(grunt) {
             },
             site: {
                 files: {
-                    "<%= path.dev %>style.css": ["<%= path.dev %>less/style.less"]
+                    "<%= path.dev %>style.css": ["<%= path.dev %>less/main.less"]
                 }
             }
         },
