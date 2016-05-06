@@ -20,7 +20,7 @@ class Multimidia extends Model {
     protected static $rules = [
         "nome" => ["required", "max:70", "string"],
         "data" => ["required", "date"],
-        "arquivo" => ["required", "max:255", "string"],
+        "arquivo" => ["required", "max:255", "string", "unique:multimidia,arquivo"],
         "tipo" => ["required", "in:imagem,video", "string"],
         "descricao" => ["string"]
     ];

@@ -12,7 +12,7 @@ class Modalidade extends Model {
     ];
     
     protected static $rules = [
-        "nome" => ["required", "string"],
+        "nome" => ["required", "string", "unique:modalidade,nome"],
         "descricao" => ["required", "string"],
         "tipo" => ["required", "in:pacote,unitario", "string"],
     ];

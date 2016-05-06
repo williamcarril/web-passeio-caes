@@ -171,7 +171,7 @@ class Validator {
         $maxSize = isset($parameters[0]) ? $parameters[0] : null;
         $imageRules = ["image"];
         if(!is_null($maxSize)) {
-            $imageRules[] = "size:$maxSize";
+            $imageRules[] = "max:$maxSize";
         }
         if(!is_array($value)) {
             return false;

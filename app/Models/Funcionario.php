@@ -13,6 +13,7 @@ class Funcionario extends Pessoa {
         static::$rules["idMultimidia"] = ["exists:multimidia,idMultimidia", "required", "integer"];
         static::$rules["rg"] = ["required", "string"];
         static::$rules["tipo"] = ["required", "in:passeador,administrador", "string"];
+        static::$rules["email"][] = ["unique:funcionario,email"];
     }
 
     public function __construct(array $attributes = array()) {
