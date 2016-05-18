@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Eloquent;
 
 use Illuminate\Support\MessageBag;
 
@@ -62,11 +62,13 @@ class Model extends \Illuminate\Database\Eloquent\Model {
      * Validates current attributes against rules
      */
     public function validate() {
-        $validator = \validator($this->attributes, static::$rules, static::$messages);
+        $validator = \validator(
+                $this->attributes, $this->overrideNormalRules(static::$rules), static::$messages
+        );
 
-        $validator->addExtensions(static::$customRules);
+        $validator->addExtensions($this->overrideCustomRules(static::$customRules));
 
-        foreach (static::$complexRules as $field => $validation) {
+        foreach ($this->overrideComplexRules(static::$complexRules) as $field => $validation) {
             $rules = $validation["rules"];
             $check = $validation["check"];
             $validator->sometimes($field, $rules, $check);
@@ -128,6 +130,18 @@ class Model extends \Illuminate\Database\Eloquent\Model {
             "custom" => static::getCustomRules(),
             "complex" => static::getComplexRules()
         ];
+    }
+
+    protected function overrideNormalRules($rules) {
+        return $rules;
+    }
+
+    protected function overrideCustomRules($rules) {
+        return $rules;
+    }
+
+    protected function overrideComplexRules($rules) {
+        return $rules;
     }
 
 }
