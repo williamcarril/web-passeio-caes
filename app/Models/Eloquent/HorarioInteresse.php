@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Models;
-use \Carbon\Carbon;
+namespace App\Models\Eloquent;
 
-class HorarioInteresse extends Model {
+class HorarioInteresse extends \WGPC\Eloquent\Model {
 
     protected $table = "horario_interesse";
     protected $primaryKey = "idHorarioInteresse";

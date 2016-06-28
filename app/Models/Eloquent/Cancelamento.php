@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Eloquent;
 
-class Cancelamento extends Model {
+class Cancelamento extends \WGPC\Eloquent\Model {
 
     protected $primaryKey = "idCancelamento";
     protected $table = 'cancelamento';

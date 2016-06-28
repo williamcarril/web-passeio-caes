@@ -4,7 +4,7 @@ module.exports = function(grunt) {
         "dev": "resources/assets/",
         "dist": "public/",
         "npm": "node_modules/",
-        "bower": "node_modules/"
+        "bower": "bower_components/"
     };
     var scripts = [
         //JQuery

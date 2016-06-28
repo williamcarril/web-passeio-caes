@@ -1,12 +1,11 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Eloquent;
 
-class Multimidia extends Model {
+class Multimidia extends \WGPC\Eloquent\Model {
+
     protected $table = "multimidia";
-    
     protected $primaryKey = "idMultimidia";
-    
     protected $fillable = [
         "nome",
         "descricao",
@@ -14,9 +13,7 @@ class Multimidia extends Model {
         "arquivo",
         "tipo"
     ];
-    
     protected $dates = ["data"];
-
     protected static $rules = [
         "nome" => ["required", "max:70", "string"],
         "data" => ["required", "date"],
@@ -24,28 +21,32 @@ class Multimidia extends Model {
         "tipo" => ["required", "in:imagem,video", "string"],
         "descricao" => ["string"]
     ];
-    
+
     public function setDataAttribute($value) {
         $value = str_replace("/", "-", $value);
         $this->attributes["data"] = date("Y-m-d", strtotime($value));
     }
-    
+
     public static function boot() {
         parent::boot();
-        static::$complexRules = [
-            "arquivo" => [
-                "rules" => ["image"],
-                "check" => function($model) {
-                    return $model->tipo === "imagem";
-                }
-            ],
-            "arquivo" => [
-                "rules" => ["mimes:mp4,avi,wmv"],
-                "check" => function($model) {
-                    return $model->tipo === "video";
-                }
-            ]
-        ];
+//        static::$complexRules = [
+//            "arquivo" => [
+//                "rules" => ["image"],
+//                "check" => function($model) {
+//            return $model->tipo === "imagem";
+//        }
+//            ],
+//            "arquivo" => [
+//                "rules" => ["mimes:mp4,avi,wmv"],
+//                "check" => function($model) {
+//            return $model->tipo === "video";
+//        }
+//            ]
+//        ];
+
+        static::saving(function($model) {
+            $model->data = date("Y-m-d H:i:s");
+        });
     }
-    
+
 }

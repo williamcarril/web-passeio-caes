@@ -1,8 +1,8 @@
     <?php
 
-namespace App\Models;
+namespace App\Models\Eloquent;
 
-class Pessoa extends Model {
+class Pessoa extends \WGPC\Eloquent\Model {
     protected $fillable = [
         'nome',
         'telefone',

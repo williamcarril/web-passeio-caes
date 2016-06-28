@@ -11,12 +11,15 @@
   |
  */
 if (!\App::environment("production")) {
-    Route::group(["prefix" => "teste"], function() {
-        Route::get("/", function() {
-            $model = new \App\Models\HorarioInteresse();
-            $model->save();
-            return response()->json($model->getErrors());
-        });
+    Route::group(["prefix" => "tests"], function() {
+        Route::get("/", ["as" => "test", "uses" => function() {
+                
+        }]);
+        Route::post("/", ["as" => "test.post", "uses" => function() {
+            $file = \Request::file("file");
+            $r = \App::make("App\Models\File\Repositorio");
+            return response()->json($r->save($file));
+        }]);
     });
 }
 
@@ -28,4 +31,5 @@ Route::group(["prefix" => "api"], function() {
     Route::resource("modalidade", "ModalidadeController");
     Route::resource("vacina", "VacinaController");
     Route::resource("trajeto", "TrajetoController");
+    Route::resource("multimidia", "MultimidiaController");
 });

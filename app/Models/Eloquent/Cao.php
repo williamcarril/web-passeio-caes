@@ -1,10 +1,8 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Eloquent;
 
-use Illuminate\Database\Eloquent\Model;
-
-class Cao extends Model {
+class Cao extends \WGPC\Eloquent\Model {
 
     protected $primaryKey = "idCao";
     protected $table = 'cao';

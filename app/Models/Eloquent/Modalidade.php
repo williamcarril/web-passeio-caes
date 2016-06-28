@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Eloquent;
 
-class Modalidade extends Model {
+class Modalidade extends \WGPC\Eloquent\Model {
     protected $table = "modalidade";
     protected $primaryKey = "idModalidade";
     protected $fillable = [

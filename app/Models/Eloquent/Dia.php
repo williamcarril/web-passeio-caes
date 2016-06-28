@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Eloquent;
 
-class Dia extends Model {
+class Dia extends \WGPC\Eloquent\Model {
     protected $table = "dia";
     protected $primaryKey = "idDia";
     protected $guarded = ["nome"];

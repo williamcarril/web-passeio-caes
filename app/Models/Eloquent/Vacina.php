@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Eloquent;
 
-class Vacina extends Model {
+class Vacina extends \WGPC\Eloquent\Model {
 
     protected $table = "vacina";
     protected $primaryKey = "idVacina";
