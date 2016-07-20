@@ -1,9 +1,8 @@
-module.exports = function(grunt) {
+module.exports = function (grunt) {
     require("load-grunt-tasks")(grunt);
     var path = {
         "dev": "resources/assets/",
         "dist": "public/",
-        "npm": "node_modules/",
         "bower": "bower_components/"
     };
     var scripts = [
@@ -14,12 +13,30 @@ module.exports = function(grunt) {
         //General JScript File
         "<%= path.dev %>js/main.js"
     ];
+
+    var less = [
+        //Configuration files
+        "<%= path.dev %>styles/config/variables.less",
+        "<%= path.dev %>styles/config/aliases.less",
+        "<%= path.dev %>styles/config/midia-queries.less",
+        "<%= path.dev %>styles/config/functions.less",
+        //Base LESS files
+        "<%= path.dev %>styles/base/*.less",
+        //Layout files
+        "<%= path.dev %>styles/layouts/*.less",
+        //Component files
+        "<%= path.dev %>styles/components/*.less",
+        //Do not remove this line: this is the destination file and should not be imported.
+        "!<%= path.dev %>styles/styles.less"
+    ];
+
     var css = [
         //Bootstrap
         "<%= path.bower %>bootstrap/dist/**/bootstrap.css",
         //General CSS File
-        "<%= path.dev %>style.css"
+        "<%= path.dev %>styles.css"
     ];
+
     grunt.initConfig({
         path: path,
         scripts: scripts,
@@ -34,7 +51,7 @@ module.exports = function(grunt) {
             },
             css: {
                 src: css,
-                dest: "<%= path.dist %>css/style.min.css"
+                dest: "<%= path.dist %>css/styles.min.css"
             }
         },
         jshint: {
@@ -45,13 +62,22 @@ module.exports = function(grunt) {
                 }
             }
         },
+        less_imports: {
+            options: {
+                banner: "// Compiled stylesheet. Do not modify. All changes are going to be lost."
+            },
+            site: {
+                src: less,
+                dest: '<%= path.dev %>styles/styles.less'
+            }
+        },
         less: {
             options: {
                 compress: true
             },
             site: {
                 files: {
-                    "<%= path.dev %>style.css": ["<%= path.dev %>less/main.less"]
+                    "<%= path.dev %>styles.css": "<%= path.dev %>styles/styles.less"
                 }
             }
         },
@@ -69,17 +95,12 @@ module.exports = function(grunt) {
             },
             dist: {
                 files: {
-                    "<%= path.dist %>css/style.min.css": ["<%= path.dist %>css/style.min.css"]
+                    "<%= path.dist %>css/styles.min.css": ["<%= path.dist %>css/styles.min.css"]
                 }
             }
         }
-        // ,
-        // watch: {
-        //     files: ['<%= jshint.files %>'],
-        //     tasks: ['jshint']
-        // }
     });
-    grunt.registerTask("l", ["less", "concat:css"]);
+    grunt.registerTask("l", ["less_imports", "less", "concat:css"]);
     grunt.registerTask("j", ["jshint", "concat:js"]);
-    grunt.registerTask("build", ["less", "concat:css", "concat:js", "uglify", "cssmin"]);
+    grunt.registerTask("build", ["less_imports", "less", "concat:css", "concat:js", "uglify", "cssmin"]);
 };

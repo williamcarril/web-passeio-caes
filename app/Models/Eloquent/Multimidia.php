@@ -7,7 +7,6 @@ class Multimidia extends \WGPC\Eloquent\Model {
     protected $table = "multimidia";
     protected $primaryKey = "idMultimidia";
     protected $fillable = [
-        "nome",
         "descricao",
         "data",
         "arquivo",
@@ -15,7 +14,6 @@ class Multimidia extends \WGPC\Eloquent\Model {
     ];
     protected $dates = ["data"];
     protected static $rules = [
-        "nome" => ["required", "max:70", "string"],
         "data" => ["required", "date"],
         "arquivo" => ["required", "max:255", "string", "unique:multimidia,arquivo"],
         "tipo" => ["required", "in:imagem,video", "string"],
@@ -29,24 +27,9 @@ class Multimidia extends \WGPC\Eloquent\Model {
 
     public static function boot() {
         parent::boot();
-//        static::$complexRules = [
-//            "arquivo" => [
-//                "rules" => ["image"],
-//                "check" => function($model) {
-//            return $model->tipo === "imagem";
-//        }
-//            ],
-//            "arquivo" => [
-//                "rules" => ["mimes:mp4,avi,wmv"],
-//                "check" => function($model) {
-//            return $model->tipo === "video";
-//        }
-//            ]
-//        ];
-
         static::saving(function($model) {
             $model->data = date("Y-m-d H:i:s");
-        });
+        }, 1);
     }
 
 }

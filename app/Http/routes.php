@@ -13,7 +13,7 @@
 if (!\App::environment("production")) {
     Route::group(["prefix" => "tests"], function() {
         Route::get("/", ["as" => "test", "uses" => function() {
-                
+            return view("test");
         }]);
         Route::post("/", ["as" => "test.post", "uses" => function() {
             $file = \Request::file("file");

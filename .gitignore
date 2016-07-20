@@ -1,8 +1,8 @@
 /vendor
 /node_modules
 /bower_components
+/public/repository
 Homestead.yaml
 Homestead.json
 .env
 nbproject
-/nbproject/private/
