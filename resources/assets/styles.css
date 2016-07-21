@@ -1,1 +1,53 @@
-@double-space : (base-space * 2);*,*:before,*:after{box-sizing:border-box}html,body{-moz-osx-font-smoothing:grayscale;-webkit-font-smoothing:antialiased;color:#777}h1,h2,h3,h4,h5,h6{color:#555}a{color:#999}img{max-width:100%}._unmargin{margin:0 !important}._align-center{text-align:center !important}._align-left{text-align:left !important}._align-right{text-align:right !important}._to-right{float:right !important}._to-left{float:left !important}.button{border-radius:2px;color:#fff}
+*,
+*:before,
+*:after {
+  box-sizing: border-box;
+}
+html,
+body {
+  color: #777;
+  font-family: sans-serif;
+  font-size: 16px;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: #555;
+}
+a {
+  color: #999;
+}
+a:hover {
+  color: #666;
+}
+img {
+  max-width: 100%;
+}
+._unmargin {
+  margin: 0!important;
+}
+._align-center {
+  text-align: center!important;
+}
+._align-left {
+  text-align: left!important;
+}
+._align-right {
+  text-align: right!important;
+}
+._to-right {
+  float: right!important;
+}
+._to-left {
+  float: left!important;
+}
+.content-block {
+  /*@{property}: unit(@pixels, px);*/
+  /*@{property}: unit(@pixels / @base-font-size, rem);*/
+  Ignore: a;font-size:20px;
+  Ignore: a;font-size:1.25rem;
+  background-color: #0ff;
+}

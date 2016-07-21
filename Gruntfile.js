@@ -73,7 +73,7 @@ module.exports = function (grunt) {
         },
         less: {
             options: {
-                compress: true
+                compress: false
             },
             site: {
                 files: {
@@ -98,8 +98,18 @@ module.exports = function (grunt) {
                     "<%= path.dist %>css/styles.min.css": ["<%= path.dist %>css/styles.min.css"]
                 }
             }
+        },
+        watch: {
+            less: {
+                files: ['<% path.dev %>styles/**/*.less'],
+                tasks: ["less_imports", "less", "concat:css"],
+                options: {
+                    spawn: false,
+                }
+            }
         }
     });
+    grunt.registerTask("w", ["watch:less"]);
     grunt.registerTask("l", ["less_imports", "less", "concat:css"]);
     grunt.registerTask("j", ["jshint", "concat:js"]);
     grunt.registerTask("build", ["less_imports", "less", "concat:css", "concat:js", "uglify", "cssmin"]);

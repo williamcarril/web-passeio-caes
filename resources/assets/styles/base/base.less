@@ -9,10 +9,9 @@
 
 html,
 body {
-    -moz-osx-font-smoothing: grayscale;
-    -webkit-font-smoothing: antialiased;
     color: @content-color;
-    @fs: @small-font-size;
+    font-family: sans-serif;
+    font-size: @base-font-size;
 }
 
 h1,
@@ -26,6 +25,10 @@ h6 {
 
 a {
     color: @link-color;
+    
+    &:hover {
+        color: @link-hover-color;
+    }
 }
 
 img {

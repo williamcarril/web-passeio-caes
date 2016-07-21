@@ -1,3 +1,26 @@
 // -------------------------
 // Functions
 // -------------------------
+
+// Convert px to REM
+// -------------------------
+.rem(@property, @pixels) {
+    @pxValue: unit(@pixels, px);
+    @remValue: unit(@pixels / @base-font-size, rem);
+    /*@{property}: unit(@pixels, px);*/
+    /*@{property}: unit(@pixels / @base-font-size, rem);*/
+    Ignore: ~"a;@{property}:@{pxValue}";
+    Ignore: ~"a;@{property}:@{remValue}";
+}
+
+
+// Convert px to EM
+// -------------------------
+.em(@property, @pixels) {
+    @pxValue: unit(@pixels, px);
+    @emValue: unit(@pixels / @base-font-size, em);
+/*    @{property}: unit(@pixels, px);
+    @{property}: unit(@pixels / @base-font-size, em);*/
+    Ignore: ~"a;@{property}:@{pxValue}";
+    Ignore: ~"a;@{property}:@{emValue}";
+}

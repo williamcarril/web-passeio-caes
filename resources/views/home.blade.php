@@ -1,10 +1,9 @@
 @extends('layouts.default')
 
 @section("main")
-<form action="{{route("test.post")}}" method="POST" enctype="multipart/form-data">
-    <input type="file" name="file">
-    <input type="text" name="text">
-    {!! csrf_field() !!}
-    <input type="submit">
-</form>
+
+<h1>Teste</h1>
+<div class="content-block">
+    <p>Testando o tamanho da fonte em REM.</p>
+</div>
 @endsection
