@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Vacina;
+use App\Models\Eloquent\Vacina;
 
 class VacinaController extends ResourceController {
 
@@ -13,9 +13,9 @@ class VacinaController extends ResourceController {
 
     public function doDestroy($id) {
         $model = Vacina::findOrFail($id);
-        
+
         $status = $model->delete();
-        
+
         return ["status" => $status, "messages" => []];
     }
 
@@ -29,11 +29,12 @@ class VacinaController extends ResourceController {
 
     public function doUpdate(Request $request, $id) {
         $model = Vacina::findOrFail($id);
-        $model->nome = $request->get("nome");
+        if ($request->has("nome")) {
+            $model->nome = $request->get("nome");
+        }
         $status = $model->save();
         $messages = $model->getErrors();
         return ["status" => $status, "messages" => $messages];
-        
     }
 
     public function edit($id) {

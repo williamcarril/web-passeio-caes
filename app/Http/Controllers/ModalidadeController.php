@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Modalidade;
+use App\Models\Eloquent\Modalidade;
 
 class ModalidadeController extends ResourceController {
 
@@ -38,9 +38,15 @@ class ModalidadeController extends ResourceController {
 
     public function doUpdate(Request $request, $id) {
         $model = Modalidade::findOrFail($id);
-        $model->nome = $request->get("nome");
-        $model->descricao = $request->get("descricao");
-        $model->tipo = $request->get("tipo");
+        if ($request->has("nome")) {
+            $model->nome = $request->get("nome");
+        }
+        if ($request->has("descricao")) {
+            $model->descricao = $request->get("descricao");
+        }
+        if ($request->has("tipo")) {
+            $model->tipo = $request->get("tipo");
+        }
 
         $status = $model->save();
         $messages = $model->getErrors();

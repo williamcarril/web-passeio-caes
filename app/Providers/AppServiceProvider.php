@@ -20,11 +20,11 @@ class AppServiceProvider extends ServiceProvider {
         \Validator::extend("less", "App\\Util\\Validator@checkLessThan");
         \Validator::extend("less_or_equal", "App\\Util\\Validator@checkLessOrEqualThan");
         \Validator::extend("image_array", "App\\Util\\Validator@checkImageArray");
-        
+
         Relation::morphMap([
-            'cliente' => \App\Models\Cliente::class,
-            'funcionario' => \App\Models\Funcionario::class,
-            "cao" => \App\Models\Cao::class
+            'cliente' => \App\Models\Eloquent\Cliente::class,
+            'funcionario' => \App\Models\Eloquent\Funcionario::class,
+            "cao" => \App\Models\Eloquent\Cao::class
         ]);
     }
 
@@ -34,7 +34,10 @@ class AppServiceProvider extends ServiceProvider {
      * @return void
      */
     public function register() {
-        
+        $this->app->singleton(\App\Models\File\Repositorio::class, function ($app) {
+            $repository = new \App\Models\File\Repositorio($app["filesystem"]);
+            return $repository;
+        });
     }
 
 }

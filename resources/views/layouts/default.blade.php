@@ -2,19 +2,28 @@
 <html>
     <head>
         <title>Passeio de Cães</title>
-        <link rel="stylesheet" href="{{asset("/css/style.min.css")}}">
+        <link rel="stylesheet" href="{{asset("/css/styles.min.css")}}">
         <meta name="csrf-token" content="{{csrf_token()}}">
     </head>
     <body>
         @section("header")
-            @include("layouts._header")
+        @include("layouts.header")
         @show
-        <div class="container">
-            @section("main")
-            @show
+        <div id="wrapper">
+            <div id="sidebar-wrapper">
+                @section("sidebar")
+                @include("layouts.sidebar")
+                @show
+            </div>
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    @section("main")
+                    @show
+                </div>
+            </div>
         </div>
         @section("footer")
-            @include("layouts._footer")
+        @include("layouts.footer")
         @show
         <script src="{{asset("/js/scripts.min.js")}}"></script>
         @section("scripts")
