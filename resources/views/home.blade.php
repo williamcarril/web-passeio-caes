@@ -1,9 +1,6 @@
 @extends('layouts.default')
 
 @section("main")
-
-<h1>Teste</h1>
-<div class="content-block">
-    <p>Testando o tamanho da fonte em REM.</p>
-</div>
+<h1>Teste supremo</h1>
+<p>teste</p>
 @endsection

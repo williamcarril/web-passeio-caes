@@ -16,7 +16,6 @@
                 @show
             </div>
             <div id="page-content-wrapper">
-                <a id="sidebar-toggle" class="btn btn-default" href="#sidebar-toggle">Toggle Menu</a>
                 <div class="container-fluid">
                     @section("main")
                     @show

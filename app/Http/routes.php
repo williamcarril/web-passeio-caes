@@ -23,9 +23,9 @@ if (!\App::environment("production")) {
     });
 }
 
-Route::get('/', function () {
+Route::get('/', ["as" => "home", "uses" => function () {
     return response()->view("home");
-});
+}]);
 
 Route::group(["prefix" => "api"], function() {
     Route::resource("modalidade", "ModalidadeController");

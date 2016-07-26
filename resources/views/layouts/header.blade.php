@@ -1,7 +1,5 @@
-<header>
-    <ul class="nav nav-tabs">
-        <li class="active"><a href="#">Home</a></li>
-        <li><a href="#">Profile</a></li>
-        <li><a href="#">Messages</a></li>
-    </ul>
+<header class="header--main">
+    <a id="sidebar-toggle" class="btn btn-default" href="#sidebar-toggle">
+        <span class='glyphicon glyphicon-menu-hamburger'></span>
+    </a>
 </header>

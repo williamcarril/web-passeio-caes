@@ -20,6 +20,8 @@ module.exports = function (grunt) {
         "<%= path.dev %>styles/config/aliases.less",
         "<%= path.dev %>styles/config/midia-queries.less",
         "<%= path.dev %>styles/config/functions.less",
+        //Vendors CSS and LESS files
+        "<%= path.dev %>styles/vendors/**/*.*",
         //Base LESS files
         "<%= path.dev %>styles/base/*.less",
         //Layout files
