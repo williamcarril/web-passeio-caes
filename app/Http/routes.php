@@ -13,19 +13,27 @@
 if (!\App::environment("production")) {
     Route::group(["prefix" => "tests"], function() {
         Route::get("/", ["as" => "test", "uses" => function() {
-            return view("test");
-        }]);
+                return view("test");
+            }]);
         Route::post("/", ["as" => "test.post", "uses" => function() {
-            $file = \Request::file("file");
-            $r = \App::make("App\Models\File\Repositorio");
-            return response()->json($r->save($file));
-        }]);
+                $file = \Request::file("file");
+                $r = \App::make("App\Models\File\Repositorio");
+                return response()->json($r->save($file));
+            }]);
     });
 }
 
-Route::get('/', ["as" => "home", "uses" => function () {
-    return response()->view("home");
-}]);
+
+Route::group([], function() {
+    Route::get('/', ["as" => "home", "uses" => function () {
+            return response()->view("home");
+        }]);
+
+    Route::post("/login", ["as" => "login.post", "uses" => 
+        function() {
+            return ["status" => true, "messages" => []];
+        }]);
+});
 
 Route::group(["prefix" => "api"], function() {
     Route::resource("modalidade", "ModalidadeController");
@@ -33,3 +41,4 @@ Route::group(["prefix" => "api"], function() {
     Route::resource("trajeto", "TrajetoController");
     Route::resource("multimidia", "MultimidiaController");
 });
+        

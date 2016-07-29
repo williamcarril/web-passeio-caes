@@ -4,6 +4,7 @@
         <title>Passeio de Cães</title>
         <link rel="stylesheet" href="{{asset("/css/styles.min.css")}}">
         <meta name="csrf-token" content="{{csrf_token()}}">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body>
         @section("header")
@@ -16,7 +17,7 @@
                 @show
             </div>
             <div id="page-content-wrapper">
-                <div class="container-fluid">
+                <div class="container">
                     @section("main")
                     @show
                 </div>
