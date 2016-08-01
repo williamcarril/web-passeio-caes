@@ -21,6 +21,7 @@
     </div>
     <button type="submit" class="btn btn-default">Entrar</button>
 </form>
+<span>Não tem cadastro? Cadastre-se <a href="#">aqui</a>.</span>
 @else
 <p>Olá, {{$customer->nome}}</p>
 @endif

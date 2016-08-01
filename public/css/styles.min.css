@@ -6882,7 +6882,7 @@ h3,
 h4,
 h5,
 h6 {
-  color: #000;
+  color: #555;
 }
 a {
   color: #999;
@@ -6915,24 +6915,27 @@ img {
   clear: fix;
   Ignore: a;padding:10px;
   Ignore: a;padding:0.625rem;
-  background-color: #22B14C;
+  background-color: #000;
   color: #FFF;
   padding-right: 0;
 }
 #sidebar-wrapper {
-  background: #22B14C;
+  background: #000;
 }
 .sidebar-nav li {
   Ignore: a;text-indent:20px;
   Ignore: a;text-indent:1.25rem;
   Ignore: a;line-height:40px;
   Ignore: a;line-height:2.5rem;
-  border-bottom: 1px solid #6fe391;
+  border-bottom: 1px solid #404040;
   color: #FFF;
+}
+.sidebar-nav li a {
+  color: #999;
 }
 .sidebar-nav li a:hover {
   text-decoration: none;
-  color: #000;
+  color: #666;
   background: rgba(0, 0, 0, 0);
 }
 .sidebar-nav > li.sidebar-nav__logo {
@@ -6947,6 +6950,9 @@ img {
   Ignore: a;padding:10px;
   Ignore: a;padding:0.625rem;
   text-indent: 0px;
+}
+.sidebar-nav > li.sidebar-nav__user a {
+  display: inline;
 }
 .sidebar-nav .sidebar-nav__title {
   font-weight: bold;
