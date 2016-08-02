@@ -3,7 +3,6 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Illuminate\Support\ViewErrorBag;
 use Illuminate\Contracts\View\Factory as ViewFactory;
 use Illuminate\Contracts\Auth\Factory as AuthFactory;
 

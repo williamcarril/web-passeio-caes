@@ -1,5 +1,5 @@
 @if(empty($customer))
-<form method="POST" action="{{route("login.post")}}" role="form">
+<form method="POST" action="{{route("cliente.login.post")}}" role="form">
     {!! csrf_field() !!}
     <div class="form-group">
         <label class="sr-only" for="email">E-mail</label>
@@ -21,7 +21,7 @@
     </div>
     <button type="submit" class="btn btn-default">Entrar</button>
 </form>
-<span>Não tem cadastro? Cadastre-se <a href="#">aqui</a>.</span>
+<span>Não tem cadastro? Cadastre-se <a href="{{route("cliente.cadastro.get")}}">aqui</a>.</span>
 @else
 <p>Olá, {{$customer->nome}}</p>
 @endif

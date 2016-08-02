@@ -132,6 +132,13 @@ a:hover {
 img {
   max-width: 100%;
 }
+input[type='number'] {
+  -moz-appearance: textfield;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
 ._unmargin {
   margin: 0!important;
 }
@@ -196,8 +203,10 @@ img {
 .sidebar-nav .sidebar-nav__title {
   font-weight: bold;
 }
-.content-block {
-  Ignore: a;font-size:20px;
-  Ignore: a;font-size:1.25rem;
-  background-color: #0ff;
+.map {
+  width: 100%;
+  Ignore: a;height:300px;
+  Ignore: a;height:18.75rem;
+  Ignore: a;margin-bottom:10px;
+  Ignore: a;margin-bottom:0.625rem;
 }

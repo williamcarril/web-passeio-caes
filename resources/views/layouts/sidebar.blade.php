@@ -5,7 +5,7 @@
         </a>
     </li>
     <li class="sidebar-nav__user">
-        @include("includes.user-area")
+        @include("includes.customer-area")
     </li>
     <li class="sidebar-nav__calendar">
         <span class="sidebar-nav__title">Calendário</span>
