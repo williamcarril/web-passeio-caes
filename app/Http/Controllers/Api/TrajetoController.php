@@ -45,6 +45,7 @@ class TrajetoController extends ResourceController {
         $model->numero = $request->input("numero");
         $model->lat = $request->input("lat");
         $model->lng = $request->input("lng");
+        $model->complemento = $request->input("complemento", null);
 
         $fotos = $request->file("fotos");
         //Salvar multimídias...

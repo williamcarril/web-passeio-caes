@@ -5,11 +5,11 @@ $hasMap = isset($hasMap) ? $hasMap : false;
 <html>
     <head>
         <title>@yield("title", env("APP_NAME"))</title>
-        <link rel="stylesheet" href="{{asset("/css/styles.min.css")}}">
+        <link rel="stylesheet" href="{{asset("/css/styles.min.css")}}" />
         <meta name="csrf-token" content="{{csrf_token()}}">
 
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
         @if(!\App::environment("production"))
         <meta name="robots" content="noindex, nofollow" />
@@ -32,11 +32,18 @@ $hasMap = isset($hasMap) ? $hasMap : false;
                 @show
             </div>
             <div id="page-content-wrapper">
+                @include("layouts.alerts")
                 <div class="container">
                     @section("main")
                     @show
                 </div>
             </div>
+        </div>
+        <div id="htmlTemplates">
+            @include("includes.alert", ["type" => "error", "message" => "!{message}", "name" => "error-alert"])
+            @include("includes.alert", ["type" => "info", "message" => "!{message}", "name" => "info-alert"])
+            @include("includes.alert", ["type" => "success", "message" => "!{message}", "name" => "success-alert"])
+            @include("includes.alert", ["type" => "warning", "message" => "!{message}", "name" => "warning-alert"])
         </div>
         @section("footer")
         @include("layouts.footer")

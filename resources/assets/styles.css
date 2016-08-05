@@ -157,6 +157,15 @@ input::-webkit-inner-spin-button {
 ._to-left {
   float: left!important;
 }
+#alerts {
+  z-index: 9999;
+  position: fixed;
+  width: 50%;
+  margin: 5% auto;
+  /* Will not center vertically and won't work in IE6/7. */
+  left: 0;
+  right: 0;
+}
 .header--main {
   clear: fix;
   Ignore: a;padding:10px;

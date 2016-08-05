@@ -12,6 +12,7 @@ class Pessoa extends \WGPC\Eloquent\Model {
         "bairro",
         "postal",
         "numero",
+        "complemento",
         "lat",
         "lng",
         "email",
@@ -37,6 +38,7 @@ class Pessoa extends \WGPC\Eloquent\Model {
         "numero" => ["max:12", "required", "string"],
         "lat" => ["numeric", "required"],
         "lng" => ["numeric", "required"],
+        "complemento" => ["max:50", "string"],
         "email" => ["required", "email", "string"]
     ];
 

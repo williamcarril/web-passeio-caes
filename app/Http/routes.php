@@ -30,12 +30,12 @@ Route::group([], function() {
     });
 });
 
-Route::group(["prefix" => "api"], function() {
+Route::group(["prefix" => "api", "namespace" => "Api"], function() {
     Route::group(["prefix" => "v1"], function() {
-        Route::resource("modalidade", "ModalidadeController");
-        Route::resource("vacina", "VacinaController");
-        Route::resource("trajeto", "TrajetoController");
-        Route::resource("multimidia", "MultimidiaController");
+        Route::resource("modalidades", "ModalidadeController");
+        Route::resource("vacinas", "VacinaController");
+        Route::resource("trajetos", "TrajetoController");
+        Route::resource("multimidias", "MultimidiaController");
     });
 });
 

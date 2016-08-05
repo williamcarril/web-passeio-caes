@@ -22,6 +22,9 @@ $lng = !empty($lng) ? $lng : -46.57817;
                 globals.maps = [];
             }
             globals.maps["{!! $id !!}"] = map;
+            @if(isset($callback))
+                window["{!! $callback !!}"]();
+            @endif
         });
     })();
 </script>

@@ -15,6 +15,7 @@ class Trajeto extends \WGPC\Eloquent\Model {
         "bairro",
         "postal",
         "numero",
+        "complemento",
         "lat",
         "lng"
     ];
@@ -32,6 +33,7 @@ class Trajeto extends \WGPC\Eloquent\Model {
         "bairro" => ["required", "max:40", "string"],
         "postal" => ["required", "size:8", "string"],
         "numero" => ["required", "max:12", "string"],
+        "complemento" => ["max:50", "string"],
         "lat" => ["required", "numeric"],
         "lng" => ["required", "numeric"]
     ];
