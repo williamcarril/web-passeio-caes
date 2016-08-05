@@ -11,10 +11,17 @@
         .rem("text-indent", @double-space);
         .rem("line-height", @quadruple-space);
         border-bottom: 1px solid @base-color;
+        color: @container-font-color;
 
         a {
-            color: @container-font-color;
+            color: @container-link-color;
+            &:hover {
+                text-decoration: none;
+                color: @container-link-hover-color;
+                background: rgba(0,0,0,0);
+            }
         }
+
     }
 
     > li.sidebar-nav__logo {
@@ -22,12 +29,27 @@
             text-align: center;
             text-indent: 0px;
         }
+    }
 
-        a:hover {
-            text-decoration: none;
-            color: #000;
-            background: rgba(0,0,0,0);
+    > li.sidebar-nav__calendar {
+        & {
+            text-align: center;
+            text-indent: 0px;
         }
+    }
+
+    > li.sidebar-nav__user {
+        & {
+            .rem("padding", @base-space);
+            text-indent: 0px;
+        }
+        a {
+            display: inline;
+        }
+    }
+
+    .sidebar-nav__title {
+        font-weight: bold;
     }
 
 }

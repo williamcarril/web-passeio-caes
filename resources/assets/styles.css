@@ -121,7 +121,7 @@ h3,
 h4,
 h5,
 h6 {
-  color: #000;
+  color: #555;
 }
 a {
   color: #999;
@@ -131,6 +131,13 @@ a:hover {
 }
 img {
   max-width: 100%;
+}
+input[type='number'] {
+  -moz-appearance: textfield;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
 }
 ._unmargin {
   margin: 0!important;
@@ -150,36 +157,65 @@ img {
 ._to-left {
   float: left!important;
 }
+#alerts {
+  z-index: 9999;
+  position: fixed;
+  width: 50%;
+  margin: 5% auto;
+  /* Will not center vertically and won't work in IE6/7. */
+  left: 0;
+  right: 0;
+}
 .header--main {
   clear: fix;
-  Ignore: a;padding-top:10px;
-  Ignore: a;padding-top:0.625rem;
+  Ignore: a;padding:10px;
+  Ignore: a;padding:0.625rem;
+  background-color: #000;
+  color: #FFF;
   padding-right: 0;
 }
 #sidebar-wrapper {
-  background: #22B14C;
+  background: #000;
 }
 .sidebar-nav li {
   Ignore: a;text-indent:20px;
   Ignore: a;text-indent:1.25rem;
   Ignore: a;line-height:40px;
   Ignore: a;line-height:2.5rem;
-  border-bottom: 1px solid #6fe391;
+  border-bottom: 1px solid #404040;
+  color: #FFF;
 }
 .sidebar-nav li a {
-  color: #FFF;
+  color: #999;
+}
+.sidebar-nav li a:hover {
+  text-decoration: none;
+  color: #666;
+  background: rgba(0, 0, 0, 0);
 }
 .sidebar-nav > li.sidebar-nav__logo {
   text-align: center;
   text-indent: 0px;
 }
-.sidebar-nav > li.sidebar-nav__logo a:hover {
-  text-decoration: none;
-  color: #000;
-  background: rgba(0, 0, 0, 0);
+.sidebar-nav > li.sidebar-nav__calendar {
+  text-align: center;
+  text-indent: 0px;
 }
-.content-block {
-  Ignore: a;font-size:20px;
-  Ignore: a;font-size:1.25rem;
-  background-color: #0ff;
+.sidebar-nav > li.sidebar-nav__user {
+  Ignore: a;padding:10px;
+  Ignore: a;padding:0.625rem;
+  text-indent: 0px;
+}
+.sidebar-nav > li.sidebar-nav__user a {
+  display: inline;
+}
+.sidebar-nav .sidebar-nav__title {
+  font-weight: bold;
+}
+.map {
+  width: 100%;
+  Ignore: a;height:300px;
+  Ignore: a;height:18.75rem;
+  Ignore: a;margin-bottom:10px;
+  Ignore: a;margin-bottom:0.625rem;
 }

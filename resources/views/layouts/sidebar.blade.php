@@ -4,7 +4,11 @@
             <img src="{{asset("img/logo.png")}}" />
         </a>
     </li>
-    <li><a href='#'>Teste</a></li>
-    <li><a href='#'>testando</a></li>
-    <li><a href='#'>oi</a></li>
+    <li class="sidebar-nav__user">
+        @include("includes.customer-area")
+    </li>
+    <li class="sidebar-nav__calendar">
+        <span class="sidebar-nav__title">Calendário</span>
+        @include("includes.calendar", ["type" => "small"])
+    </li>
 </ul>

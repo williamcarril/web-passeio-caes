@@ -18,11 +18,10 @@
   ],
   "private": true,
   "license": "MIT",
-  "devDependencies": {
-      
-  },
+  "devDependencies": {},
   "dependencies": {
     "jquery": "^2.2.3",
-    "bootstrap": "^3.3.6"
+    "bootstrap": "^3.3.6",
+    "jquery.inputmask": "^3.3.1"
   }
 }

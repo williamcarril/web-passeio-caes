@@ -13,23 +13,32 @@
 if (!\App::environment("production")) {
     Route::group(["prefix" => "tests"], function() {
         Route::get("/", ["as" => "test", "uses" => function() {
-            return view("test");
-        }]);
-        Route::post("/", ["as" => "test.post", "uses" => function() {
-            $file = \Request::file("file");
-            $r = \App::make("App\Models\File\Repositorio");
-            return response()->json($r->save($file));
-        }]);
+                $researcher = \App::make(App\Models\Address\CepResearcher::class);
+                $return = $researcher->researchAddress("03286-220");
+                return $return;
+            }]);
     });
 }
 
-Route::get('/', ["as" => "home", "uses" => function () {
-    return response()->view("home");
-}]);
 
-Route::group(["prefix" => "api"], function() {
-    Route::resource("modalidade", "ModalidadeController");
-    Route::resource("vacina", "VacinaController");
-    Route::resource("trajeto", "TrajetoController");
-    Route::resource("multimidia", "MultimidiaController");
+Route::group([], function() {
+    Route::get('/', ["as" => "home", "uses" => "HomeController@route_getHome"]);
+
+    Route::group(["prefix" => "cliente"], function() {
+        Route::get("/cadastro", ["as" => "cliente.cadastro.get", "uses" => "ClienteController@route_getCadastro"]);
+        Route::post("/login", ["as" => "cliente.login.post", "uses" => "ClienteController@route_postLogin"]);
+    });
+});
+
+Route::group(["prefix" => "api", "namespace" => "Api"], function() {
+    Route::group(["prefix" => "v1"], function() {
+        Route::resource("modalidades", "ModalidadeController");
+        Route::resource("vacinas", "VacinaController");
+        Route::resource("trajetos", "TrajetoController");
+        Route::resource("multimidias", "MultimidiaController");
+    });
+});
+
+Route::group(["prefix" => "webservice"], function() {
+    Route::get("cep", ["as" => "webservice.cep", "uses" => "WebserviceController@route_getAddressByCep"]);
 });

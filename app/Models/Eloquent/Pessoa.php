@@ -8,10 +8,11 @@ class Pessoa extends \WGPC\Eloquent\Model {
         'telefone',
         "ativo",
         "cpf",
-        "rua",
+        "logradouro",
         "bairro",
         "postal",
         "numero",
+        "complemento",
         "lat",
         "lng",
         "email",
@@ -31,12 +32,13 @@ class Pessoa extends \WGPC\Eloquent\Model {
         "telefone" => ["max:12", "required", "numeric"],
         "ativo" => ["boolean", "required"],
         "cpf" => ["cpf", "required", "string"],
-        "rua" => ["max:70", "required", "string"],
+        "logradouro" => ["max:70", "required", "string"],
         "bairro" => ["max:40", "required", "string"],
         "postal" => ["cep", "required", "string"],
         "numero" => ["max:12", "required", "string"],
         "lat" => ["numeric", "required"],
         "lng" => ["numeric", "required"],
+        "complemento" => ["max:50", "string"],
         "email" => ["required", "email", "string"]
     ];
 

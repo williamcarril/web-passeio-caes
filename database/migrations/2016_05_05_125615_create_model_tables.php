@@ -27,7 +27,7 @@ class CreateModelTables extends Migration {
                 $table->text("descricao");
                 $table->integer("raioAtuacao");
                 $table->boolean("ativo")->default(true);
-                $table->string("rua", 70);
+                $table->string("logradouro", 70);
                 $table->string("bairro", 40);
                 $table->char("postal", 8);
                 $table->string("numero", 12);
@@ -67,7 +67,7 @@ class CreateModelTables extends Migration {
                 $table->string("telefone", 12);
                 $table->boolean("ativo")->default(true);
                 $table->char("cpf", 11);
-                $table->string("rua", 70);
+                $table->string("logradouro", 70);
                 $table->string("bairro", 40);
                 $table->char("postal", 8);
                 $table->string("numero", 12);
@@ -83,7 +83,7 @@ class CreateModelTables extends Migration {
                 $table->string("telefone", 12);
                 $table->boolean("ativo")->default(true);
                 $table->char("cpf", 11);
-                $table->string("rua", 70);
+                $table->string("logradouro", 70);
                 $table->string("bairro", 40);
                 $table->char("postal", 8);
                 $table->string("numero", 12);
