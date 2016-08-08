@@ -26,11 +26,11 @@ $hasMap = isset($hasMap) ? $hasMap : false;
         @include("layouts.header")
         @show
         <div id="wrapper">
-            <div id="sidebar-wrapper">
+            <aside id="sidebar-wrapper">
                 @section("sidebar")
                 @include("layouts.sidebar")
                 @show
-            </div>
+            </aside>
             <div id="page-content-wrapper">
                 @include("layouts.alerts")
                 <div class="container">
@@ -51,7 +51,7 @@ $hasMap = isset($hasMap) ? $hasMap : false;
         <script src="{{asset("/js/scripts.min.js")}}"></script>
         @if($hasMap)
         <script async defer
-                src="https://maps.googleapis.com/maps/api/js?key={{config("services.google.maps.key")}}">
+                src="https://maps.googleapis.com/maps/api/js?key={{config("services.google.maps.key")}}&libraries=places">
         </script>
         @endif
         @section("scripts")

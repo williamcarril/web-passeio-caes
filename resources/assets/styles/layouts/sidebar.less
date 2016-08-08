@@ -2,11 +2,35 @@
 // Sidebar - Layout
 // -------------------------
 
+#wrapper {
+    .rem("padding-top", @sextuple-space);
+
+    &.toggled {
+        .rem("padding-left", 250px);
+        #sidebar-wrapper {
+            .rem("width", 250px);
+        }
+        #page-content-wrapper {
+            .rem("margin-right", -250px);
+        }
+    }
+}
+
+#page-content-wrapper {
+    padding: 0;
+}
+
 #sidebar-wrapper {
     background: @container-color;
+    .rem("left", 250px);
+    .rem("margin-left", -250px);
 }
 
 .sidebar-nav {
+    & {
+        .rem("width", 250px);
+    }
+
     li {
         .rem("text-indent", @double-space);
         .rem("line-height", @quadruple-space);
