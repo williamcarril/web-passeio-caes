@@ -78,7 +78,8 @@
 
         window.bootstrapListeners = function () {
             var map = globals.maps["cadastro-map"];
-
+            var searchBox = globals.maps["cadastro-map"].searchBox;
+            
             var $number = $("input[name='numero']");
             var $route = $("input[name='logradouro']");
             var $postal = $("input[name='postal']");
@@ -87,33 +88,57 @@
             var $lng = $("input[name='lat']");
             
             google.maps.event.addListener(map, "click", function (event) {
+                searchBox.clear();
                 var geocoder = new google.maps.Geocoder;
-                if (globals.customerLocation) {
-                    globals.customerLocation.setMap(null);
-                }
+                map.markers.forEach(function(marker) {
+                    marker.setMap(null);
+                });
+                map.markers = [];
                 geocoder.geocode({'location': event.latLng}, function (results, status) {
                     if (status === google.maps.GeocoderStatus.OK) {
                         var result = results[0];
 //                        var infowindow = new google.maps.InfoWindow;
-                        globals.customerLocation = new google.maps.Marker({
+                        map.markers.push(new google.maps.Marker({
                             position: event.latLng,
                             map: map
-                        });
+                        }));
 //                        infowindow.setContent(result.formatted_address);
 //                        infowindow.open(map, globals.customerLocation);
-                        $addressFields.prop("disabled", false);
-                        $lat.val(event.latLng.lat());
-                        $lng.val(event.latLng.lng());
-                        fillAddressesFields(result);
-                        if(!globals.mapWarning) {
-                            showAlert("Atenção! É importante que a localização marcada no mapa esteja correta.", "warning");
-                            globals.mapWarning = true;
-                        }
+                        fillAddressesFields(result, event.latLng.lat(), event.latLng.lng());
                     }
                 });
             });
+            
+            searchBox.addListener('places_changed', function() {
+                var places = searchBox.getPlaces();
+                if (places.length === 0) {
+                    return;
+                }
+                map.markers.forEach(function(marker) {
+                    marker.setMap(null);
+                });
+                map.markers = [];
+                var bounds = new google.maps.LatLngBounds();
+                var place = places[0];
+                    map.markers.push(new google.maps.Marker({
+                        map: map,
+                        title: place.name,
+                        position: place.geometry.location
+                    }));
 
-            function fillAddressesFields(result) {
+                    if (place.geometry.viewport) {
+                        bounds.union(place.geometry.viewport);
+                    } else {
+                        bounds.extend(place.geometry.location);
+                    }
+                map.fitBounds(bounds);
+                fillAddressesFields(place, place.geometry.location.lat, place.geometry.location.lng);
+            });
+
+            function fillAddressesFields(result, lat, lng) {
+                $addressFields.prop("disabled", false);
+                $lat.val(lat);
+                $lng.val(lng);
                 var data = {
                     "number": null,
                     "route": null,
@@ -147,17 +172,21 @@
                         continue;
                     }
                 }
-                if (!$number.val() && data.number) {
+                if (data.number) {
                     $number.val(data.number);
                 }
-                if (!$route.val() && data.route) {
+                if (data.route) {
                     $route.val(data.route);
                 }
-                if (!$postal.val() && data.postal) {
+                if (data.postal) {
                     $postal.val(data.postal);
                 }
-                if (!$sublocality.val() && data.sublocality) {
+                if (data.sublocality) {
                     $sublocality.val(data.sublocality);
+                }
+                if(!globals.mapWarning) {
+                    showAlert("Atenção! É importante que a localização marcada no mapa esteja correta.", "warning");
+                    globals.mapWarning = true;
                 }
             }
         };
