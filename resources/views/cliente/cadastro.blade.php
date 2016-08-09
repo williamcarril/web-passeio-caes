@@ -97,6 +97,9 @@
                 "data": {
                     "cpf": cpf
                 },
+                "beforeSend": function() {
+                    $this.addClass("loading");
+                },
                 "success": function(response) {
                     if(response.status) {
                         setInputStatus($this, "error");
@@ -107,6 +110,9 @@
                 },
                 "error": function() {
                     setInputStatus($this, "success");
+                },
+                "complete": function() {
+                    $this.removeClass("loading");
                 }
             });
         });
@@ -132,6 +138,9 @@
                 "data": {
                     "email": email
                 },
+                "beforeSend": function() {
+                    $this.addClass("loading");
+                },
                 "success": function(response) {
                     if(response.status) {
                         setInputStatus($this, "error");
@@ -142,6 +151,9 @@
                 },
                 "error": function() {
                     setInputStatus($this, "success");
+                },
+                "complete": function() {
+                    $this.removeClass("loading");
                 }
             });
         });

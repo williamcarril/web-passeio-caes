@@ -132,13 +132,6 @@ a:hover {
 img {
   max-width: 100%;
 }
-input[type='number'] {
-  -moz-appearance: textfield;
-}
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-}
 ._unmargin {
   margin: 0!important;
 }
@@ -258,6 +251,9 @@ header {
 }
 .form-control--error {
   border: 1px solid #FF0000;
+}
+input.loading {
+  background: url(../img/loading.gif) no-repeat right center;
 }
 .map {
   width: 100%;
