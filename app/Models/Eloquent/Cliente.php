@@ -11,6 +11,7 @@ class Cliente extends Pessoa {
         parent::boot();
 
         static::$rules["email"][] = "unique:cliente,email";
+        static::$rules["cpf"][] = "unique:cliente,cpf";
     }
 
     public function cancelamentos() {
@@ -19,6 +20,10 @@ class Cliente extends Pessoa {
 
     public function passeios() {
         return $this->hasMany("\App\Models\Passeio", "idCliente", "idCliente");
+    }
+
+    public function getAuthIdentifierName() {
+        return "idCliente";
     }
 
 }

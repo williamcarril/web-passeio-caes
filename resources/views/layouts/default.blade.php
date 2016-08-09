@@ -4,7 +4,7 @@ $hasMap = isset($hasMap) ? $hasMap : false;
 <!DOCTYPE html>
 <html>
     <head>
-        <title>@yield("title", env("APP_NAME"))</title>
+        <title>@yield("title", config("app.name"))</title>
         <link rel="stylesheet" href="{{asset("/css/styles.min.css")}}" />
         <meta name="csrf-token" content="{{csrf_token()}}">
 

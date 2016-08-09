@@ -250,6 +250,15 @@ header {
 .sidebar-nav .sidebar-nav__title {
   font-weight: bold;
 }
+.form-control--warning {
+  border: 1px solid #FF0;
+}
+.form-control--success {
+  border: 1px solid #22B14C;
+}
+.form-control--error {
+  border: 1px solid #FF0000;
+}
 .map {
   width: 100%;
   Ignore: a;height:300px;

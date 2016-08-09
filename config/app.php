@@ -1,7 +1,8 @@
 <?php
 
 return [
-
+    "name" => env("APP_NAME", "Passeio de Cães"),
+    
     'env' => env('APP_ENV', 'production'),
     
     /*

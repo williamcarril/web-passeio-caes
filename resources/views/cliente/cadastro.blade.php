@@ -6,7 +6,7 @@
 <section>
 
     <h1>Cadastro - Cliente</h1>
-    <form id="form-cadastro-cliente" role="form">
+    <form id="form-cadastro-cliente" role="form" method="POST" action="{{route("cliente.cadastro.post")}}">
         {!! csrf_field() !!}
         <fieldset>
             <legend>Informações gerais</legend>
@@ -22,7 +22,6 @@
                 <label class="control-label" for="cliente-telefone">Telefone *</label>
                 <input required name="telefone" data-inputmask="'mask': '(99) 9999[9]-9999', 'greedy': false" id="cliente-telefone" type="tel" class="form-control" placeholder="Informe seu telefone">
             </div>
-
         </fieldset>
         <fieldset>
             <legend>Informações de acesso</legend>
@@ -65,7 +64,7 @@
                 <input disabled name="complemento" id="cliente-complemento" type="text" class="form-control" placeholder="Informe o complemento do endereço (caso necessário)">
             </div>
         </fieldset>
-        <button type="submit" class="btn btn-default">Cadastrar</button>
+        <button type="submit" class="btn btn-default pull-right">Cadastrar</button>
     </form>
 </section>
 @endsection
@@ -75,6 +74,157 @@
 <script type="text/javascript">
     (function () {
         var $addressFields = $("fieldset[data-name='address'] input[disabled]");
+        var $form = $("#form-cadastro-cliente");
+        
+        $form.find("input[name='nome']").on("blur", function() {
+            var $this = $(this);
+            if(!validate.empty($this.val())) {
+                setInputStatus($this, "success");
+            } else {
+                setInputStatus($this, "error");
+            }
+        });
+        $form.find("input[name='cpf']").on("blur", function() {
+            var $this = $(this);
+            var cpf = $this.val();
+            if(!validate.cpf(cpf)) {
+                setInputStatus($this, "error");
+                return;
+            } 
+            $.ajax({
+                "url": "{!! route('cliente.cadastro.check.cpf') !!}",
+                "type": "GET",
+                "data": {
+                    "cpf": cpf
+                },
+                "success": function(response) {
+                    if(response.status) {
+                        setInputStatus($this, "error");
+                        showAlert("O CPF informado já está sendo utilizado.", "error");
+                    } else {
+                        setInputStatus($this, "success");
+                    }
+                },
+                "error": function() {
+                    setInputStatus($this, "success");
+                }
+            });
+        });
+        $form.find("input[name='telefone']").on("blur", function() {
+            var $this = $(this);
+            var phone = $this.val();
+            if(validate.phone(phone)) {
+                setInputStatus($this, "success");
+            } else {
+                setInputStatus($this, "error");
+            }
+        });
+        $form.find("input[name='email']").on("blur", function() {
+            var $this = $(this);
+            var email = $this.val();
+            if(!validate.email(email)) {
+                setInputStatus($this, "error");
+                return;
+            }
+            $.ajax({
+                "url": "{!! route('cliente.cadastro.check.email') !!}",
+                "type": "GET",
+                "data": {
+                    "email": email
+                },
+                "success": function(response) {
+                    if(response.status) {
+                        setInputStatus($this, "error");
+                        showAlert("O e-mail informado já está sendo utilizado.", "error");
+                    } else {
+                        setInputStatus($this, "success");
+                    }
+                },
+                "error": function() {
+                    setInputStatus($this, "success");
+                }
+            });
+        });
+        $form.find("input[name='senha'],input[name='senha2']").on("blur", function() {
+            var $senha = $form.find("input[name='senha']");
+            var $senha2 = $form.find("input[name='senha2']");
+            
+            var senha =  $senha.val();
+            var senha2 =  $senha2.val();
+            if(validate.equals(senha, senha2) && !validate.empty(senha)) {
+                setInputStatus($senha, "success");
+                setInputStatus($senha2, "success");
+            } else {
+                setInputStatus($senha, "error");
+                setInputStatus($senha2, "error");
+            }
+        });
+        $form.find("input[name='postal']").on("blur", function() {
+            var $this = $(this);
+            var cep = $this.val();
+            if(validate.cep(cep)) {
+                setInputStatus($this, "success");
+            } else {
+                setInputStatus($this, "error");
+            }
+        });
+        $form.find("input[name='logradouro']").on("blur", function() {
+            var $this = $(this);
+            var logradouro = $this.val();
+            if(!validate.empty(logradouro)) {
+                setInputStatus($this, "success");
+            } else {
+                setInputStatus($this, "error");
+            }
+        });
+        $form.find("input[name='bairro']").on("blur", function() {
+            var $this = $(this);
+            var bairro = $this.val();
+            if(!validate.empty(bairro)) {
+                setInputStatus($this, "success");
+            } else {
+                setInputStatus($this, "error");
+            }
+        });
+        $form.find("input[name='numero']").on("blur", function() {
+            var $this = $(this);
+            var numero = $this.val();
+            if(!validate.empty(numero)) {
+                setInputStatus($this, "success");
+            } else {
+                setInputStatus($this, "error");
+            }
+        });
+        $form.find("input[name='complemento']").on("blur", function() {
+            setInputStatus($this, "success");
+        });
+        
+        $form.on("submit", function(ev) {
+            ev.stopPropagation();
+            ev.preventDefault();
+            
+            $.ajax({
+                "url": $form.attr("action"),
+                "type": $form.attr("method"),
+                "data": $form.serialize(),
+                "success": function(response) {
+                    if(!response.status) {
+                        for(var i in response.messages) {
+                            showAlert(response.messages[i], "error");
+                        }
+                    } else {
+                        showAlert('Cadastro realizado com sucesso!', "success");
+                        $form.find("button[type='submit']").prop("disabled", true);
+                        setInterval(function() {
+                            window.location.replace("{!! route('home') !!}");
+                        }, 3000);
+                    }
+                },
+                "error": function() {
+                    showAlert("Ocorreu um problema ao enviar a requisição. Tente novamente mais tarde.", "error");
+                }
+            });
+        });
 
         window.bootstrapListeners = function () {
             var map = globals.maps["cadastro-map"];
@@ -85,7 +235,7 @@
             var $postal = $("input[name='postal']");
             var $sublocality = $("input[name='bairro']");
             var $lat = $("input[name='lat']");
-            var $lng = $("input[name='lat']");
+            var $lng = $("input[name='lng']");
             
             google.maps.event.addListener(map, "click", function (event) {
                 searchBox.clear();
@@ -174,15 +324,19 @@
                 }
                 if (data.number) {
                     $number.val(data.number);
+                    $number.trigger("blur");
                 }
                 if (data.route) {
                     $route.val(data.route);
+                    $route.trigger("blur");
                 }
                 if (data.postal) {
                     $postal.val(data.postal);
+                    $postal.trigger("blur");
                 }
                 if (data.sublocality) {
                     $sublocality.val(data.sublocality);
+                    $sublocality.trigger("blur");
                 }
                 if(!globals.mapWarning) {
                     showAlert("Atenção! É importante que a localização marcada no mapa esteja correta.", "warning");

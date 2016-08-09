@@ -64,9 +64,9 @@ class CreateModelTables extends Migration {
             \Schema::create("cliente", function($table) {
                 $table->increments("idCliente");
                 $table->string("nome", 70);
-                $table->string("telefone", 12);
+                $table->string("telefone", 11);
                 $table->boolean("ativo")->default(true);
-                $table->char("cpf", 11);
+                $table->char("cpf", 11)->unique();
                 $table->string("logradouro", 70);
                 $table->string("bairro", 40);
                 $table->char("postal", 8);
@@ -80,16 +80,16 @@ class CreateModelTables extends Migration {
             \Schema::create("funcionario", function($table) {
                 $table->increments("idFuncionario");
                 $table->string("nome", 70);
-                $table->string("telefone", 12);
+                $table->string("telefone", 11);
                 $table->boolean("ativo")->default(true);
-                $table->char("cpf", 11);
+                $table->char("cpf", 11)->unique();
                 $table->string("logradouro", 70);
                 $table->string("bairro", 40);
                 $table->char("postal", 8);
                 $table->string("numero", 12);
                 $table->decimal("lat", 10, 6);
                 $table->decimal("lng", 10, 6);
-                $table->string("rg", 15);
+                $table->string("rg", 15)->unique();
                 $table->enum("tipo", ["passeador", "administrador"]);
                 $table->string("email", 80)->unique();
                 $table->string("senha", 60);
