@@ -13,9 +13,7 @@
 if (!\App::environment("production")) {
     Route::group(["prefix" => "tests"], function() {
         Route::get("/", ["as" => "test", "uses" => function() {
-                $researcher = \App::make(App\Models\Address\CepResearcher::class);
-                $return = $researcher->researchAddress("03286-220");
-                return $return;
+            return \Session::all();
             }]);
     });
 }
@@ -26,7 +24,11 @@ Route::group([], function() {
 
     Route::group(["prefix" => "cliente"], function() {
         Route::get("/cadastro", ["as" => "cliente.cadastro.get", "uses" => "ClienteController@route_getCadastro"]);
-        Route::post("/login", ["as" => "cliente.login.post", "uses" => "ClienteController@route_postLogin"]);
+        Route::post("/cadastro", ["as" => "cliente.cadastro.post", "uses" => "ClienteController@route_postCadastro"]);
+        Route::get("/cadastro/checkEmail", ["as" => "cliente.cadastro.check.email", "uses" => "ClienteController@route_getCheckEmail"]);
+        Route::get("/cadastro/checkCpf", ["as" => "cliente.cadastro.check.cpf", "uses" => "ClienteController@route_getCheckCpf"]);
+        Route::post("/login", ["as" => "cliente.auth.login", "uses" => "ClienteController@route_postLogin"]);
+        Route::get("/logout", ["as" => "cliente.auth.logout", "uses" => "ClienteController@route_getLogout"]);
     });
 });
 

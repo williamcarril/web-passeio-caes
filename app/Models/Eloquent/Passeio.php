@@ -9,24 +9,20 @@ class Passeio extends \WGPC\Eloquent\Model {
     protected $fillable = [
         "idModalidade",
         "idTrajeto",
-        "idCliente",
         "idPasseador",
-        "idMultimidia",
         "preco",
-        "gravado",
         "inicio",
         "fim",
         "data",
-        "status"
+        "status",
+        "coletivo"
     ];
     protected static $rules = [
         "idModalidade" => ["required", "exists:modalidade,idModalidade", "integer"],
         "idTrajeto" => ["required", "exists:trajeto,idTrajeto", "integer"],
-        "idCliente" => ["required", "exists:cliente,idCliente", "integer"],
         "idPasseador" => ["exists:funcionario,idFuncionario,tipo,passeador", "integer"],
-        "idMultimidia" => ["exists:multimidia,idMultimidia,tipo,video", "integer"],
         "preco" => ["required", "numeric"],
-        "gravado" => ["boolean", "required"],
+        "coletivo" => ["boolean", "required"],
         "inicio" => ["required", "date_format:H:i:s", "less_or_equal:fim"],
         "fim" => ["required", "date_format:H:i:s", "greater_or_equal:inicio"],
         "data" => ["required", "date"],
@@ -35,35 +31,38 @@ class Passeio extends \WGPC\Eloquent\Model {
     protected $dates = ["data"];
     protected $casts = [
         "preco" => "float",
-        "gravado" => "boolean"
+        "coletivo" => "boolean"
     ];
     protected $attributes = [
         "gravado" => false,
+        "coletivo" => false,
         "status" => "pendente"
     ];
 
     public function trajeto() {
-        return $this->belongsTo("\App\Models\Trajeto", "idTrajeto", "idTrajeto");
+        return $this->belongsTo("\App\Models\Eloquent\Trajeto", "idTrajeto", "idTrajeto");
     }
 
-    public function cliente() {
-        return $this->belongsTo("\App\Models\Cliente", "idCliente", "idCliente");
+    public function clientes() {
+        $caes = $this->caes;
+        $clientes = [];
+        foreach ($caes as $cao) {
+            $cliente = $cao->cliente;
+            $clientes[$cliente->idCliente] = $cliente;
+        }
+        return array_values($clientes);
     }
 
     public function passeador() {
-        return $this->belongsTo("\App\Models\Funcionario", "idPasseador", "idFuncionario");
-    }
-
-    public function video() {
-        return $this->belongsTo("\App\Models\Multimidia", "idMultimidia", "idMultimidia");
+        return $this->belongsTo("\App\Models\Eloquent\Funcionario", "idPasseador", "idFuncionario");
     }
 
     public function cancelamento() {
-        return $this->hasMany("\App\Models\Cancelamento", "idPasseio", "idPasseio");
+        return $this->hasMany("\App\Models\Eloquent\Cancelamento", "idPasseio", "idPasseio");
     }
 
     public function caes() {
-        return $this->belongsToMany("\App\Models\Cao", "a_cao_passeio", "idPasseio", "idCao");
+        return $this->belongsToMany("\App\Models\Eloquent\Cao", "a_cao_passeio", "idPasseio", "idCao");
     }
 
     public function setDataAttribute($value) {

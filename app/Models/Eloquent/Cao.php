@@ -25,23 +25,23 @@ class Cao extends \WGPC\Eloquent\Model {
     ];
 
     public function cliente() {
-        return $this->belongsTo("\App\Models\Cliente", "idCliente", "idCliente");
+        return $this->belongsTo("\App\Models\Eloquent\Cliente", "idCliente", "idCliente");
     }
 
     public function multimidia() {
-        return $this->belongsTo("\App\Models\Multimidia", "idMultimidia", "idMultimidia");
+        return $this->belongsTo("\App\Models\Eloquent\Multimidia", "idMultimidia", "idMultimidia");
     }
 
     public function passeios() {
-        return $this->belongsToMany("\App\Models\Passeio", "a_cao_passeio", "idCao", "idPasseio");
+        return $this->belongsToMany("\App\Models\Eloquent\Passeio", "a_cao_passeio", "idCao", "idPasseio");
     }
 
     public function vacinacoes() {
-        return $this->hasMany("\App\Models\Vacinacao", "idCao", "idCao");
+        return $this->hasMany("\App\Models\Eloquent\Vacinacao", "idCao", "idCao");
     }
     
     public function vacinas() {
-        return $this->hasManyThrough("\App\Models\Vacina", "\App\Models\Vacinacao", "idCao", "idVacina", "idCao");
+        return $this->hasManyThrough("\App\Models\Eloquent\Vacina", "\App\Models\Eloquent\Vacinacao", "idCao", "idVacina", "idCao");
     }
 
 }

@@ -1,8 +1,14 @@
-    <?php
+<?php
 
 namespace App\Models\Eloquent;
 
-class Pessoa extends \WGPC\Eloquent\Model {
+use Illuminate\Contracts\Auth\Authenticatable;
+
+abstract class Pessoa extends \WGPC\Eloquent\Model implements Authenticatable {
+
+    protected $attributes = [
+        "ativo" => true
+    ];
     protected $fillable = [
         'nome',
         'telefone',
@@ -20,16 +26,14 @@ class Pessoa extends \WGPC\Eloquent\Model {
         "remember_token"
     ];
     protected $hidden = ['senha', 'remember_token'];
-    
     protected $casts = [
         "lat" => "float",
         "lng" => "float",
         "ativo" => "boolean"
     ];
-    
     protected static $rules = [
         "nome" => ["required", "max:70", "string"],
-        "telefone" => ["max:12", "required", "numeric"],
+        "telefone" => ["max:11", "required", "string", "phone"],
         "ativo" => ["boolean", "required"],
         "cpf" => ["cpf", "required", "string"],
         "logradouro" => ["max:70", "required", "string"],
@@ -55,6 +59,26 @@ class Pessoa extends \WGPC\Eloquent\Model {
     public function setCpfAttribute($value) {
         $cpf = preg_replace('/[^0-9]/', '', $value);
         $this->attributes["cpf"] = $cpf;
+    }
+
+    public function getAuthIdentifier() {
+        return $this->attributes[$this->getAuthIdentifierName()];
+    }
+
+    public function getAuthPassword() {
+        return $this->attributes["senha"];
+    }
+
+    public function getRememberToken() {
+        return $this->attributes[$this->getRememberTokenName()];
+    }
+
+    public function getRememberTokenName() {
+        return "remember_token";
+    }
+
+    public function setRememberToken($value) {
+        $this->attributes[$this->getRememberTokenName()] = $value;
     }
 
 }

@@ -11,9 +11,10 @@ class Funcionario extends Pessoa {
         parent::boot();
         
         static::$rules["idMultimidia"] = ["exists:multimidia,idMultimidia", "required", "integer"];
-        static::$rules["rg"] = ["required", "string"];
+        static::$rules["rg"] = ["required", "string", "unique:funcionario,rg"];
         static::$rules["tipo"] = ["required", "in:passeador,administrador", "string"];
         static::$rules["email"][] = ["unique:funcionario,email"];
+        static::$rules["cpf"][] = ["unique:funcionario,cpf"];
     }
 
     public function __construct(array $attributes = array()) {
@@ -25,10 +26,15 @@ class Funcionario extends Pessoa {
     }
 
     public function cancelamentos() {
-        return $this->morphMany("\App\Models\Cancelamento", "pessoa", "funcionario");
+        return $this->morphMany("\App\Models\Eloquent\Cancelamento", "pessoa", "funcionario");
     }
 
     public function passeios() {
-        return $this->hasMany("\App\Models\Passeio", "idFuncionario", "idPasseador");
+        return $this->hasMany("\App\Models\Eloquent\Passeio", "idFuncionario", "idPasseador");
     }
+
+    public function getAuthIdentifierName() {
+        return "idFuncionario";
+    }
+
 }

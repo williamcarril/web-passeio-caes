@@ -36,7 +36,7 @@ class ShareCustomerFromSession {
      */
     public function handle($request, Closure $next) {
         $this->view->share(
-                'customer', $this->auth->user()
+                'customer', $this->auth->guard("web")->user()
         );
         return $next($request);
     }

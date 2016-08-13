@@ -39,7 +39,7 @@ class Trajeto extends \WGPC\Eloquent\Model {
     ];
 
     public function passeios() {
-        return $this->hasMany("\App\Models\Passeio", "idTrajeto", "idTrajeto");
+        return $this->hasMany("\App\Models\Eloquent\Passeio", "idTrajeto", "idTrajeto");
     }
 
     public function verificarServico($lat, $lng) {
@@ -50,7 +50,7 @@ class Trajeto extends \WGPC\Eloquent\Model {
     }
 
     public function fotos() {
-        return $this->belongsToMany("\App\Models\Multimidia", "a_trajeto_foto", "idTrajeto", "idMultimidia")
+        return $this->belongsToMany("\App\Models\Eloquent\Multimidia", "a_trajeto_foto", "idTrajeto", "idMultimidia")
                 ->withPivot(["ordem"]);
     }
 }

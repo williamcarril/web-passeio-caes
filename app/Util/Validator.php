@@ -159,6 +159,7 @@ class Validator {
 
         return $isTheLeast;
     }
+
     /**
      * Verifica se um valor é um array de imagens.
      * @param string $attribute Nome do atributo a ser validado
@@ -170,19 +171,32 @@ class Validator {
     public function checkImageArray($attribute = null, $value = null, $parameters = [], $validator = null) {
         $maxSize = isset($parameters[0]) ? $parameters[0] : null;
         $imageRules = ["image"];
-        if(!is_null($maxSize)) {
+        if (!is_null($maxSize)) {
             $imageRules[] = "max:$maxSize";
         }
-        if(!is_array($value)) {
+        if (!is_array($value)) {
             return false;
         }
-        foreach($value as $image) {
+        foreach ($value as $image) {
             $imageValidator = \validator($image, $imageRules);
-            if($imageValidator->fails()) {
+            if ($imageValidator->fails()) {
                 return false;
             }
         }
         return true;
+    }
+
+    /**
+     * Verifica se o valor é um telefone.
+     * @param string $attribute Nome do atributo a ser validado
+     * @param mixed $value Valor a ser validado
+     * @param array $parameters Parâmetros adicionais.
+     * @param \Illuminate\Contracts\Validation\Validator $validator Instância do validador padrão do Laravel
+     * @return boolean
+     */
+    public function checkPhone($attribute = null, $value = null, $parameter = [], $validator = null) {
+        $phone = preg_replace('/[^0-9]/', '', $value);
+        return preg_match("/^[0-9]{6}[0-9]{4}[0-9]?$/", $phone);
     }
 
 }

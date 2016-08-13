@@ -40,14 +40,8 @@ class CreateModelTables extends Migration {
                 $table->string("nome", 35)->unique();
                 $table->text("descricao");
                 $table->enum("tipo", ["unitario", "pacote"]);
-            });
-
-            \Schema::create("modalidade_valor", function($table) {
-                $table->increments("idModalidadeValor");
-                $table->integer("idModalidade")->unsigned();
-                $table->foreign("idModalidade")->references("idModalidade")->on("modalidade");
-                $table->date("inicio");
-                $table->date("fim");
+                $table->boolean("ativo")->default(true);
+                $table->boolean("coletivo")->default(false);
                 $table->decimal("preco", 6, 2);
             });
 
@@ -64,9 +58,9 @@ class CreateModelTables extends Migration {
             \Schema::create("cliente", function($table) {
                 $table->increments("idCliente");
                 $table->string("nome", 70);
-                $table->string("telefone", 12);
+                $table->string("telefone", 11);
                 $table->boolean("ativo")->default(true);
-                $table->char("cpf", 11);
+                $table->char("cpf", 11)->unique();
                 $table->string("logradouro", 70);
                 $table->string("bairro", 40);
                 $table->char("postal", 8);
@@ -80,16 +74,16 @@ class CreateModelTables extends Migration {
             \Schema::create("funcionario", function($table) {
                 $table->increments("idFuncionario");
                 $table->string("nome", 70);
-                $table->string("telefone", 12);
+                $table->string("telefone", 11);
                 $table->boolean("ativo")->default(true);
-                $table->char("cpf", 11);
+                $table->char("cpf", 11)->unique();
                 $table->string("logradouro", 70);
                 $table->string("bairro", 40);
                 $table->char("postal", 8);
                 $table->string("numero", 12);
                 $table->decimal("lat", 10, 6);
                 $table->decimal("lng", 10, 6);
-                $table->string("rg", 15);
+                $table->string("rg", 15)->unique();
                 $table->enum("tipo", ["passeador", "administrador"]);
                 $table->string("email", 80)->unique();
                 $table->string("senha", 60);
@@ -132,14 +126,13 @@ class CreateModelTables extends Migration {
                 $table->foreign("idModalidade")->references("idModalidade")->on("modalidade");
                 $table->integer("idTrajeto")->unsigned();
                 $table->foreign("idTrajeto")->references("idTrajeto")->on("trajeto");
-                $table->integer("idCliente")->unsigned();
-                $table->foreign("idCliente")->references("idCliente")->on("cliente");
                 $table->integer("idPasseador")->unsigned()->nullable();
                 $table->foreign("idPasseador")->references("idFuncionario")->on("funcionario");
                 $table->integer("idMultimidia")->unsigned()->nullable();
                 $table->foreign("idMultimidia")->references("idMultimidia")->on("multimidia");
                 $table->decimal("preco", 6, 2);
                 $table->boolean("gravado")->default(false);
+                $table->boolean("coletivo")->default(false);
                 $table->time("inicio");
                 $table->time("fim");
                 $table->date("data");

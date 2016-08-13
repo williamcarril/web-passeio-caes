@@ -12,6 +12,7 @@ body {
     color: @content-color;
     font-family: sans-serif;
     font-size: @base-font-size;
+    .rem("margin-bottom", @double-space);
 }
 
 h1,
@@ -33,13 +34,4 @@ a {
 
 img {
     max-width: 100%;
-}
-
-input[type='number'] {
-    -moz-appearance:textfield;
-}
-
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
 }

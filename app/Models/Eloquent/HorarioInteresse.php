@@ -25,7 +25,7 @@ class HorarioInteresse extends \WGPC\Eloquent\Model {
     ];
     
     public function dias() {
-        return $this->belongsToMany("App\Models\Dia", "a_horario_interesse_dia", "idHorarioInteresse", "idDia")
+        return $this->belongsToMany("\App\Models\Eloquent\Dia", "a_horario_interesse_dia", "idHorarioInteresse", "idDia")
                 ->withPivot(["interesse"]);
     }
 

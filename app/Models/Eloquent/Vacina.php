@@ -14,7 +14,7 @@ class Vacina extends \WGPC\Eloquent\Model {
     ];
 
     public function vacinacoes() {
-        return $this->hasMany("\App\Models\Vacinacao", "idCao", "idCao");
+        return $this->hasMany("\App\Models\Eloquent\Vacinacao", "idCao", "idCao");
     }
 
 }

@@ -23,10 +23,10 @@ class Vacinacao extends \WGPC\Eloquent\Model {
     protected $dates = ["aplicacao", "proximaAplicacao"];
     
     public function cao() {
-        return $this->belongsTo("\App\Models\Cao", "idCao", "idCao");
+        return $this->belongsTo("\App\Models\Eloquent\Cao", "idCao", "idCao");
     }
     
     public function vacina() {
-        return $this->belongsTo("\App\Models\Vacina", "idVacina", "idVacina");
+        return $this->belongsTo("\App\Models\Eloquent\Vacina", "idVacina", "idVacina");
     }
 }
