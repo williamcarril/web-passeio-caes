@@ -40,14 +40,8 @@ class CreateModelTables extends Migration {
                 $table->string("nome", 35)->unique();
                 $table->text("descricao");
                 $table->enum("tipo", ["unitario", "pacote"]);
-            });
-
-            \Schema::create("modalidade_valor", function($table) {
-                $table->increments("idModalidadeValor");
-                $table->integer("idModalidade")->unsigned();
-                $table->foreign("idModalidade")->references("idModalidade")->on("modalidade");
-                $table->date("inicio");
-                $table->date("fim");
+                $table->boolean("ativo")->default(true);
+                $table->boolean("coletivo")->default(false);
                 $table->decimal("preco", 6, 2);
             });
 
@@ -132,14 +126,13 @@ class CreateModelTables extends Migration {
                 $table->foreign("idModalidade")->references("idModalidade")->on("modalidade");
                 $table->integer("idTrajeto")->unsigned();
                 $table->foreign("idTrajeto")->references("idTrajeto")->on("trajeto");
-                $table->integer("idCliente")->unsigned();
-                $table->foreign("idCliente")->references("idCliente")->on("cliente");
                 $table->integer("idPasseador")->unsigned()->nullable();
                 $table->foreign("idPasseador")->references("idFuncionario")->on("funcionario");
                 $table->integer("idMultimidia")->unsigned()->nullable();
                 $table->foreign("idMultimidia")->references("idMultimidia")->on("multimidia");
                 $table->decimal("preco", 6, 2);
                 $table->boolean("gravado")->default(false);
+                $table->boolean("coletivo")->default(false);
                 $table->time("inicio");
                 $table->time("fim");
                 $table->date("data");

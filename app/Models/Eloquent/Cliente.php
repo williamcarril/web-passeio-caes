@@ -15,11 +15,11 @@ class Cliente extends Pessoa {
     }
 
     public function cancelamentos() {
-        return $this->morphMany("\App\Models\Cancelamento", "pessoa", "cliente");
+        return $this->morphMany("\App\Models\Eloquent\Cancelamento", "pessoa", "cliente");
     }
 
     public function passeios() {
-        return $this->hasMany("\App\Models\Passeio", "idCliente", "idCliente");
+        return $this->hasMany("\App\Models\Eloquent\Passeio", "idCliente", "idCliente");
     }
 
     public function getAuthIdentifierName() {

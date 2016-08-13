@@ -3,7 +3,9 @@
 // -------------------------
 
 #wrapper {
-    .rem("padding-top", @sextuple-space);
+    @media @smartphones, @tablets {
+        .rem("padding-top", @sextuple-space);
+    }
 
     &.toggled {
         .rem("padding-left", 250px);
@@ -34,7 +36,7 @@
     li {
         .rem("text-indent", @double-space);
         .rem("line-height", @quadruple-space);
-        border-bottom: 1px solid @base-color;
+        border-bottom: 1px solid @container-divisory-color;
         color: @container-font-color;
 
         a {
@@ -48,31 +50,28 @@
 
     }
 
-    > li.sidebar-nav__logo {
-        & {
-            text-align: center;
-            text-indent: 0px;
-        }
+    > li.logo {
+        text-align: center;
+        text-indent: 0px;
+        border-top: 1px solid @container-divisory-color;
+        border-left: 1px solid @container-divisory-color;
     }
 
-    > li.sidebar-nav__calendar {
-        & {
-            text-align: center;
-            text-indent: 0px;
-        }
+    > li.calendar {
+        text-align: center;
+        text-indent: 0px;
     }
 
-    > li.sidebar-nav__user {
-        & {
-            .rem("padding", @base-space);
-            text-indent: 0px;
-        }
+    > li.user {
+        .rem("padding", @base-space);
+        text-indent: 0px;
+
         a {
             display: inline;
         }
     }
 
-    .sidebar-nav__title {
+    .title {
         font-weight: bold;
     }
 

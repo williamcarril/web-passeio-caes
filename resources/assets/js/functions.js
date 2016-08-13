@@ -45,9 +45,9 @@
     //Add classes refer input status
     window.setInputStatus = function($input, status) {
         var classes = [
-            "form-control--success", 
-            "form-control--error", 
-            "form-control--warning"
+            "form-control -success", 
+            "form-control -error", 
+            "form-control -warning"
         ];
         status = status.toLowerCase();
         $input.removeClass(classes.join(" "));

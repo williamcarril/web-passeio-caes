@@ -6,7 +6,7 @@ $lng = !empty($lng) ? $lng : -46.57817;
 $searchBox = isset($searchBox) ? $searchBox : true;
 ?>
 @if($searchBox)
-<input class="map__search-input" id="search-{{$id}}" type="text" placeholder="Buscar local...">
+<input class="searchbox -map" id="search-{{$id}}" type="text" placeholder="Buscar local...">
 @endif
 <div class="map" id="{{$id}}" data-role="map"></div>
 @section("scripts")

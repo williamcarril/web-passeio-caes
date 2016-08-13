@@ -4,7 +4,6 @@
 
 @section("main")
 <section>
-
     <h1>Cadastro - Cliente</h1>
     <form id="form-cadastro-cliente" role="form" method="POST" action="{{route("cliente.cadastro.post")}}">
         {!! csrf_field() !!}
@@ -64,7 +63,7 @@
                 <input disabled name="complemento" id="cliente-complemento" type="text" class="form-control" placeholder="Informe o complemento do endereço (caso necessário)">
             </div>
         </fieldset>
-        <button type="submit" class="btn btn-default pull-right">Cadastrar</button>
+        <button type="submit" class="btn btn-default btn-lg pull-right">Cadastrar</button>
     </form>
 </section>
 @endsection

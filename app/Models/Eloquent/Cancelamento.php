@@ -50,7 +50,7 @@ class Cancelamento extends \WGPC\Eloquent\Model {
     }
     
     public function passeio() {
-        return $this->belongsTo("\App\Models\Passeio", "idPasseio", "idPasseio");
+        return $this->belongsTo("\App\Models\Eloquent\Passeio", "idPasseio", "idPasseio");
     }
     
     public function pessoa() {

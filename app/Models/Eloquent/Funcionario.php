@@ -26,11 +26,11 @@ class Funcionario extends Pessoa {
     }
 
     public function cancelamentos() {
-        return $this->morphMany("\App\Models\Cancelamento", "pessoa", "funcionario");
+        return $this->morphMany("\App\Models\Eloquent\Cancelamento", "pessoa", "funcionario");
     }
 
     public function passeios() {
-        return $this->hasMany("\App\Models\Passeio", "idFuncionario", "idPasseador");
+        return $this->hasMany("\App\Models\Eloquent\Passeio", "idFuncionario", "idPasseador");
     }
 
     public function getAuthIdentifierName() {
