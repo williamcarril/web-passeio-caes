@@ -1,6 +1,6 @@
 /*!
- * Bootstrap v3.3.6 (http://getbootstrap.com)
- * Copyright 2011-2015 Twitter, Inc.
+ * Bootstrap v3.3.7 (http://getbootstrap.com)
+ * Copyright 2011-2016 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  */
 /*! normalize.css v3.0.3 | MIT License | github.com/necolas/normalize.css */
@@ -1106,7 +1106,6 @@ a:focus {
   text-decoration: underline;
 }
 a:focus {
-  outline: thin dotted;
   outline: 5px auto -webkit-focus-ring-color;
   outline-offset: -2px;
 }
@@ -2537,7 +2536,6 @@ select[size] {
 input[type="file"]:focus,
 input[type="radio"]:focus,
 input[type="checkbox"]:focus {
-  outline: thin dotted;
   outline: 5px auto -webkit-focus-ring-color;
   outline-offset: -2px;
 }
@@ -3029,7 +3027,6 @@ select[multiple].input-lg {
 .btn.focus,
 .btn:active.focus,
 .btn.active.focus {
-  outline: thin dotted;
   outline: 5px auto -webkit-focus-ring-color;
   outline-offset: -2px;
 }
@@ -6759,6 +6756,62 @@ button.close {
 }
 /*# sourceMappingURL=bootstrap.css.map */
 
+.responsive-calendar .controls {
+  text-align: center;
+}
+.responsive-calendar .controls a {
+  cursor: pointer;
+}
+.responsive-calendar .controls h4 {
+  display: inline;
+}
+.responsive-calendar .day-headers,
+.responsive-calendar .days {
+  font-size: 0;
+}
+.responsive-calendar .day {
+  display: inline-block;
+  position: relative;
+  font-size: 14px;
+  width: 14.285714285714286%;
+  text-align: center;
+}
+.responsive-calendar .day a {
+  color: #000000;
+  display: block;
+  cursor: pointer;
+  padding: 20% 0 20% 0;
+}
+.responsive-calendar .day a:hover {
+  background-color: #eee;
+  text-decoration: none;
+}
+.responsive-calendar .day.header {
+  border-bottom: 1px gray solid;
+}
+.responsive-calendar .day.active a {
+  background-color: #1d86c8;
+  color: #ffffff;
+}
+.responsive-calendar .day.active a:hover {
+  background-color: #36a0e2;
+}
+.responsive-calendar .day.active .not-current {
+  background-color: #8fcaef;
+  color: #ffffff;
+}
+.responsive-calendar .day.active .not-current:hover {
+  background-color: #bcdff5;
+}
+.responsive-calendar .day.not-current a {
+  color: #ddd;
+}
+.responsive-calendar .day .badge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  z-index: 1;
+}
 /*!
  * Start Bootstrap - Simple Sidebar (http://startbootstrap.com/)
  * Copyright 2013-2016 Start Bootstrap
@@ -6919,8 +6972,19 @@ input.loading {
 #htmlTemplates {
   display: none;
 }
+#page-content-wrapper {
+  padding: 0;
+  Ignore: a;padding-top:10px;
+  Ignore: a;padding-top:0.625rem;
+}
+@media only screen and (max-width: 479px), only screen and (min-width: 768px) and (max-width: 959px) {
+  #wrapper {
+    Ignore: a;padding-top:60px;
+    Ignore: a;padding-top:3.75rem;
+  }
+}
 .header {
-  background-color: #49A34B;
+  background-color: #367A38;
   color: #FFF;
   clear: fix;
 }
@@ -6940,12 +7004,6 @@ input.loading {
     display: none;
   }
 }
-@media only screen and (max-width: 479px), only screen and (min-width: 768px) and (max-width: 959px) {
-  #wrapper {
-    Ignore: a;padding-top:60px;
-    Ignore: a;padding-top:3.75rem;
-  }
-}
 #wrapper.toggled {
   Ignore: a;padding-left:250px;
   Ignore: a;padding-left:15.625rem;
@@ -6958,11 +7016,8 @@ input.loading {
   Ignore: a;margin-right:-250px;
   Ignore: a;margin-right:-15.625rem;
 }
-#page-content-wrapper {
-  padding: 0;
-}
 #sidebar-wrapper {
-  background: #49A34B;
+  background: #367A38;
   Ignore: a;left:250px;
   Ignore: a;left:15.625rem;
   Ignore: a;margin-left:-250px;
@@ -7008,6 +7063,62 @@ input.loading {
 }
 .sidebar-nav .title {
   font-weight: bold;
+}
+.responsive-calendar .day {
+  Ignore: a;font-size:16px;
+  Ignore: a;font-size:1rem;
+}
+.responsive-calendar .day a {
+  color: #999;
+}
+.responsive-calendar .day a:hover {
+  background-color: #666;
+}
+.responsive-calendar .day.header {
+  border-bottom: 1px #777 solid;
+}
+.responsive-calendar .day.active a {
+  background-color: #1d86c8;
+  color: #ffffff;
+}
+.responsive-calendar .day.active a:hover {
+  background-color: #36a0e2;
+}
+.responsive-calendar .day.active .not-current {
+  background-color: #8fcaef;
+  color: #ffffff;
+}
+.responsive-calendar .day.active .not-current:hover {
+  background-color: #bcdff5;
+}
+.responsive-calendar .day.not-current a {
+  color: #ddd;
+}
+.responsive-calendar.-sidebar .day a {
+  color: #BEEE9E;
+}
+.responsive-calendar.-sidebar .day a:hover {
+  background-color: #71D161;
+}
+.responsive-calendar.-sidebar .day.header {
+  border-bottom: 1px #E6FFBF solid;
+}
+.responsive-calendar.-sidebar .day.active a {
+  background-color: #1d86c8;
+  color: #ffffff;
+}
+.responsive-calendar.-sidebar .day.active a:hover {
+  background-color: #36a0e2;
+}
+.responsive-calendar.-sidebar .day.active .not-current {
+  background-color: #8fcaef;
+  color: #ffffff;
+}
+.responsive-calendar.-sidebar .day.active .not-current:hover {
+  background-color: #bcdff5;
+}
+.responsive-calendar.-sidebar .day.not-current a {
+  color: #ddd;
 }
 .map {
   width: 100%;

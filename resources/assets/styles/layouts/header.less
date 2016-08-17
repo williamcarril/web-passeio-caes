@@ -2,12 +2,18 @@
 // Header - Layout
 // -------------------------
 
+#wrapper {
+    @media @smartphones, @tablets {
+        .rem("padding-top", @sextuple-space);
+    }
+}
+
 .header {
-    
+
     background-color: @container-color;
     color: @container-font-color;
     clear: fix;
-    
+
     &.-main {
         z-index: 1000;
         position: fixed;
@@ -16,7 +22,7 @@
         overflow-x: auto;
         .rem("padding", @base-space);
         .rem("height", @sextuple-space);
-        
+
         @media @desktop {
             display: none;
         }

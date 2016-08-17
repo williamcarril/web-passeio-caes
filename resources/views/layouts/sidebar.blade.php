@@ -7,8 +7,10 @@
     <li class="user">
         @include("includes.customer-area")
     </li>
+    {{--    
     <li class="calendar">
         <span class="title">Calendário</span>
-        @include("includes.calendar", ["type" => "small"])
+        @include("includes.calendar", ["type" => "sidebar"])
     </li>
+    --}}
 </ul>

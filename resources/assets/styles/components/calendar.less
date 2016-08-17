@@ -1,0 +1,66 @@
+// -------------------------
+// Calendar - Component
+// -------------------------
+.responsive-calendar {
+    & {
+        .day {
+            .rem("font-size", @base-font-size);
+        }
+        .day a {
+            color: @link-color;
+        }
+        .day a:hover { 
+            background-color: @link-hover-color;
+        }
+        .day.header {
+            border-bottom: 1px @divisory-color solid;
+        }
+        .day.active a {
+            background-color: #1d86c8;
+            color: #ffffff;
+        }
+        .day.active a:hover {
+            background-color: #36a0e2;
+        }
+        .day.active .not-current {
+            background-color: #8fcaef;
+            color: #ffffff;
+        }
+        .day.active .not-current:hover {
+            background-color: #bcdff5;
+        }
+        .day.not-current a {
+            color: #ddd;
+        }
+    }
+
+    &.-sidebar {
+        .day a {
+            color: @container-link-color;
+        }
+        .day a:hover { 
+            background-color: @container-link-hover-color;
+        }
+        .day.header {
+            border-bottom: 1px @container-divisory-color solid;
+        }
+        .day.active a {
+            background-color: #1d86c8;
+            color: #ffffff;
+        }
+        .day.active a:hover {
+            background-color: #36a0e2;
+        }
+        .day.active .not-current {
+            background-color: #8fcaef;
+            color: #ffffff;
+        }
+        .day.active .not-current:hover {
+            background-color: #bcdff5;
+        }
+        .day.not-current a {
+            color: #ddd;
+        }
+    }
+
+}

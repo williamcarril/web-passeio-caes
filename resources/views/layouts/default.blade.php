@@ -2,7 +2,7 @@
 $hasMap = isset($hasMap) ? $hasMap : false;
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="{{config("app.locale")}}">
     <head>
         <title>@yield("title", config("app.name"))</title>
         <link rel="stylesheet" href="{{asset("/css/styles.min.css")}}" />
