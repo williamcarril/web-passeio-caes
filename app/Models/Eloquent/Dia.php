@@ -12,6 +12,6 @@ class Dia extends \WGPC\Eloquent\Model {
     ];
 
     public function horariosDeInteresse() {
-        return $this->belongsToMany("\App\Models\Eloquent\HorarioInteresse", "a_horario_interesse_dia", "idDia", "idHorarioInteresse");
+        return $this->belongsToMany("\App\Models\Eloquent\Horario", "a_horario_dia", "idDia", "idHorario");
     }
 }

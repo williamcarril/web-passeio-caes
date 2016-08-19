@@ -91,8 +91,8 @@ class CreateModelTables extends Migration {
                 $table->rememberToken();
             });
 
-            \Schema::create("horario_interesse", function($table) {
-                $table->increments("idHorarioInteresse");
+            \Schema::create("horario", function($table) {
+                $table->increments("idHorario");
                 $table->time("inicio")->default("00:00:00");
                 $table->time("fim")->default("23:59:59");
                 $table->integer("idCliente")->unsigned();
@@ -138,6 +138,8 @@ class CreateModelTables extends Migration {
                 $table->foreign("idTrajeto")->references("idTrajeto")->on("trajeto");
                 $table->integer("idPasseador")->unsigned()->nullable();
                 $table->foreign("idPasseador")->references("idFuncionario")->on("funcionario");
+                $table->integer("idPasseioReagendado")->unsigned()->nullable();
+                $table->foreign("idPasseioReagendado")->references("idPasseio")->on("passeio");
                 $table->decimal("preco", 6, 2);
                 $table->boolean("coletivo")->default(false);
                 $table->time("inicio");
@@ -164,9 +166,9 @@ class CreateModelTables extends Migration {
                 $table->foreign("idCao")->references("idCao")->on("cao");
             });
 
-            \Schema::create("a_horario_interesse_dia", function($table) {
-                $table->integer("idHorarioInteresse")->unsigned();
-                $table->foreign("idHorarioInteresse")->references("idHorarioInteresse")->on("horario_interesse");
+            \Schema::create("a_horario_dia", function($table) {
+                $table->integer("idHorario")->unsigned();
+                $table->foreign("idHorario")->references("idHorario")->on("horario");
                 $table->integer("idDia")->unsigned();
                 $table->foreign("idDia")->references("idDia")->on("dia");
             });
@@ -201,11 +203,13 @@ class CreateModelTables extends Migration {
     public function down() {
         \DB::beginTransaction();
         try {
+            \Schema::drop("a_agendamento_dia");
             \Schema::drop("a_trajeto_imagem");
             \Schema::drop("a_horario_interesse_dia");
             \Schema::drop("a_cao_passeio");
             \Schema::drop("cancelamento");
             \Schema::drop("passeio");
+            \Schema::drop("agendamento");
             \Schema::drop("vacinacao");
             \Schema::drop("cao");
             \Schema::drop("horario_interesse");

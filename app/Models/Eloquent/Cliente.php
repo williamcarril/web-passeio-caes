@@ -22,6 +22,10 @@ class Cliente extends Pessoa {
         return $this->hasMany("\App\Models\Eloquent\Passeio", "idCliente", "idCliente");
     }
 
+    public function horariosDeInteresse() {
+        return $this->hasMany("\App\Models\Eloquent\Horario", "idCliente", "idCliente");
+    }
+
     public function getAuthIdentifierName() {
         return "idCliente";
     }
