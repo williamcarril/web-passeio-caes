@@ -10,6 +10,7 @@ class Passeio extends \WGPC\Eloquent\Model {
         "idModalidade",
         "idTrajeto",
         "idPasseador",
+        "idCliente",
         "preco",
         "inicio",
         "fim",
@@ -21,6 +22,7 @@ class Passeio extends \WGPC\Eloquent\Model {
         "idModalidade" => ["required", "exists:modalidade,idModalidade", "integer"],
         "idTrajeto" => ["required", "exists:trajeto,idTrajeto", "integer"],
         "idPasseador" => ["exists:funcionario,idFuncionario,tipo,passeador", "integer"],
+        "idCliente" => ["required", "exists:cliente,idCliente", "integer"],
         "preco" => ["required", "numeric"],
         "coletivo" => ["boolean", "required"],
         "inicio" => ["required", "date_format:H:i:s", "less_or_equal:fim"],
@@ -34,16 +36,23 @@ class Passeio extends \WGPC\Eloquent\Model {
         "coletivo" => "boolean"
     ];
     protected $attributes = [
-        "gravado" => false,
         "coletivo" => false,
         "status" => "pendente"
     ];
+
+    public function agendamento() {
+        return $this->belongsTo("\App\Models\Eloquent\Agendamento", "idAgendamento", "idAgendamento");
+    }
 
     public function trajeto() {
         return $this->belongsTo("\App\Models\Eloquent\Trajeto", "idTrajeto", "idTrajeto");
     }
 
-    public function clientes() {
+    public function cliente() {
+        return $this->belongsTo("\App\Models\Eloquent\Cliente", "idCliente", "idCliente");
+    }
+
+    public function donos() {
         $caes = $this->caes;
         $clientes = [];
         foreach ($caes as $cao) {
@@ -57,7 +66,7 @@ class Passeio extends \WGPC\Eloquent\Model {
         return $this->belongsTo("\App\Models\Eloquent\Funcionario", "idPasseador", "idFuncionario");
     }
 
-    public function cancelamento() {
+    public function cancelamentos() {
         return $this->hasMany("\App\Models\Eloquent\Cancelamento", "idPasseio", "idPasseio");
     }
 

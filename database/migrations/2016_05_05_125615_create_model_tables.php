@@ -13,12 +13,11 @@ class CreateModelTables extends Migration {
     public function up() {
         \DB::beginTransaction();
         try {
-            \Schema::create("multimidia", function($table) {
-                $table->increments("idMultimidia");
+            \Schema::create("imagem", function($table) {
+                $table->increments("idImagem");
                 $table->text("descricao")->nullable();
                 $table->date("data");
                 $table->string("arquivo", 255)->unique();
-                $table->enum("tipo", ["imagem", "video"]);
             });
 
             \Schema::create("trajeto", function($table) {
@@ -40,11 +39,13 @@ class CreateModelTables extends Migration {
                 $table->string("nome", 35)->unique();
                 $table->text("descricao");
                 $table->enum("tipo", ["unitario", "pacote"]);
+                $table->enum("periodo", ["mensal", "bimestral", "trimestral", "semestral", "anual"])->nullable();
+                $table->enum("frequencia", ["semanal", "bisemanal"])->nullable();
                 $table->boolean("ativo")->default(true);
                 $table->boolean("coletivo")->default(false);
-                $table->decimal("preco", 6, 2);
+                $table->decimal("precoPorPasseio", 6, 2);
             });
-
+            
             \Schema::create("dia", function($table) {
                 $table->increments("idDia");
                 $table->string("nome", 13)->unique();
@@ -103,11 +104,11 @@ class CreateModelTables extends Migration {
                 $table->string("nome", 50);
                 $table->string("raca", 25);
                 $table->enum("porte", ["pequeno", "medio", "grande"]);
-                $table->enum("genero", ["macho", "femea"])->nullable();
+                $table->enum("genero", ["macho", "femea"]);
                 $table->integer("idCliente")->unsigned();
                 $table->foreign("idCliente")->references("idCliente")->on("cliente");
-                $table->integer("idMultimidia")->unsigned()->nullable();
-                $table->foreign("idMultimidia")->references("idMultimidia")->on("multimidia");
+                $table->integer("idImagem")->unsigned()->nullable();
+                $table->foreign("idImagem")->references("idImagem")->on("imagem");
             });
 
             \Schema::create("vacinacao", function($table) {
@@ -119,19 +120,25 @@ class CreateModelTables extends Migration {
                 $table->date("aplicacao");
                 $table->date("proximaAplicacao")->nullable();
             });
+            
+            \Schema::create("agendamento", function($table) {
+                $table->increments("idAgendamento");
+                $table->integer("idModalidade")->unsigned();
+                $table->foreign("idModalidade")->references("idModalidade")->on("modalidade");
+                $table->integer("idCliente")->unsigned();
+                $table->foreign("idCliente")->references("idCliente")->on("cliente");
+                $table->date("data");
+            });
 
             \Schema::create("passeio", function($table) {
                 $table->increments("idPasseio");
-                $table->integer("idModalidade")->unsigned();
-                $table->foreign("idModalidade")->references("idModalidade")->on("modalidade");
+                $table->integer("idAgendamento")->unsigned();
+                $table->foreign("idAgendamento")->references("idAgendamento")->on("agendamento");
                 $table->integer("idTrajeto")->unsigned();
                 $table->foreign("idTrajeto")->references("idTrajeto")->on("trajeto");
                 $table->integer("idPasseador")->unsigned()->nullable();
                 $table->foreign("idPasseador")->references("idFuncionario")->on("funcionario");
-                $table->integer("idMultimidia")->unsigned()->nullable();
-                $table->foreign("idMultimidia")->references("idMultimidia")->on("multimidia");
                 $table->decimal("preco", 6, 2);
-                $table->boolean("gravado")->default(false);
                 $table->boolean("coletivo")->default(false);
                 $table->time("inicio");
                 $table->time("fim");
@@ -162,16 +169,23 @@ class CreateModelTables extends Migration {
                 $table->foreign("idHorarioInteresse")->references("idHorarioInteresse")->on("horario_interesse");
                 $table->integer("idDia")->unsigned();
                 $table->foreign("idDia")->references("idDia")->on("dia");
-                $table->boolean("interesse");
             });
 
-            \Schema::create("a_trajeto_foto", function($table) {
+            \Schema::create("a_trajeto_imagem", function($table) {
                 $table->integer("idTrajeto")->unsigned();
                 $table->foreign("idTrajeto")->references("idTrajeto")->on("trajeto");
-                $table->integer("idMultimidia")->unsigned();
-                $table->foreign("idMultimidia")->references("idMultimidia")->on("multimidia");
+                $table->integer("idImagem")->unsigned();
+                $table->foreign("idImagem")->references("idImagem")->on("imagem");
                 $table->tinyInteger("ordem")->unsigned()->nullable();
             });
+            
+            \Schema::create("a_agendamento_dia", function($table) {
+                $table->integer("idAgendamento")->unsigned();
+                $table->foreign("idAgendamento")->references("idAgendamento")->on("agendamento");
+                $table->integer("idDia")->unsigned();
+                $table->foreign("idDia")->references("idDia")->on("dia");
+            });
+            
             \DB::commit();
         } catch (\Exception $ex) {
             \DB::rollback();
@@ -187,7 +201,7 @@ class CreateModelTables extends Migration {
     public function down() {
         \DB::beginTransaction();
         try {
-            \Schema::drop("a_trajeto_foto");
+            \Schema::drop("a_trajeto_imagem");
             \Schema::drop("a_horario_interesse_dia");
             \Schema::drop("a_cao_passeio");
             \Schema::drop("cancelamento");
@@ -202,7 +216,7 @@ class CreateModelTables extends Migration {
             \Schema::drop("modalidade_valor");
             \Schema::drop("modalidade");
             \Schema::drop("trajeto");
-            \Schema::drop("multimidia");
+            \Schema::drop("imagem");
             \DB::commit();
         } catch (\Exception $ex) {
             \DB::rollback();

@@ -49,8 +49,8 @@ class Trajeto extends \WGPC\Eloquent\Model {
         return ((pow($this->raioAtuacao, 2)) >= ($dX + $dY));
     }
 
-    public function fotos() {
-        return $this->belongsToMany("\App\Models\Eloquent\Multimidia", "a_trajeto_foto", "idTrajeto", "idMultimidia")
+    public function imagens() {
+        return $this->belongsToMany("\App\Models\Eloquent\Imagem", "a_trajeto_imagem", "idTrajeto", "idImagem")
                 ->withPivot(["ordem"]);
     }
 }

@@ -9,8 +9,8 @@ class Funcionario extends Pessoa {
 
     protected static function boot() {
         parent::boot();
-        
-        static::$rules["idMultimidia"] = ["exists:multimidia,idMultimidia", "required", "integer"];
+
+        static::$rules["idImagem"] = ["exists:imagem,idImagem", "required", "integer"];
         static::$rules["rg"] = ["required", "string", "unique:funcionario,rg"];
         static::$rules["tipo"] = ["required", "in:passeador,administrador", "string"];
         static::$rules["email"][] = ["unique:funcionario,email"];
@@ -20,9 +20,13 @@ class Funcionario extends Pessoa {
     public function __construct(array $attributes = array()) {
         parent::__construct($attributes);
 
-        $this->fillable[] = "idMultimidia";
+        $this->fillable[] = "idImagem";
         $this->fillable[] = "rg";
         $this->fillable[] = "tipo";
+    }
+
+    public function foto() {
+        return $this->belongsTo("\App\Models\Eloquent\Imagem", "idImagem", "idImagem");
     }
 
     public function cancelamentos() {

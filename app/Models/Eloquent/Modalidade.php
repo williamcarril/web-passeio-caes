@@ -10,14 +10,16 @@ class Modalidade extends \WGPC\Eloquent\Model {
         "nome",
         "descricao",
         "tipo",
+        "periodo",
+        "frequencia",
         "ativa",
         "coletivo",
-        "preco"
+        "precoPorPasseio"
     ];
     protected $casts = [
         "ativo" => "boolean",
         "coletivo" => "boolean",
-        "preco" => "float"
+        "precoPorPasseio" => "float"
     ];
     protected $attributes = [
         "ativo" => true,
@@ -27,9 +29,11 @@ class Modalidade extends \WGPC\Eloquent\Model {
         "nome" => ["required", "string", "unique:modalidade,nome"],
         "descricao" => ["required", "string"],
         "tipo" => ["required", "in:pacote,unitario", "string"],
+        "periodo" => ["required", "in:mensal,bimestral,trimestral,semestral,anual", "string"],
+        "frequencia" => ["required", "in:semanal,bisemanal", "string"],
         "ativo" => ["required", "boolean"],
         "coletivo" => ["required", "boolean"],
-        "preco" => ["required", "numeric"]
+        "precoPorPasseio" => ["required", "numeric"]
     ];
 
     public function valores() {
