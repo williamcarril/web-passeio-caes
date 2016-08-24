@@ -14,30 +14,90 @@ class ClienteController extends Controller {
         $this->auth = $auth;
     }
 
-    public function route_getCadastro(Request $req) {
+    // <editor-fold defaultstate="collapsed" desc="Rotas que retornam Views">
+    public function route_getCadastroView(Request $req) {
         $data = [];
-
         return response()->view("cliente.cadastro", $data);
     }
 
+    public function route_getCaesView(Request $req) {
+        $data = [];
+        return response()->view("cliente.caes", $data);
+    }
+
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Rotas GET que retornam JSON">
+    public function route_getCheckEmail(Request $req) {
+        $email = $req->input("email");
+        $cliente = $this->auth->guard("web")->user();
+
+        $check = Cliente::where("email", $email);
+        if (!is_null($cliente)) {
+            $check->where("idCliente", "!=", $cliente->idCliente);
+        }
+
+        return $this->defaultJsonResponse($check->exists());
+    }
+
+    public function route_getCheckCpf(Request $req) {
+        $cpf = $req->input("cpf");
+        $cliente = $this->auth->guard("web")->user();
+
+        $check = Cliente::where("cpf", $cpf);
+        if (!is_null($cliente)) {
+            $check->where("idCliente", "!=", $cliente->idCliente);
+        }
+        return $this->defaultJsonResponse($check->exists());
+    }
+
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Rotas POST que retornam JSON">
     public function route_postCadastro(Request $req) {
+        $cliente = $this->auth->guard("web")->user();
+        if (is_null($cliente)) {
+            $cliente = new Cliente();
+        }
+
         if ($req->input("senha") !== $req->input("senha2")) {
             return $this->defaultJsonResponse(false, "Os campos de senha devem ser iguais.");
         }
 
-        $cliente = new Cliente();
-        $cliente->nome = $req->input("nome");
-        $cliente->cpf = $req->input("cpf");
-        $cliente->telefone = $req->input("telefone");
-        $cliente->email = $req->input("email");
-        $cliente->senha = \bcrypt($req->input("senha"));
-        $cliente->lat = $req->input("lat");
-        $cliente->lng = $req->input("lng");
-        $cliente->postal = $req->input("postal");
-        $cliente->logradouro = $req->input("logradouro");
-        $cliente->bairro = $req->input("bairro");
-        $cliente->numero = $req->input("numero");
-        $cliente->complemento = $req->input("complemento");
+        if ($req->has("nome")) {
+            $cliente->nome = $req->input("nome");
+        }
+        if ($req->has("cpf")) {
+            $cliente->cpf = $req->input("cpf");
+        }
+        if ($req->has("telefone")) {
+            $cliente->telefone = $req->input("telefone");
+        }
+        if ($req->has("email")) {
+            $cliente->email = $req->input("email");
+        }
+        if ($req->has("senha")) {
+            $cliente->senha = \bcrypt($req->input("senha"));
+        }
+        if ($req->has("lat")) {
+            $cliente->lat = $req->input("lat");
+        }
+        if ($req->has("lng")) {
+            $cliente->lng = $req->input("lng");
+        }
+        if ($req->has("postal")) {
+            $cliente->postal = $req->input("postal");
+        }
+        if ($req->has("logradouro")) {
+            $cliente->logradouro = $req->input("logradouro");
+        }
+        if ($req->has("bairro")) {
+            $cliente->bairro = $req->input("bairro");
+        }
+        if ($req->has("numero")) {
+            $cliente->numero = $req->input("numero");
+        }
+        if ($req->has("complemento")) {
+            $cliente->complemento = $req->input("complemento");
+        }
 
         \DB::beginTransaction();
         try {
@@ -52,30 +112,27 @@ class ClienteController extends Controller {
         }
     }
 
-    public function route_getCheckEmail(Request $req) {
-        $email = $req->input("email");
-        return $this->defaultJsonResponse(Cliente::where("email", $email)->exists());
+    public function route_postCaes(Request $req) {
+        return $this->defaultJsonResponse(false);
     }
 
-    public function route_getCheckCpf(Request $req) {
-        $cpf = $req->input("cpf");
-        return $this->defaultJsonResponse(Cliente::where("cpf", $cpf)->exists());
-    }
-
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Rotas que causam redirects">
     public function route_postLogin(Request $req) {
         $email = $req->input("email");
         $senha = $req->input("senha");
         $cliente = Cliente::where(["email" => $email])->first();
         if (!is_null($cliente) && \Hash::check($senha, $cliente->senha)) {
-            $this->auth->login($cliente);
+            $this->auth->guard("web")->login($cliente);
             return redirect()->back();
         }
         return redirect()->back()->withErrors(["As credenciais fornecidas estão incorretas."]);
     }
 
     public function route_getLogout(Request $req) {
-        $this->auth->logout();
+        $this->auth->guard("web")->logout();
         return redirect()->back();
     }
 
+    // </editor-fold>
 }

@@ -7,13 +7,6 @@ class Cliente extends Pessoa {
     protected $primaryKey = "idCliente";
     protected $table = 'cliente';
 
-    public static function boot() {
-        parent::boot();
-
-        static::$rules["email"][] = "unique:cliente,email";
-        static::$rules["cpf"][] = "unique:cliente,cpf";
-    }
-
     public function cancelamentos() {
         return $this->morphMany("\App\Models\Eloquent\Cancelamento", "pessoa", "cliente");
     }
@@ -28,6 +21,12 @@ class Cliente extends Pessoa {
 
     public function getAuthIdentifierName() {
         return "idCliente";
+    }
+
+    protected function overrideNormalRules($rules) {
+        $rules["email"][] = "unique:cliente,email,{$this->idCliente},idCliente";
+        $rules["cpf"][] = "unique:cliente,cpf,{$this->idCliente},idCliente";
+        return $rules;
     }
 
 }

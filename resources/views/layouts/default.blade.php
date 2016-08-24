@@ -22,10 +22,10 @@ $hasMap = isset($hasMap) ? $hasMap : false;
         <meta content="@yield('description', '')" name="description"/>
     </head>
     <body>
-        @section("header")
-        @include("layouts.header")
-        @show
         <div id="wrapper">
+            @section("header")
+            @include("layouts.header")
+            @show
             <aside id="sidebar-wrapper">
                 @section("sidebar")
                 @include("layouts.sidebar")
@@ -38,6 +38,9 @@ $hasMap = isset($hasMap) ? $hasMap : false;
                     @show
                 </div>
             </div>
+            @section("footer")
+            @include("layouts.footer")
+            @show
         </div>
         <div id="htmlTemplates">
             @include("includes.alert", ["type" => "error", "message" => "!{message}", "name" => "error-alert"])
@@ -45,9 +48,6 @@ $hasMap = isset($hasMap) ? $hasMap : false;
             @include("includes.alert", ["type" => "success", "message" => "!{message}", "name" => "success-alert"])
             @include("includes.alert", ["type" => "warning", "message" => "!{message}", "name" => "warning-alert"])
         </div>
-        @section("footer")
-        @include("layouts.footer")
-        @show
         <script src="{{asset("/js/scripts.min.js")}}"></script>
         @if($hasMap)
         <script async defer

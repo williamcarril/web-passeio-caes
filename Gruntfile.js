@@ -17,7 +17,9 @@ module.exports = function (grunt) {
         //General JScript Functions File
         "<%= path.dev %>js/functions.js",
         //General JScript File
-        "<%= path.dev %>js/main.js"
+        "<%= path.dev %>js/main.js",
+        //Custom Components Files
+        "<%= path.dev %>js/components/**/*.js"
     ];
 
     var less = [

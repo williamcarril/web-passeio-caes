@@ -1,4 +1,18 @@
 // -------------------------
 // Footer - Layout
 // -------------------------
-
+#footer {
+    display: none;
+    background-color: @container-color;
+    color: @container-font-color;
+    clear: fix;
+    z-index: 1000;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    overflow-x: auto;
+    .rem("padding", @base-space);
+    .rem("height", @quadruple-space);
+    .rem("margin-top", @base-space);
+}

@@ -1,7 +1,6 @@
 // -------------------------
 // Container - Layout
 // -------------------------
-
 #alerts {
     z-index: 9999;
     position: fixed;
@@ -13,4 +12,19 @@
 
 #htmlTemplates {
     display: none;
+}
+
+#wrapper {
+    &.toggled {
+        .rem("padding-left", 250px);
+        #sidebar-wrapper {
+            .rem("width", 250px);
+        }
+        #page-content-wrapper {
+            .rem("margin-right", -250px);
+        }
+        #footer {
+            .rem("margin-right", -250px);
+        }
+    }
 }

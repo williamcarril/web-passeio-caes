@@ -24,7 +24,7 @@ class CreateModelTables extends Migration {
                 $table->increments("idTrajeto");
                 $table->string("nome", 70)->unique();
                 $table->text("descricao");
-                $table->integer("raioAtuacao");
+                $table->integer("raioAtuacao")->unsigned();
                 $table->boolean("ativo")->default(true);
                 $table->string("logradouro", 70);
                 $table->string("bairro", 40);
@@ -32,6 +32,7 @@ class CreateModelTables extends Migration {
                 $table->string("numero", 12);
                 $table->decimal("lat", 10, 6);
                 $table->decimal("lng", 10, 6);
+                $table->string("complemento", 50)->nullable();
             });
 
             \Schema::create("modalidade", function($table) {
@@ -45,7 +46,7 @@ class CreateModelTables extends Migration {
                 $table->boolean("coletivo")->default(false);
                 $table->decimal("precoPorPasseio", 6, 2);
             });
-            
+
             \Schema::create("dia", function($table) {
                 $table->increments("idDia");
                 $table->string("nome", 13)->unique();
@@ -70,6 +71,7 @@ class CreateModelTables extends Migration {
                 $table->decimal("lng", 10, 6);
                 $table->string("email", 80)->unique();
                 $table->string("senha", 60);
+                $table->string("complemento", 50)->nullable();
                 $table->rememberToken();
             });
             \Schema::create("funcionario", function($table) {
@@ -88,6 +90,9 @@ class CreateModelTables extends Migration {
                 $table->enum("tipo", ["passeador", "administrador"]);
                 $table->string("email", 80)->unique();
                 $table->string("senha", 60);
+                $table->string("complemento", 50)->nullable();
+                $table->integer("idImagem")->unsigned();
+                $table->foreign("idImagem")->references("idImagem")->on("imagem");
                 $table->rememberToken();
             });
 
@@ -120,14 +125,14 @@ class CreateModelTables extends Migration {
                 $table->date("aplicacao");
                 $table->date("proximaAplicacao")->nullable();
             });
-            
+
             \Schema::create("agendamento", function($table) {
                 $table->increments("idAgendamento");
                 $table->integer("idModalidade")->unsigned();
                 $table->foreign("idModalidade")->references("idModalidade")->on("modalidade");
                 $table->integer("idCliente")->unsigned();
                 $table->foreign("idCliente")->references("idCliente")->on("cliente");
-                $table->date("data");
+                $table->timestamp("data")->default(\DB::raw("CURRENT_TIMESTAMP"));
             });
 
             \Schema::create("passeio", function($table) {
@@ -154,7 +159,7 @@ class CreateModelTables extends Migration {
                 $table->integer("idPasseio")->unsigned();
                 $table->foreign("idPasseio")->references("idPasseio")->on("passeio");
                 $table->text("justificativa");
-                $table->enum("status", ["feito", "pendente"])->default("pendente");
+                $table->enum("status", ["verificado", "pendente"])->default("pendente");
                 $table->date("data");
                 $table->enum("tipoPessoa", ["funcionario", "cliente"]);
             });
@@ -164,6 +169,7 @@ class CreateModelTables extends Migration {
                 $table->foreign("idPasseio")->references("idPasseio")->on("passeio");
                 $table->integer("idCao")->unsigned();
                 $table->foreign("idCao")->references("idCao")->on("cao");
+                $table->primary(["idPasseio", "idCao"]);
             });
 
             \Schema::create("a_horario_dia", function($table) {
@@ -171,6 +177,7 @@ class CreateModelTables extends Migration {
                 $table->foreign("idHorario")->references("idHorario")->on("horario");
                 $table->integer("idDia")->unsigned();
                 $table->foreign("idDia")->references("idDia")->on("dia");
+                $table->primary(["idHorario", "idDia"]);
             });
 
             \Schema::create("a_trajeto_imagem", function($table) {
@@ -179,15 +186,17 @@ class CreateModelTables extends Migration {
                 $table->integer("idImagem")->unsigned();
                 $table->foreign("idImagem")->references("idImagem")->on("imagem");
                 $table->tinyInteger("ordem")->unsigned()->nullable();
+                $table->primary(["idTrajeto", "idImagem"]);
             });
-            
+
             \Schema::create("a_agendamento_dia", function($table) {
                 $table->integer("idAgendamento")->unsigned();
                 $table->foreign("idAgendamento")->references("idAgendamento")->on("agendamento");
                 $table->integer("idDia")->unsigned();
                 $table->foreign("idDia")->references("idDia")->on("dia");
+                $table->primary(["idDia", "idAgendamento"]);
             });
-            
+
             \DB::commit();
         } catch (\Exception $ex) {
             \DB::rollback();

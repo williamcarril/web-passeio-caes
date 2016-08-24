@@ -11,59 +11,59 @@
             <legend>Informações gerais</legend>
             <div class="form-group">
                 <label class="control-label" for="cliente-nome">Nome *</label>
-                <input required name="nome" id="cliente-nome" type="text" class="form-control" placeholder="Informe seu nome completo">
+                <input value="{{!empty($customer->nome) ? $customer->nome : ""}}" required name="nome" id="cliente-nome" type="text" class="form-control" placeholder="Informe seu nome completo">
             </div>
             <div class="form-group">
                 <label class="control-label" for="cliente-cpf">CPF *</label>
-                <input required name="cpf" data-inputmask="'mask': '999.999.999-99'" type="text" id="cliente-cpf" class="form-control" placeholder="Informe seu CPF">
+                <input value="{{!empty($customer->cpf) ? $customer->cpf : ""}}" required name="cpf" data-inputmask="'mask': '999.999.999-99'" type="text" id="cliente-cpf" class="form-control" placeholder="Informe seu CPF">
             </div>
             <div class="form-group">
                 <label class="control-label" for="cliente-telefone">Telefone *</label>
-                <input required name="telefone" data-inputmask="'mask': '(99) 9999[9]-9999', 'greedy': false" id="cliente-telefone" type="tel" class="form-control" placeholder="Informe seu telefone">
+                <input value="{{!empty($customer->telefone) ? $customer->telefone : ""}}" required name="telefone" data-inputmask="'mask': '(99) 9999[9]-9999', 'greedy': false" id="cliente-telefone" type="tel" class="form-control" placeholder="Informe seu telefone">
             </div>
         </fieldset>
         <fieldset>
             <legend>Informações de acesso</legend>
             <div class="form-group">
                 <label class="control-label" for="cliente-email">E-mail *</label>
-                <input required name="email" id="cliente-email" type="email" class="form-control" placeholder="Informe seu e-mail">
+                <input value="{{!empty($customer->email) ? $customer->email : ""}}" required name="email" id="cliente-email" type="email" class="form-control" placeholder="Informe seu e-mail">
             </div>
             <div class="form-group">
                 <label class="control-label" for="cliente-senha">Senha *</label>
-                <input required name="senha" id="cliente-senha" type="password" class="form-control" placeholder="Informe sua senha">
+                <input {{!empty($customer) ? "" : "required"}} name="senha" id="cliente-senha" type="password" class="form-control" placeholder="Informe sua senha">
             </div>
             <div class="form-group">
                 <label class="control-label" for="cliente-senha2">Confirme sua senha *</label>
-                <input required name="senha2" id="cliente-senha2" type="password" class="form-control" placeholder="Confirme sua senha">
+                <input {{!empty($customer) ? "" : "required"}} name="senha2" id="cliente-senha2" type="password" class="form-control" placeholder="Confirme sua senha">
             </div>
         </fieldset>
         <fieldset data-name="address">
-            <input required name="lat" type="hidden">
-            <input required name="lng" type="hidden">
+            <input value="{{!empty($customer->lat) ? $customer->lat : ""}}" required name="lat" type="hidden">
+            <input value="{{!empty($customer->lng) ? $customer->lng : ""}}" required name="lng" type="hidden">
             <legend>Informações relativas ao endereço</legend>
             @include("includes.map", ["id" => "cadastro-map", "callback" => "bootstrapListeners"])
             <div class="form-group">
                 <label class="control-label" for="cliente-cep">CEP *</label>
-                <input disabled required name="postal" data-inputmask="'mask': '99999-999'" id="cliente-cep" type="text" class="form-control" placeholder="Informe seu CEP">
+                <input {{!empty($customer) ? "" : "disabled"}} value="{{!empty($customer->postal) ? $customer->postal : ""}}" required name="postal" data-inputmask="'mask': '99999-999'" id="cliente-cep" type="text" class="form-control" placeholder="Informe seu CEP">
             </div>
             <div class="form-group">
                 <label class="control-label" for="cliente-logradouro">Logradouro *</label>
-                <input disabled required name="logradouro" id="cliente-logradouro" type="text" class="form-control" placeholder="Informe seu logradouro">
+                <input {{!empty($customer) ? "" : "disabled"}} value="{{!empty($customer->logradouro) ? $customer->logradouro : ""}}" required name="logradouro" id="cliente-logradouro" type="text" class="form-control" placeholder="Informe seu logradouro">
             </div>
             <div class="form-group">
                 <label class="control-label" for="cliente-bairro">Bairro *</label>
-                <input disabled required name="bairro" id="cliente-bairro" type="text" class="form-control" placeholder="Informe seu bairro">
+                <input {{!empty($customer) ? "" : "disabled"}} value="{{!empty($customer->bairro) ? $customer->bairro : ""}}" required name="bairro" id="cliente-bairro" type="text" class="form-control" placeholder="Informe seu bairro">
             </div>
             <div class="form-group">
                 <label class="control-label" for="cliente-numero">Número *</label>
-                <input disabled required name="numero" id="cliente-numero" type="text" class="form-control" placeholder="Informe o número de sua residência">
+                <input {{!empty($customer) ? "" : "disabled"}} value="{{!empty($customer->numero) ? $customer->numero : ""}}" required name="numero" id="cliente-numero" type="text" class="form-control" placeholder="Informe o número de sua residência">
             </div>
             <div class="form-group">
                 <label class="control-label" for="cliente-complemento">Complemento</label>
-                <input disabled name="complemento" id="cliente-complemento" type="text" class="form-control" placeholder="Informe o complemento do endereço (caso necessário)">
+                <input {{!empty($customer) ? "" : "disabled"}} value="{{!empty($customer->complemento) ? $customer->complemento : ""}}" name="complemento" id="cliente-complemento" type="text" class="form-control" placeholder="Informe o complemento do endereço (caso necessário)">
             </div>
         </fieldset>
-        <button type="submit" class="btn btn-default btn-lg pull-right">Cadastrar</button>
+        <button type="submit" class="btn btn-default btn-lg pull-right">{{!empty($customer) ? "Salvar" : "Cadastrar"}}</button>
     </form>
 </section>
 @endsection
@@ -89,7 +89,7 @@
             if(!validate.cpf(cpf)) {
                 setInputStatus($this, "error");
                 return;
-            } 
+            }
             $.ajax({
                 "url": "{!! route('cliente.cadastro.check.cpf') !!}",
                 "type": "GET",
@@ -224,7 +224,7 @@
                             showAlert(response.messages[i], "error");
                         }
                     } else {
-                        showAlert('Cadastro realizado com sucesso!', "success");
+                        showAlert('Operação realizada com sucesso!', "success");
                         $form.find("button[type='submit']").prop("disabled", true);
                         setInterval(function() {
                             window.location.replace("{!! route('home') !!}");

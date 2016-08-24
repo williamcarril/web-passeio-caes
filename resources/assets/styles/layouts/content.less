@@ -1,8 +1,9 @@
 // -------------------------
 // Main - Layout
 // -------------------------
-
 #page-content-wrapper {
     padding: 0;
-    .rem("padding-top", @base-space);
+    @media @smartphones, @tablets {
+        .rem("margin-top", @sextuple-space);
+    }
 }

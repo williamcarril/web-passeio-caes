@@ -1,7 +1,7 @@
 <ul class="sidebar-nav">
     <li class="logo">
         <a href="{{route("home")}}">
-            <img src="{{asset("img/logo.png")}}" />
+            <img src="{{asset("img/logo.png")}}" alt="Anamá"/>
         </a>
     </li>
     <li class="user">

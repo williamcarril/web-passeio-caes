@@ -13,8 +13,6 @@ class Funcionario extends Pessoa {
         static::$rules["idImagem"] = ["exists:imagem,idImagem", "required", "integer"];
         static::$rules["rg"] = ["required", "string", "unique:funcionario,rg"];
         static::$rules["tipo"] = ["required", "in:passeador,administrador", "string"];
-        static::$rules["email"][] = ["unique:funcionario,email"];
-        static::$rules["cpf"][] = ["unique:funcionario,cpf"];
     }
 
     public function __construct(array $attributes = array()) {
@@ -39,6 +37,12 @@ class Funcionario extends Pessoa {
 
     public function getAuthIdentifierName() {
         return "idFuncionario";
+    }
+
+    protected function overrideNormalRules($rules) {
+        $rules["email"][] = "unique:funcionario,email,{$this->idFuncionario},idFuncionario";
+        $rules["cpf"][] = "unique:funcionario,cpf,{$this->idFuncionario},idFuncionario";
+        return $rules;
     }
 
 }

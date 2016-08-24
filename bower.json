@@ -20,8 +20,8 @@
     "license": "MIT",
     "devDependencies": {},
     "dependencies": {
-        "jquery": "^3.1.0",
         "bootstrap": "^3.3.6",
-        "jquery.inputmask": "^3.3.1"
+        "jquery.inputmask": "^3.3.1",
+        "jquery": "^2"
     }
 }

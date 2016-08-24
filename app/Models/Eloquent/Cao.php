@@ -7,7 +7,6 @@ class Cao extends \WGPC\Eloquent\Model {
     protected $primaryKey = "idCao";
     protected $table = 'cao';
     protected $fillable = [
-        "idCao",
         "nome",
         "raca",
         "porte",

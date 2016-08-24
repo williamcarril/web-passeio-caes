@@ -18,15 +18,18 @@ class Agendamento extends \WGPC\Eloquent\Model {
     ];
     protected $dates = ["data"];
 
-    public function setDataAttribute($value) {
-        $value = str_replace("/", "-", $value);
-        $this->attributes["data"] = date("Y-m-d", strtotime($value));
+    public static function boot() {
+        parent::boot();
+
+        static::saving(function($model) {
+            $model->data = date("Y-m-d H:i:s");
+        }, 1);
     }
-    
+
     public function passeios() {
         return $this->hasMany("\App\Models\Eloquent\Passeio", "idAgendamento", "idAgendamento");
     }
-    
+
     public function dias() {
         return $this->belongsToMany("\App\Models\Eloquent\Dia", "a_agendamento_dia", "idAgendamento", "idDia");
     }
