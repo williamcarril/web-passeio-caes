@@ -6,7 +6,7 @@ class Vacinacao extends \WGPC\Eloquent\Model {
     protected $table = "vacinacao";
     protected $primaryKey = "idVacinacao";
     
-    protected $fillabel = [
+    protected $fillable = [
         "idCao",
         "idVacina",
         "aplicacao",

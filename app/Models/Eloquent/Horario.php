@@ -2,12 +2,11 @@
 
 namespace App\Models\Eloquent;
 
-class HorarioInteresse extends \WGPC\Eloquent\Model {
+class Horario extends \WGPC\Eloquent\Model {
 
-    protected $table = "horario_interesse";
-    protected $primaryKey = "idHorarioInteresse";
+    protected $table = "horario";
+    protected $primaryKey = "idHorario";
     protected $fillable = [
-        "idHorarioInteresse",
         "inicio",
         "fim",
         "idCliente"
@@ -25,8 +24,7 @@ class HorarioInteresse extends \WGPC\Eloquent\Model {
     ];
     
     public function dias() {
-        return $this->belongsToMany("\App\Models\Eloquent\Dia", "a_horario_interesse_dia", "idHorarioInteresse", "idDia")
-                ->withPivot(["interesse"]);
+        return $this->belongsToMany("\App\Models\Eloquent\Dia", "a_horario_dia", "idHorario", "idDia");
     }
 
 }

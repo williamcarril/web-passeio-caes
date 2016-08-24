@@ -12,10 +12,14 @@ module.exports = function (grunt) {
         "<%= path.bower %>bootstrap/dist/**/bootstrap.min.js",
         //JQuery Input Mask
         "<%= path.bower %>jquery.inputmask/dist/jquery.inputmask.bundle.js",
+        //Non-Bower Vendors Files
+        "<%= path.dev %>js/vendors/**/*.js",
         //General JScript Functions File
         "<%= path.dev %>js/functions.js",
         //General JScript File
-        "<%= path.dev %>js/main.js"
+        "<%= path.dev %>js/main.js",
+        //Custom Components Files
+        "<%= path.dev %>js/components/**/*.js"
     ];
 
     var less = [

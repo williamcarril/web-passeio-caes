@@ -1,24 +1,20 @@
 // -------------------------
 // Header - Layout
 // -------------------------
-
-.header {
-    
+#header {
     background-color: @container-color;
     color: @container-font-color;
     clear: fix;
     
-    &.-main {
-        z-index: 1000;
-        position: fixed;
-        left: 0;
-        width: 100%;
-        overflow-x: auto;
-        .rem("padding", @base-space);
-        .rem("height", @sextuple-space);
-        
-        @media @desktop {
-            display: none;
-        }
+    z-index: 1000;
+    position: fixed;
+    left: 0;
+    width: 100%;
+    overflow-x: auto;
+    .rem("padding", @base-space);
+    .rem("height", @sextuple-space);
+
+    @media @desktop {
+        display: none;
     }
 }

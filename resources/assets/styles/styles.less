@@ -1,5 +1,63 @@
 // Compiled stylesheet. Do not modify. All changes are going to be lost.
 
+.responsive-calendar .controls {
+  text-align: center;
+}
+.responsive-calendar .controls a {
+  cursor: pointer;
+}
+.responsive-calendar .controls h4 {
+  display: inline;
+}
+.responsive-calendar .day-headers,
+.responsive-calendar .days {
+  font-size: 0;
+}
+.responsive-calendar .day {
+  display: inline-block;
+  position: relative;
+  font-size: 14px;
+  width: 14.285714285714286%;
+  text-align: center;
+}
+.responsive-calendar .day a {
+  color: #000000;
+  display: block;
+  cursor: pointer;
+  padding: 20% 0 20% 0;
+}
+.responsive-calendar .day a:hover {
+  background-color: #eee;
+  text-decoration: none;
+}
+.responsive-calendar .day.header {
+  border-bottom: 1px gray solid;
+}
+.responsive-calendar .day.active a {
+  background-color: #1d86c8;
+  color: #ffffff;
+}
+.responsive-calendar .day.active a:hover {
+  background-color: #36a0e2;
+}
+.responsive-calendar .day.active .not-current {
+  background-color: #8fcaef;
+  color: #ffffff;
+}
+.responsive-calendar .day.active .not-current:hover {
+  background-color: #bcdff5;
+}
+.responsive-calendar .day.not-current a {
+  color: #ddd;
+}
+.responsive-calendar .day .badge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  z-index: 1;
+}
+
+
 /*!
  * Start Bootstrap - Simple Sidebar (http://startbootstrap.com/)
  * Copyright 2013-2016 Start Bootstrap
@@ -133,11 +191,19 @@ body {
 @import (once) "config/midia-queries.less";
 @import (once) "config/functions.less";
 @import (once) "base/base.less";
+@import (once) "base/fonts.less";
+@import (once) "base/helpers.less";
 @import (once) "base/input.less";
 @import (once) "layouts/container.less";
 @import (once) "layouts/content.less";
 @import (once) "layouts/footer.less";
 @import (once) "layouts/header.less";
 @import (once) "layouts/sidebar.less";
+@import (once) "components/button.less";
+@import (once) "components/calendar.less";
+@import (once) "components/editable-label.less";
+@import (once) "components/image-uploader.less";
 @import (once) "components/map.less";
-@import (once) "components/searchbox.less";
+@import (once) "components/panel.less";
+@import (once) "components/search-box.less";
+@import (once) "components/table.less";

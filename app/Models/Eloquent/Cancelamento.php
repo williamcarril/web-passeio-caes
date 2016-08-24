@@ -18,7 +18,7 @@ class Cancelamento extends \WGPC\Eloquent\Model {
     protected static $rules = [
         "idPessoa" => ["required", "integer"],
         "justificativa" => ["required", "string"],
-        "status" => ["in:pendente,feito", "string"],
+        "status" => ["in:pendente,verificado", "string"],
         "tipoPessoa" => ["required", "in:funcionario,cliente", "string"],
         "data" => ["required", "date"],
         "idPasseio" => ["required", "exists:passeio,idPasseio", "integer"]

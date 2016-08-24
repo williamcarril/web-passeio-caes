@@ -2,21 +2,19 @@
 
 namespace App\Models\Eloquent;
 
-class Multimidia extends \WGPC\Eloquent\Model {
+class Imagem extends \WGPC\Eloquent\Model {
 
-    protected $table = "multimidia";
-    protected $primaryKey = "idMultimidia";
+    protected $table = "imagem";
+    protected $primaryKey = "idImagem";
     protected $fillable = [
         "descricao",
         "data",
-        "arquivo",
-        "tipo"
+        "arquivo"
     ];
     protected $dates = ["data"];
     protected static $rules = [
         "data" => ["required", "date"],
-        "arquivo" => ["required", "max:255", "string", "unique:multimidia,arquivo"],
-        "tipo" => ["required", "in:imagem,video", "string"],
+        "arquivo" => ["required", "max:255", "string", "unique:imagem,arquivo"],
         "descricao" => ["string"]
     ];
 
