@@ -14,6 +14,10 @@ class Cliente extends Pessoa {
     public function passeios() {
         return $this->hasMany("\App\Models\Eloquent\Passeio", "idCliente", "idCliente");
     }
+    
+    public function caes() {
+        return $this->hasMany("\App\Models\Eloquent\Cao", "idCliente", "idCliente");
+    }
 
     public function horariosDeInteresse() {
         return $this->hasMany("\App\Models\Eloquent\Horario", "idCliente", "idCliente");

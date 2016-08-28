@@ -30,4 +30,8 @@ class Imagem extends \WGPC\Eloquent\Model {
         }, 1);
     }
 
+    public function getUrl() {
+        return asset("repository/$this->arquivo");
+    }
+
 }

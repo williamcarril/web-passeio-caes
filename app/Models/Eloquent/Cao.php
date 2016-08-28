@@ -38,7 +38,7 @@ class Cao extends \WGPC\Eloquent\Model {
     public function vacinacoes() {
         return $this->hasMany("\App\Models\Eloquent\Vacinacao", "idCao", "idCao");
     }
-    
+
     public function vacinas() {
         return $this->hasManyThrough("\App\Models\Eloquent\Vacina", "\App\Models\Eloquent\Vacinacao", "idCao", "idVacina", "idCao");
     }

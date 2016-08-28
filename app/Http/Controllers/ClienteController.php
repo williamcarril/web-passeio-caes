@@ -113,7 +113,7 @@ class ClienteController extends Controller {
     }
 
     public function route_postCaes(Request $req) {
-        return $this->defaultJsonResponse(false);
+        return $this->defaultJsonResponse(false, null, $req->all());
     }
 
     // </editor-fold>
