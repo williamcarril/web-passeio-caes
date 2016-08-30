@@ -32,7 +32,7 @@
         </a>
         <br/>
         <a href="{{route("cliente.caes.get")}}">
-            <i class="flaticon-paw-print"></i>
+            <i class="flaticon-dog"></i>
             Manter cachorros
         </a>
         <br/>

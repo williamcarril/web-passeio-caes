@@ -14,7 +14,7 @@ class Repositorio {
 
     public function __construct(FilesystemManager $storage, $path = null, $rules = [], $complexRules = []) {
         if (is_null($path)) {
-            $path = "repository/";
+            $path = config("path.repository");
         }
         $this->storage = $storage;
         $this->setRules($rules);
@@ -23,7 +23,7 @@ class Repositorio {
     }
 
     public function setPath($path) {
-        $this->path = $path;
+        $this->path = rtrim($path, "/") . "/";
     }
 
     public function getPath() {
@@ -78,7 +78,7 @@ class Repositorio {
         }
 
         $contents = file_get_contents($source);
-        $toPath = "$this->path/$to";
+        $toPath = "$this->path$to";
         $saved = $this->storage->put($toPath, $contents);
         if (!$saved) {
             return false;
@@ -88,7 +88,7 @@ class Repositorio {
     }
 
     public function delete($filename) {
-        return $this->storage->delete("$this->path/$filename");
+        return $this->storage->delete("$this->path$filename");
     }
 
 }

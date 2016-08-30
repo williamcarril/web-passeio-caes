@@ -157,7 +157,7 @@
         });
 
         @if (!empty($customer))
-                $form.find("input[name='senha'],input[name='senha2']").on("blur", function () {
+        $form.find("input[name='senha'],input[name='senha2']").on("blur", function () {
             var $senha = $form.find("input[name='senha']");
             var $senha2 = $form.find("input[name='senha2']");
 
@@ -175,8 +175,8 @@
                 setInputStatus($senha2, "error");
             }
         });
-                @ else
-                $form.find("input[name='senha'],input[name='senha2']").on("blur", function () {
+        @else
+        $form.find("input[name='senha'],input[name='senha2']").on("blur", function () {
             var $senha = $form.find("input[name='senha']");
             var $senha2 = $form.find("input[name='senha2']");
 
@@ -190,28 +190,27 @@
                 setInputStatus($senha2, "error");
             }
         });
-                @endif
+        @endif
 
-                $form.find("input[name='complemento']").on("blur", function () {
+        $form.find("input[name='complemento']").on("blur", function () {
             setInputStatus($(this), "success");
         });
 
         $form.on("submit", function (ev) {
             ev.stopPropagation();
             ev.preventDefault();
-
+            var $submit = $form.find("button[type='submit']");
             $.ajax({
                 "url": $form.attr("action"),
                 "type": $form.attr("method"),
                 "data": $form.serialize(),
                 "beforeSend": function () {
-                    loadingAnimation(true);
+                    $submit.addClass("disabled").addClass("loading");
                 },
                 "success": function (response) {
                     if (!response.status) {
-                        for (var i in response.messages) {
-                            showAlert(response.messages[i], "error");
-                        }
+                        showAlert(response.messages, "error");
+                        $submit.removeClass("disabled");
                     } else {
                         showAlert('Operação realizada com sucesso!', "success");
                         $form.find("button[type='submit']").prop("disabled", true);
@@ -222,9 +221,10 @@
                 },
                 "error": function () {
                     showAlert("{!!trans('alert.error.request')!!}", "error");
+                    $submit.removeClass("disabled");
                 },
                 "complete": function () {
-                    loadingAnimation(false);
+                    $submit.removeClass("loading");
                 }
             });
         });

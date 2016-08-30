@@ -4,14 +4,19 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Eloquent\Cliente;
+use App\Models\Eloquent\Cao;
+use App\Models\Eloquent\Imagem;
 use Illuminate\Contracts\Auth\Factory as AuthFactory;
+use App\Models\File\Repositorio;
 
 class ClienteController extends Controller {
 
     private $auth;
+    private $repository;
 
-    public function __construct(AuthFactory $auth) {
+    public function __construct(AuthFactory $auth, Repositorio $repository) {
         $this->auth = $auth;
+        $this->repository = $repository;
     }
 
     // <editor-fold defaultstate="collapsed" desc="Rotas que retornam Views">
@@ -113,7 +118,49 @@ class ClienteController extends Controller {
     }
 
     public function route_postCaes(Request $req) {
-        return $this->defaultJsonResponse(false, null, $req->all());
+        $id = $req->input("id");
+        $cliente = $this->auth->guard("web")->user();
+        \DB::beginTransaction();
+        try {
+            if (!empty($id)) {
+                $cao = Cao::find($id);
+            } else {
+                $cao = new Cao();
+            }
+            if ($req->has("nome")) {
+                $cao->nome = $req->input("nome");
+            }
+            if ($req->has("raca")) {
+                $cao->raca = $req->input("raca");
+            }
+            if ($req->has("porte")) {
+                $cao->porte = $req->input("porte");
+            }
+            if ($req->has("genero")) {
+                $cao->genero = $req->input("genero");
+            }
+            if ($req->hasFile("imagem")) {
+                $filename = $this->repository->save($req->file("imagem"));
+                $imagem = new Imagem();
+                $imagem->descricao = "";
+                $imagem->arquivo = $filename;
+                if (!$imagem->save()) {
+                    \DB::rollback();
+                    return $this->defaultJsonResponse(false, $imagem->getErrors());
+                }
+                $cao->idImagem = $imagem->idImagem;
+            }
+            $cao->idCliente = $cliente->idCliente;
+            if (!$cao->save()) {
+                \DB::rollback();
+                return $this->defaultJsonResponse(false, $cao->getErrors());
+            }
+            \DB::commit();
+            return $this->defaultJsonResponse(true, null, $cao);
+        } catch (\Exception $ex) {
+            \DB::rollback();
+            return $this->defaultJsonResponse(false, $ex->getMessage());
+        }
     }
 
     // </editor-fold>

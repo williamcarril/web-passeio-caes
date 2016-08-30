@@ -160,6 +160,8 @@ body {
     margin-right: 0;
   }
 }
+/*@tablets: ~"only screen and (min-width: 768px) and (max-width: 959px)";*/
+/*@desktops: ~"only screen and (min-width: 960px)";*/
 *,
 *:before,
 *:after {
@@ -191,20 +193,20 @@ img {
   max-width: 100%;
 }
 /*
-Flaticon icon font: Flaticon
-Creation date: 28/08/2016 19:28
+flaticon icon font: flaticon
+Creation date: 29/08/2016 18:46
 */
 @font-face {
   font-family: "flaticon";
   src: url("../fonts/flaticon.eot");
-  src: url("../fonts/flaticon.eot?#iefix") format("embedded-opentype"), url("../fonts/flaticon.woff") format("woff"), url("../fonts/flaticon.ttf") format("truetype"), url("../fonts/flaticon.svg#Flaticon") format("svg");
+  src: url("../fonts/flaticon.eot?#iefix") format("embedded-opentype"), url("../fonts/flaticon.woff") format("woff"), url("../fonts/flaticon.ttf") format("truetype"), url("../fonts/flaticon.svg#flaticon") format("svg");
   font-weight: normal;
   font-style: normal;
 }
 @media screen and (-webkit-min-device-pixel-ratio: 0) {
   @font-face {
     font-family: "flaticon";
-    src: url("../fonts/flaticon.svg#Flaticon") format("svg");
+    src: url("../fonts/flaticon.svg#flaticon") format("svg");
   }
 }
 [class^="flaticon-"]:before,
@@ -215,8 +217,11 @@ Creation date: 28/08/2016 19:28
   font-size: 20px;
   font-style: normal;
 }
-.flaticon-paw-print:before {
+.flaticon-dog:before {
   content: "\f100";
+}
+.flaticon-paw-print:before {
+  content: "\f101";
 }
 ._no-border {
   border: none !important;
@@ -286,11 +291,24 @@ textarea.-error {
 }
 #page-content-wrapper {
   padding: 0;
+  Ignore: a;margin-bottom:60px;
+  Ignore: a;margin-bottom:3.75rem;
 }
-@media only screen and (max-width: 479px), only screen and (min-width: 768px) and (max-width: 959px) {
+@media only screen and (max-width: 767px) {
   #page-content-wrapper {
     Ignore: a;margin-top:60px;
     Ignore: a;margin-top:3.75rem;
+  }
+}
+@media only screen and (min-width: 768px) {
+  #page-content-wrapper > .container {
+    width: 1085px;
+  }
+}
+@media only screen and (max-width: 767px) {
+  #page-content-wrapper > .container {
+    Ignore: a;margin-bottom:60px;
+    Ignore: a;margin-bottom:3.75rem;
   }
 }
 #footer {
@@ -307,8 +325,6 @@ textarea.-error {
   Ignore: a;padding:0.625rem;
   Ignore: a;height:40px;
   Ignore: a;height:2.5rem;
-  Ignore: a;margin-top:10px;
-  Ignore: a;margin-top:0.625rem;
 }
 #header {
   background-color: #367A38;
@@ -324,7 +340,7 @@ textarea.-error {
   Ignore: a;height:60px;
   Ignore: a;height:3.75rem;
 }
-@media only screen and (min-width: 959px) {
+@media only screen and (min-width: 768px) {
   #header {
     display: none;
   }
@@ -345,7 +361,7 @@ textarea.-error {
   color: #71D161;
   background: rgba(0, 0, 0, 0);
 }
-@media only screen and (max-width: 479px), only screen and (min-width: 768px) and (max-width: 959px) {
+@media only screen and (max-width: 767px) {
   #sidebar-wrapper {
     Ignore: a;margin-top:60px;
     Ignore: a;margin-top:3.75rem;
@@ -380,12 +396,21 @@ textarea.-error {
 .sidebar-nav > li a {
   display: inline;
 }
-.btn-default.-green {
+.btn.loading {
+  background-image: url(../img/loading.gif);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-attachment: center;
+  text-indent: 1000%;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.btn.btn-default.-green {
   background-color: #367A38;
   color: #BEEE9E;
   border-color: #FFF;
 }
-.btn-default.-green:hover {
+.btn.btn-default.-green:hover {
   color: #71D161;
   border-color: #bfbfbf;
 }

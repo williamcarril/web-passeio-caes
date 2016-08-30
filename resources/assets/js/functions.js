@@ -8,36 +8,41 @@
 
     //Default alert function
     var $alerts = $("#alerts");
-    window.showAlert = function (message, type, $wrapper) {
+    window.showAlert = function (messages, type, $wrapper) {
         $wrapper = $wrapper ? $wrapper : $alerts;
         var html = {
-            "success": $templates.find("[data-name='success-alert']").clone(),
-            "error": $templates.find("[data-name='error-alert']").clone(),
-            "info": $templates.find("[data-name='info-alert']").clone(),
-            "warning": $templates.find("[data-name='warning-alert']").clone()
+            "success": $templates.find("[data-name='success-alert']"),
+            "error": $templates.find("[data-name='error-alert']"),
+            "info": $templates.find("[data-name='info-alert']"),
+            "warning": $templates.find("[data-name='warning-alert']")
         };
         var $alert;
-        switch (type) {
-            case "success":
-                $alert = html.success;
-                break;
-            case "error":
-                $alert = html.error;
-                break;
-            case "warning":
-                $alert = html.warning;
-                break;
-            case "info":
-                $alert = html.info;
-                break;
-            default:
-                $alert = html.error;
-                break;
+        if (!messages instanceof Array) {
+            messages = [messages];
         }
-        $alert.html(function () {
-            return $(this).html().replace("!{message}", message);
-        });
-        $wrapper.append($alert).fadeIn(500);
+        for (var i in messages) {
+            switch (type) {
+                case "success":
+                    $alert = html.success.clone();
+                    break;
+                case "error":
+                    $alert = html.error.clone();
+                    break;
+                case "warning":
+                    $alert = html.warning.clone();
+                    break;
+                case "info":
+                    $alert = html.info.clone();
+                    break;
+                default:
+                    $alert = html.error.clone();
+                    break;
+            }
+            $alert.html(function () {
+                return $(this).html().replace("!{message}", messages[i]);
+            });
+            $wrapper.append($alert).fadeIn(500);
+        }
     };
     window.clearAlerts = function () {
         $alerts.html("");
@@ -162,20 +167,6 @@
             setInputStatus($input, "success");
         } else {
             setInputStatus($input, "error");
-        }
-    };
-
-    // Start/stop loading animation on screen
-    window.loadingAnimation = function (action) {
-        switch (action) {
-            case "start":
-            case true:
-                console.log("its loading...");
-                break;
-            case false:
-            case "stop":
-                console.log("its not loading...");
-                break;
         }
     };
 })();
