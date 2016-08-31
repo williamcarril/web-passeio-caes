@@ -3,7 +3,19 @@
 // -------------------------
 #page-content-wrapper {
     padding: 0;
-    @media @smartphones, @tablets {
+    @media @smartphones {
         .rem("margin-top", @sextuple-space);
     }
+
+    .rem("margin-bottom", @sextuple-space);
+
+    > .container {
+        @media @desktops {
+            width: 1085px;
+        }
+        @media @smartphones {
+            .rem("margin-bottom", @sextuple-space);
+        }
+    }
+
 }

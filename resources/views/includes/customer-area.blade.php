@@ -1,6 +1,6 @@
 <section>
     @if(empty($customer))
-    <form method="POST" action="{{route("cliente.auth.login")}}" role="form">
+    <form method="POST" action="{{route("cliente.auth.login.post")}}" role="form">
         {!! csrf_field() !!}
         <div class="form-group">
             <label class="sr-only" for="email">E-mail</label>
@@ -32,11 +32,11 @@
         </a>
         <br/>
         <a href="{{route("cliente.caes.get")}}">
-            <i class="glyphicon glyphicon-lock"></i>
+            <i class="flaticon-dog"></i>
             Manter cachorros
         </a>
         <br/>
-        <a href="{{route("cliente.auth.logout")}}">
+        <a href="{{route("cliente.auth.logout.get")}}">
             <i class="glyphicon glyphicon-off"></i>
             Sair
         </a>

@@ -88,4 +88,27 @@ class Passeio extends \WGPC\Eloquent\Model {
         return array_values($clientes);
     }
 
+    public function scopePendente($query) {
+        return $query->where('status', "pendente");
+    }
+
+    public function scopeCancelado($query) {
+        return $query->where('status', "cancelado");
+    }
+
+    public function scopeEmAndamento($query) {
+        return $query->where('status', "em_andamento");
+    }
+
+    public function scopeFeito($query) {
+        return $query->where('status', "feito");
+    }
+
+    public function scopeNaoFinalizado($query) {
+        return $query->where(function($q) {
+                    $q->orWhere("status", "pendente");
+                    $q->orWhere("status", "em_andamento");
+                });
+    }
+
 }

@@ -1,15 +1,27 @@
 // -------------------------
 // Button - Component
 // -------------------------
-.btn-default {
-    &.-green {
-        background-color: @container-color;
-        color: @container-link-color;
-        border-color: @light-color;
+.btn {
+    &.loading {
+        background-image: url(../img/loading.gif);
+        background-repeat: no-repeat;
+        background-position: center;
+        background-attachment: center;
+        text-indent: 1000%;
+        white-space: nowrap;
+        overflow: hidden;
+    }
 
-        &:hover {
-            color: @container-link-hover-color;
-            border-color: darken(@light-color, 25%);
+    &.btn-default {
+        &.-green {
+            background-color: @container-color;
+            color: @container-link-color;
+            border-color: @light-color;
+
+            &:hover {
+                color: @container-link-hover-color;
+                border-color: darken(@light-color, 25%);
+            }
         }
     }
 }

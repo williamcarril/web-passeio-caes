@@ -13,4 +13,27 @@
             }
         }
     });
+
+    $.fn.extend({
+        "imageUploader": function (action, data) {
+            if (this.attr("data-action") !== "image-uploader") {
+                return;
+            }
+            var $input = this.find("[data-role='input']");
+            var $preview = this.find("[data-role='preview']");
+            var $placeholder = this.find("[data-role='placeholder']");
+            switch (action) {
+                case "placeholder":
+                    $placeholder.text(data);
+                    break;
+                case "preview":
+                    $preview.attr("src", data);
+                    break;
+                case "id":
+                    $input.attr("id", data);
+                    this.attr("for", data);
+                    break;
+            }
+        }
+    });
 })();

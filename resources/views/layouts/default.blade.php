@@ -6,6 +6,8 @@ $hasMap = isset($hasMap) ? $hasMap : false;
     <head>
         <title>@yield("title", config("app.name"))</title>
         <link rel="stylesheet" href="{{asset("/css/styles.min.css")}}" />
+        <link rel="shortcut icon" href="{{asset("/img/logo.ico")}}" >
+        
         <meta name="csrf-token" content="{{csrf_token()}}">
 
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -41,12 +43,15 @@ $hasMap = isset($hasMap) ? $hasMap : false;
             @section("footer")
             @include("layouts.footer")
             @show
+            @include("layouts.modals.confirm")
         </div>
-        <div id="htmlTemplates">
+        <div id="html-templates">
             @include("includes.alert", ["type" => "error", "message" => "!{message}", "name" => "error-alert"])
             @include("includes.alert", ["type" => "info", "message" => "!{message}", "name" => "info-alert"])
             @include("includes.alert", ["type" => "success", "message" => "!{message}", "name" => "success-alert"])
             @include("includes.alert", ["type" => "warning", "message" => "!{message}", "name" => "warning-alert"])
+            @section("templates")
+            @show
         </div>
         <script src="{{asset("/js/scripts.min.js")}}"></script>
         @if($hasMap)
