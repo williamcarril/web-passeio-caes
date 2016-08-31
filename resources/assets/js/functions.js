@@ -17,7 +17,7 @@
             "warning": $templates.find("[data-name='warning-alert']")
         };
         var $alert;
-        if (!messages instanceof Array) {
+        if (typeof messages === "string" || messages instanceof String) {
             messages = [messages];
         }
         for (var i in messages) {
@@ -149,24 +149,75 @@
     //Predefined input validation and comportment
     validate.inputs = {};
     validate.inputs.empty = function ($input) {
-        if (!validate.empty($input.val())) {
+        var isEmpty = validate.empty($input.val());
+        if (!isEmpty) {
             setInputStatus($input, "success");
         } else {
             setInputStatus($input, "error");
         }
+        return isEmpty;
     };
     validate.inputs.phone = function ($input) {
-        if (validate.phone($input.val())) {
+        var isPhone = validate.phone($input.val());
+        if (isPhone) {
             setInputStatus($input, "success");
         } else {
             setInputStatus($input, "error");
         }
+        return isPhone;
     };
     validate.inputs.cep = function ($input) {
-        if (validate.cep($input.val())) {
+        var isCep = validate.cep($input.val());
+        if (isCep) {
             setInputStatus($input, "success");
         } else {
             setInputStatus($input, "error");
         }
+        return isCep;
+    };
+
+    //Default confirm modal function
+    var $confirm = $("#confirm-modal");
+    window.askConfirmation = function (title, text, confirmCallback, cancelCallback) {
+        title = title || "Confirmação";
+        text = text || "Deseja mesmo realizar esta operação?";
+        confirmCallback = $.isFunction(confirmCallback) ? confirmCallback : function () {};
+        cancelCallback = $.isFunction(cancelCallback) ? cancelCallback : function () {};
+
+        if (($confirm.data("bs.modal") || {}).isShown) {
+            return false;
+        }
+        $confirm.find("[data-role='title']").text(title);
+        $confirm.find("[data-role='text']").text(text);
+        $confirm.find("[data-role='confirm-button']").unbind("click").bind("click", confirmCallback);
+        $confirm.find("[data-role='cancel-button']").unbind("click").bind("click", cancelCallback);
+        $confirm.modal("show");
+        return true;
+    };
+
+    //Noun article fixer
+    window.fixArticle = function (text, gender, upperCase, articleMark) {
+        upperCase = upperCase || false;
+        articleMark = articleMark || "!{a}";
+        var article = "o(a)";
+        switch (gender) {
+            case 0:
+            case "male":
+            case "macho":
+                article = "o";
+                break;
+            case 1:
+            case "femea":
+            case "fêmea":
+            case "female":
+                article = "a";
+                break;
+            default:
+                break;
+        }
+        if (upperCase) {
+            article = article.toUpperCase();
+        }
+        return text.replace(new RegExp(articleMark, "gm"), article);
     };
 })();

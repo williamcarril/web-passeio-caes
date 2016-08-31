@@ -98,7 +98,7 @@
                 return;
             }
             $.ajax({
-                "url": "{!! route('cliente.cadastro.check.cpf') !!}",
+                "url": "{!! route('cliente.cadastro.check.cpf.get') !!}",
                 "type": "GET",
                 "data": {
                     "cpf": cpf
@@ -131,7 +131,7 @@
                 return;
             }
             $.ajax({
-                "url": "{!! route('cliente.cadastro.check.email') !!}",
+                "url": "{!! route('cliente.cadastro.check.email.get') !!}",
                 "type": "GET",
                 "data": {
                     "email": email

@@ -43,6 +43,7 @@ $hasMap = isset($hasMap) ? $hasMap : false;
             @section("footer")
             @include("layouts.footer")
             @show
+            @include("layouts.modals.confirm")
         </div>
         <div id="html-templates">
             @include("includes.alert", ["type" => "error", "message" => "!{message}", "name" => "error-alert"])
@@ -51,9 +52,6 @@ $hasMap = isset($hasMap) ? $hasMap : false;
             @include("includes.alert", ["type" => "warning", "message" => "!{message}", "name" => "warning-alert"])
             @section("templates")
             @show
-        </div>
-        <div id="loading-wrapper">
-            
         </div>
         <script src="{{asset("/js/scripts.min.js")}}"></script>
         @if($hasMap)

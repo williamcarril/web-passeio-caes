@@ -6,7 +6,7 @@ $imageDescription = isset($imageDescription) ? $imageDescription : "";
 $preview = isset($preview) ? $preview : true;
 $width = isset($width) ? $width : "100px";
 $height = isset($height) ? $height : "100px";
-$placeholder = isset($placeholder) ? $placeholder : true;
+$placeholder = isset($placeholder) ? $placeholder : "Selecione uma imagem";
 $icon = isset($icon) ? $icon : true;
 ?>
 <label class="image-uploader" for="{{$id}}" data-action="image-uploader">
@@ -20,10 +20,10 @@ $icon = isset($icon) ? $icon : true;
     @if($icon)
     <i class="glyphicon glyphicon-upload"></i>
     @endif
-    @if($placeholder)
+    @if(!empty($placeholder))
     <span data-role="placeholder">
-        Selecione a imagem
+        {{$placeholder}}
     </span>
     @endif
-    <input id="{{$id}}" name="{{$name}}" type="file" accept=".jpg, .png, .jpeg, .bmp, .tif, .tiff|images/*">
+    <input data-role="input" id="{{$id}}" name="{{$name}}" type="file" accept=".jpg, .png, .jpeg, .bmp, .tif, .tiff|images/*">
 </label>

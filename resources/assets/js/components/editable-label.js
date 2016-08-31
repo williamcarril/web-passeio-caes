@@ -1,32 +1,67 @@
 (function () {
-    $(document).on("click", "[data-action='editable-label']", function (ev) {
-        var $this = $(this);
-        var $input = $this.children("[data-role='input']");
-        var $label = $this.find("[data-role='label']");
-        changeStatus($this, $label, $input, "editing");
-    });
-    $(document).on("blur", "[data-action='editable-label'] [data-role='input']", function (ev) {
-        var $this = $(this);
-        var $parent = $this.parent("[data-action='editable-label']");
-        var $label = $parent.find("[data-role='label']");
-        changeStatus($parent, $label, $this, "done");
+    $(document).on("click", "[data-action='editable-label'] [data-role='label']", function (ev) {
+        var $parent = $(this).parent("[data-action='editable-label']");
+        $parent.trigger("editable-label:editing");
     });
 
-//    $.fn.extend({
-//        "editableLabel": function (action) {
-//            if (this.attr("data-action") !== "editable-label") {
-//                return;
-//            }
-//            switch (action) {
-//                case "clear":
-//                    var $input = this.find("[data-role='input']");
-//                    var $label = this.find("[data-role='label']");
-//                    $input.val("");
-//                    $label.text("");
-//                    break;
-//            }
-//        }
-//    });
+    $(document).on("blur", "[data-action='editable-label'] [data-role='input']", function (ev) {
+        var $parent = $(this).parent("[data-action='editable-label']");
+        $parent.trigger("editable-label:done");
+    });
+
+    $(document).on("editable-label:editing", "[data-action='editable-label']", function () {
+        var $this = $(this);
+        var $label = $this.children("[data-role='label']");
+        var $input = $this.children("[data-role='input']");
+        changeStatus($this, $label, $input, "editing");
+    });
+
+    $(document).on("editable-label:done", "[data-action='editable-label']", function () {
+        var $this = $(this);
+        var $label = $this.children("[data-role='label']");
+        var $input = $this.children("[data-role='input']");
+        changeStatus($this, $label, $input, "done");
+    });
+
+    $.fn.extend({
+        "editableLabel": function (action, data) {
+            if (this.attr("data-action") !== "editable-label") {
+                return;
+            }
+            var $input = this.find("[data-role='input']");
+            var $label = this.find("[data-role='label']");
+            switch (action) {
+                case "fill":
+                    var inputValue;
+                    var labelText;
+                    if ($.isPlainObject(data)) {
+                        inputValue = data.input;
+                        labelText = data.label;
+                    }
+                    if (data instanceof String || typeof data === "string") {
+                        inputValue = data;
+                        labelText = data;
+                    }
+                    if ($input.is("select")) {
+                        var $option = $input.find("option[value='" + inputValue + "']");
+                        $option.prop("selected", true);
+                        $label.text($option.text());
+                    } else {
+                        $input.val(inputValue);
+                        $label.text(labelText);
+                    }
+                    break;
+                case "clear":
+                    if ($input.is("select")) {
+                        $input.find("option:selected").prop("selected", false);
+                    } else {
+                        $input.val("");
+                    }
+                    $label.text("");
+                    break;
+            }
+        }
+    });
 
     function changeStatus($wrapper, $label, $input, status) {
         switch (status) {
@@ -37,11 +72,13 @@
                 $wrapper.attr("data-status", "editing");
                 $label.hide();
                 $input.show();
-                $wrapper.trigger("editable-label:editing");
                 $input.focus();
                 break;
             case "done":
             default:
+                if ($wrapper.attr("data-status") !== "editing") {
+                    return;
+                }
                 $wrapper.removeAttr("data-status");
                 if ($input.is("select")) {
                     var $selected = $input.find(":selected");
@@ -51,7 +88,6 @@
                 }
                 $input.hide();
                 $label.show();
-                $wrapper.trigger("editable-label:done");
                 break;
         }
     }

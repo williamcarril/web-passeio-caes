@@ -13,7 +13,8 @@
 if (!\App::environment("production")) {
     Route::group(["prefix" => "tests"], function() {
         Route::get("/", ["as" => "test", "uses" => function() {
-                return \Session::all();
+                $user = \Auth::guard("web")->user();
+                return $user->caes()->where("idCao", 1)->first();
             }]);
     });
 }
@@ -25,14 +26,16 @@ Route::group([], function() {
     Route::group(["prefix" => "cliente"], function() {
         Route::get("/cadastro", ["as" => "cliente.cadastro.get", "uses" => "ClienteController@route_getCadastroView"]);
         Route::post("/cadastro", ["as" => "cliente.cadastro.post", "uses" => "ClienteController@route_postCadastro"]);
-        Route::get("/cadastro/checkEmail", ["as" => "cliente.cadastro.check.email", "uses" => "ClienteController@route_getCheckEmail"]);
-        Route::get("/cadastro/checkCpf", ["as" => "cliente.cadastro.check.cpf", "uses" => "ClienteController@route_getCheckCpf"]);
-        Route::post("/login", ["as" => "cliente.auth.login", "uses" => "ClienteController@route_postLogin"]);
-        Route::get("/logout", ["as" => "cliente.auth.logout", "uses" => "ClienteController@route_getLogout"]);
+        Route::get("/cadastro/checkEmail", ["as" => "cliente.cadastro.check.email.get", "uses" => "ClienteController@route_getCheckEmail"]);
+        Route::get("/cadastro/checkCpf", ["as" => "cliente.cadastro.check.cpf.get", "uses" => "ClienteController@route_getCheckCpf"]);
+        Route::post("/login", ["as" => "cliente.auth.login.post", "uses" => "ClienteController@route_postLogin"]);
+        Route::get("/logout", ["as" => "cliente.auth.logout.get", "uses" => "ClienteController@route_getLogout"]);
 
         Route::group(["middleware" => "auth"], function() {
             Route::get("/cachorro", ["as" => "cliente.caes.get", "uses" => "ClienteController@route_getCaesView"]);
             Route::post("/cachorro", ["as" => "cliente.caes.post", "uses" => "ClienteController@route_postCaes"]);
+            Route::post("/cachorro/delete", ["as" => "cliente.caes.delete.post", "uses" => "ClienteController@route_postDeleteCao"]);
+            Route::get("/cachorro/{id}/vacinas", ["as" => "cliente.caes.vacina.get", "uses" => "ClienteController@route_getVacinacao"]);
         });
     });
 });

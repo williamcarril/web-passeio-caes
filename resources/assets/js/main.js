@@ -39,4 +39,9 @@
     $('.responsive-calendar').responsiveCalendar({
         "translateMonths": months
     });
+
+    //Adding method to string prototype
+    String.prototype.ucfirst = function () {
+        return this.charAt(0).toUpperCase() + this.slice(1);
+    };
 })();

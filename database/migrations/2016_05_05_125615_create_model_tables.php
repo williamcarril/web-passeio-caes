@@ -110,6 +110,7 @@ class CreateModelTables extends Migration {
                 $table->string("raca", 25);
                 $table->enum("porte", ["pequeno", "medio", "grande"]);
                 $table->enum("genero", ["macho", "femea"]);
+                $table->boolean("ativo")->default(true);
                 $table->integer("idCliente")->unsigned();
                 $table->foreign("idCliente")->references("idCliente")->on("cliente");
                 $table->integer("idImagem")->unsigned()->nullable();
@@ -199,7 +200,7 @@ class CreateModelTables extends Migration {
 
             \DB::commit();
         } catch (\Exception $ex) {
-            \DB::rollback();
+            \DB::rollBack();
             throw $ex;
         }
     }
@@ -214,25 +215,24 @@ class CreateModelTables extends Migration {
         try {
             \Schema::drop("a_agendamento_dia");
             \Schema::drop("a_trajeto_imagem");
-            \Schema::drop("a_horario_interesse_dia");
+            \Schema::drop("a_horario_dia");
             \Schema::drop("a_cao_passeio");
             \Schema::drop("cancelamento");
             \Schema::drop("passeio");
             \Schema::drop("agendamento");
             \Schema::drop("vacinacao");
             \Schema::drop("cao");
-            \Schema::drop("horario_interesse");
+            \Schema::drop("horario");
             \Schema::drop("funcionario");
             \Schema::drop("cliente");
             \Schema::drop("vacina");
             \Schema::drop("dia");
-            \Schema::drop("modalidade_valor");
             \Schema::drop("modalidade");
             \Schema::drop("trajeto");
             \Schema::drop("imagem");
             \DB::commit();
         } catch (\Exception $ex) {
-            \DB::rollback();
+            \DB::rollBack();
         }
     }
 

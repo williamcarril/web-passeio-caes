@@ -63,6 +63,8 @@ class Repositorio {
             } else {
                 $to = uniqid(date("Y-m-d_")) . "." . $source->getExtension();
             }
+        } else {
+            $to = ltrim($to, "/");
         }
 
         $validatorKey = "source";
@@ -84,7 +86,7 @@ class Repositorio {
             return false;
         }
 
-        return $toPath;
+        return $to;
     }
 
     public function delete($filename) {
