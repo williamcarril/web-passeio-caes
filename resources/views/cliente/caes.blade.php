@@ -21,19 +21,15 @@
                 @foreach($caes as $cao)
                 <tr data-id="{{$cao->idCao}}" data-role="cao">
                     <td>
-                        @if(!is_null($cao->imagem))
                         @include("includes.image-uploader", ["placeholder" => false, "icon" => false, "name" => "imagem", "image" => $cao->thumbnail, "imageDescription" => $cao->nome])
-                        @else
-                        @include("includes.image-uploader", ["placeholder" => false, "icon" => false, "name" => "imagem"])
-                        @endif
                     </td>
                     <td class="editable-label" data-action="editable-label" data-name="nome">
                         <span data-role="label">{{$cao->nome}}</span>
-                        <input name="nome" data-role="input" class="form-control" type="text" value="{{$cao->nome}}"/>
+                        <input name="nome" data-role="input" class="form-control" type="text" value="{{$cao->nome}}" autocomplete="off"/>
                     </td>
                     <td class="editable-label" data-action="editable-label" data-name="raca">
                         <span data-role="label">{{$cao->raca}}</span>
-                        <input name="raca" data-role="input" class="form-control" type="text" value="{{$cao->raca}}"/>
+                        <input name="raca" data-role="input" class="form-control" type="text" value="{{$cao->raca}}" autocomplete="off"/>
                     </td>
                     <td class="editable-label" data-action="editable-label" data-name="porte">
                         <?php
@@ -52,7 +48,7 @@
                         }
                         ?>
                         <span data-role="label">{{$porte}}</span>
-                        <select data-role="input" name="porte" class="form-control">
+                        <select data-role="input" name="porte" class="form-control" autocomplete="off">
                             <option {!!$cao->porte === "pequeno" ? "selected" : ""!!} value="pequeno">Pequeno</option>
                             <option {!!$cao->porte === "medio" ? "selected" : ""!!} value="medio">Médio</option>
                             <option {!!$cao->porte === "grande" ? "selected" : ""!!} value="grande">Grande</option>
@@ -72,7 +68,7 @@
                         }
                         ?>
                         <span data-role="label">{{$genero}}</span>
-                        <select data-role="input" name="genero" class="form-control">
+                        <select data-role="input" name="genero" class="form-control" autocomplete="off">
                             <option {!!$cao->genero === "macho" ? "selected" : ""!!} value="macho">Macho</option>
                             <option {!!$cao->genero === "femea" ? "selected" : ""!!} value="femea">Fêmea</option>
                         </select>
@@ -97,13 +93,13 @@
                         @include("includes.image-uploader", ["placeholder" => false, "icon" => false, "name" => "imagem"])
                     </td>
                     <td>
-                        <input name="nome" class="form-control" type="text" value=""/>
+                        <input name="nome" class="form-control" type="text" value="" autocomplete="off"/>
                     </td>
                     <td>
-                        <input name="raca"class="form-control" type="text" value=""/>
+                        <input name="raca"class="form-control" type="text" value="" autocomplete="off"/>
                     </td>
                     <td>
-                        <select name="porte" class="form-control">
+                        <select name="porte" class="form-control" autocomplete="off">
                             <option value="" selected>Selecione uma opção</option>
                             <option value="pequeno">Pequeno</option>
                             <option value="medio">Médio</option>
@@ -111,7 +107,7 @@
                         </select>
                     </td>
                     <td>
-                        <select name="genero" class="form-control">
+                        <select name="genero" class="form-control" autocomplete="off">
                             <option value="" selected>Selecione uma opção</option>
                             <option value="macho">Macho</option>
                             <option value="femea">Fêmea</option>
@@ -139,13 +135,13 @@
                 @include("includes.image-uploader", ["placeholder" => false, "icon" => false, "name" => "imagem"])
             </td>
             <td>
-                <input name="nome" class="form-control" type="text" value=""/>
+                <input name="nome" class="form-control" type="text" value="" autocomplete="off"/>
             </td>
             <td>
-                <input name="raca"class="form-control" type="text" value=""/>
+                <input name="raca"class="form-control" type="text" value="" autocomplete="off"/>
             </td>
             <td>
-                <select name="porte" class="form-control">
+                <select name="porte" class="form-control" autocomplete="off">
                     <option value="">Selecione uma opção</option>
                     <option value="pequeno">Pequeno</option>
                     <option value="medio">Médio</option>
@@ -153,7 +149,7 @@
                 </select>
             </td>
             <td>
-                <select name="genero" class="form-control">
+                <select name="genero" class="form-control" autocomplete="off">
                     <option value="">Selecione uma opção</option>
                     <option value="macho">Macho</option>
                     <option value="femea">Fêmea</option>
@@ -173,15 +169,15 @@
             </td>
             <td class="editable-label" data-action="editable-label" data-name="nome">
                 <span data-role="label"></span>
-                <input name="nome" data-role="input" class="form-control" type="text" value=""/>
+                <input name="nome" data-role="input" class="form-control" type="text" value="" autocomplete="off"/>
             </td>
             <td class="editable-label" data-action="editable-label" data-name="raca">
                 <span data-role="label"></span>
-                <input name="raca" data-role="input" class="form-control" type="text" value=""/>
+                <input name="raca" data-role="input" class="form-control" type="text" value="" autocomplete="off"/>
             </td>
             <td class="editable-label" data-action="editable-label" data-name="porte">
                 <span data-role="label"></span>
-                <select data-role="input" name="porte" class="form-control">
+                <select data-role="input" name="porte" class="form-control" autocomplete="off">
                     <option value="pequeno">Pequeno</option>
                     <option value="medio">Médio</option>
                     <option value="grande">Grande</option>
@@ -189,7 +185,7 @@
             </td>
             <td class="editable-label" data-action="editable-label" data-name="genero">
                 <span data-role="label"></span>
-                <select data-role="input" name="genero" class="form-control">
+                <select data-role="input" name="genero" class="form-control" autocomplete="off">
                     <option value="macho">Macho</option>
                     <option value="femea">Fêmea</option>
                 </select>
@@ -220,10 +216,15 @@
         var $newDogTemplate = globals.templates.find("[data-template='new-dog']");
         var $dogTemplate = globals.templates.find("[data-template='dog']");
 
+        $dogTable.on("blur", "input[name='nome'],input[name='raca'],select[name='porte'],select[name='genero']", function () {
+            var $this = $(this);
+            validate.inputs.empty($this);
+        });
+
         $dogTable.on("editable-label:done", "[data-name='nome'],[data-name='raca'],[data-name='porte'],[data-name='genero']", function (ev) {
             var $this = $(this);
             var $input = $this.find("[data-role='input']");
-            if (validate.inputs.empty($input)) {
+            if (validate.empty($input.val())) {
                 ev.stopPropagation();
                 ev.preventDefault();
             }

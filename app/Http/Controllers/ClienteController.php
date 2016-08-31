@@ -154,7 +154,11 @@ class ClienteController extends Controller {
                 $cao->genero = $req->input("genero");
             }
             if ($req->hasFile("imagem")) {
-                $filename = $this->repository->save($req->file("imagem"));
+                $filename = $this->repository->saveImage($req->file("imagem"), 100, 100);
+                if ($filename === false) {
+                    \DB::rollBack();
+                    return $this->defaultJsonResponse(false, trans("alert.error.generic", ["message" => "salvar a imagem do cachorro"]));
+                }
                 $imagem = new Imagem();
                 $imagem->descricao = null;
                 $imagem->arquivo = $filename;
@@ -206,11 +210,12 @@ class ClienteController extends Controller {
                 return $this->defaultJsonResponse(false, $cao->getErrors());
             }
             //Apaga o arquivo, caso necessário
-            if (!empty($imagem) && $imagem->delete()) {
+            if (!empty($imagem)) {
+                if (!$imagem->delete()) {
+                    \DB::rollBack();
+                    return $this->defaultJsonResponse(false, trans("alert.error.deletion", ["entity" => "este cachorro"]));
+                }
                 $this->repository->delete($imagem->arquivo);
-            } else {
-                \DB::rollBack();
-                return $this->defaultJsonResponse(false, trans("alert.error.deletion", ["entity" => "este cachorro"]));
             }
             \DB::commit();
             return $this->defaultJsonResponse(true);

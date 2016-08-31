@@ -13,8 +13,7 @@
 if (!\App::environment("production")) {
     Route::group(["prefix" => "tests"], function() {
         Route::get("/", ["as" => "test", "uses" => function() {
-                $user = \Auth::guard("web")->user();
-                return $user->caes()->where("idCao", 1)->first();
+                return pathinfo("/eita.png", PATHINFO_EXTENSION) == false ? "failso" : "dad";
             }]);
     });
 }

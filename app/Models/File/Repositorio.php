@@ -3,20 +3,25 @@
 namespace App\Models\File;
 
 use \Illuminate\Filesystem\FilesystemManager;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
+use \Symfony\Component\HttpFoundation\File\UploadedFile;
+use \Intervention\Image\ImageManager;
 
 class Repositorio {
+
+    const DEFAULT_IMAGE_QUALITY = 60;
 
     private $path;
     private $rules;
     private $complexRules;
     private $storage;
+    private $imageManager;
 
-    public function __construct(FilesystemManager $storage, $path = null, $rules = [], $complexRules = []) {
+    public function __construct(FilesystemManager $storage, ImageManager $imageManager, $path = null, $rules = [], $complexRules = []) {
         if (is_null($path)) {
             $path = config("path.repository");
         }
         $this->storage = $storage;
+        $this->imageManager = $imageManager;
         $this->setRules($rules);
         $this->setComplexRules($complexRules);
         $this->setPath($path);
@@ -52,19 +57,64 @@ class Repositorio {
         $this->complexRules = $complexRules;
     }
 
-    public function save($source, $to = null) {
+    /**
+     * @todo
+     */
+    public function saveImage($source, $width = null, $height = null, $to = null) {
+        try {
+            $image = $this->imageManager->make($source);
+            if (!empty($width) && !empty($height)) {
+                $image->resize($width, $height);
+            } else {
+                if (!empty($width)) {
+                    $image->widen($width);
+                } else {
+                    $image->heighten($height);
+                }
+            }
+            $data = $image->encode("png", static::DEFAULT_IMAGE_QUALITY);
+            if (is_null($to)) {
+                $extOrPath = "png";
+            } else {
+                $extOrPath = $to;
+            }
+            return $this->save($data, $extOrPath);
+        } catch (\Exception $ex) {
+            return false;
+        }
+    }
+
+    public function save($contents, $extOrPath) {
+        //É uma extensão
+        if (pathinfo($extOrPath) == false) {
+            $to = uniqid(date("Y-m-d_")) . ".$extOrPath";
+        }
+        //É um path
+        else {
+            $to = ltrim($extOrPath, "/");
+        }
+        $toPath = "$this->path$to";
+        $saved = $this->storage->put($toPath, $contents);
+        if (!$saved) {
+            return false;
+        }
+
+        return $to;
+    }
+
+    public function copy($source, $to = null) {
         if (is_string($source)) {
             $source = new SplFileInfo($source);
         }
 
         if (is_null($to)) {
             if ($source instanceof UploadedFile) {
-                $to = uniqid(date("Y-m-d_")) . "." . $source->getClientOriginalExtension();
+                $extOrPath = $source->getClientOriginalExtension();
             } else {
-                $to = uniqid(date("Y-m-d_")) . "." . $source->getExtension();
+                $extOrPath = $source->getExtension();
             }
         } else {
-            $to = ltrim($to, "/");
+            $extOrPath = $to;
         }
 
         $validatorKey = "source";
@@ -78,15 +128,7 @@ class Repositorio {
         if ($validator->fails()) {
             return false;
         }
-
-        $contents = file_get_contents($source);
-        $toPath = "$this->path$to";
-        $saved = $this->storage->put($toPath, $contents);
-        if (!$saved) {
-            return false;
-        }
-
-        return $to;
+        return $this->save(file_get_contents($source), $extOrPath);
     }
 
     public function delete($filename) {

@@ -49,6 +49,10 @@ class Cao extends \WGPC\Eloquent\Model {
         return $this->hasManyThrough("\App\Models\Eloquent\Vacina", "\App\Models\Eloquent\Vacinacao", "idCao", "idVacina", "idCao");
     }
 
+    public static function getDefaultThumbnail() {
+        return asset("img/dog.png");
+    }
+    
     /**
      * @todo Definir thumbnail padrão
      */
@@ -57,7 +61,7 @@ class Cao extends \WGPC\Eloquent\Model {
         if (!is_null($imagem)) {
             return $imagem->getUrl();
         } else {
-            return asset("");
+            return static::getDefaultThumbnail();
         }
     }
 

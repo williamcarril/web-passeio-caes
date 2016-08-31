@@ -35,8 +35,12 @@ class AppServiceProvider extends ServiceProvider {
      * @return void
      */
     public function register() {
+        $this->app->bind(\Intervention\Image\ImageManager::class, function($app) {
+            return new \Intervention\Image\ImageManager();
+        });
+
         $this->app->singleton(\App\Models\File\Repositorio::class, function ($app) {
-            $repository = new \App\Models\File\Repositorio($app["filesystem"]);
+            $repository = new \App\Models\File\Repositorio($app["filesystem"], $app->make(\Intervention\Image\ImageManager::class));
             return $repository;
         });
 
