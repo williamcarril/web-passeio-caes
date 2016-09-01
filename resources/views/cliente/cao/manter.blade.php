@@ -1,4 +1,4 @@
-@extends("layouts.default", ["hasMap" => true])
+@extends("layouts.default")
 
 @section("title") Cachorros | {{env("APP_NAME")}} @endsection
 

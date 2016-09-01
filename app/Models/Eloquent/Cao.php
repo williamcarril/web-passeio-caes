@@ -29,6 +29,16 @@ class Cao extends \WGPC\Eloquent\Model {
         "idImagem" => ["exists:imagem,idImagem", "integer"]
     ];
 
+    public static function boot() {
+        parent::boot();
+        /**
+         * @todo create a scope trait for active field...
+         */
+        static::addGlobalScope("ativo", function(\Illuminate\Database\Eloquent\Builder $builder) {
+            $builder->where("ativo", true);
+        });
+    }
+
     public function cliente() {
         return $this->belongsTo("\App\Models\Eloquent\Cliente", "idCliente", "idCliente");
     }
@@ -52,7 +62,7 @@ class Cao extends \WGPC\Eloquent\Model {
     public static function getDefaultThumbnail() {
         return asset("img/dog.png");
     }
-    
+
     /**
      * @todo Definir thumbnail padrão
      */
@@ -63,10 +73,6 @@ class Cao extends \WGPC\Eloquent\Model {
         } else {
             return static::getDefaultThumbnail();
         }
-    }
-
-    public function scopeAtivo($query) {
-        return $query->where('ativo', 1);
     }
 
 }
