@@ -13,7 +13,7 @@
 if (!\App::environment("production")) {
     Route::group(["prefix" => "tests"], function() {
         Route::get("/", ["as" => "test", "uses" => function() {
-                return pathinfo("/eita.png", PATHINFO_EXTENSION) == false ? "failso" : "dad";
+                return \App\Models\Eloquent\Cao::all();
             }]);
     });
 }
@@ -36,6 +36,11 @@ Route::group([], function() {
             Route::post("/cachorro/delete", ["as" => "cliente.caes.delete.post", "uses" => "ClienteController@route_postDeleteCao"]);
             Route::get("/cachorro/{id}/vacinas", ["as" => "cliente.caes.vacina.get", "uses" => "ClienteController@route_getVacinacao"]);
         });
+    });
+
+    Route::group(["prefix" => "local"], function() {
+        Route::get("/", ["as" => "local.listagem.get", "uses" => "LocalController@route_getLocais"]);
+        Route::get("/{slug}", ["as" => "local.detalhes.get", "uses" => "LocalController@route_getLocal"]);
     });
 });
 

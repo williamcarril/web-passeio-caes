@@ -219,11 +219,17 @@ Creation date: 29/08/2016 18:46
 .flaticon-dog:before {
   content: "\f100";
 }
-.flaticon-medical:before {
+.flaticon-smile:before {
   content: "\f101";
 }
-.flaticon-paw-print:before {
+.flaticon-key:before {
   content: "\f102";
+}
+.flaticon-medical:before {
+  content: "\f103";
+}
+.flaticon-paw-print:before {
+  content: "\f104";
 }
 ._no-border {
   border: none !important;

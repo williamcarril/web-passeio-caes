@@ -9,7 +9,7 @@ class Passeio extends \WGPC\Eloquent\Model {
     protected $fillable = [
         "idAgendamento",
         "idModalidade",
-        "idTrajeto",
+        "idLocal",
         "idPasseador",
         "idPasseioReagendado",
         "preco",
@@ -22,7 +22,7 @@ class Passeio extends \WGPC\Eloquent\Model {
     protected static $rules = [
         "idAgendamento" => ["required", "exists:agendamento,idAgendamento", "integer"],
         "idModalidade" => ["required", "exists:modalidade,idModalidade", "integer"],
-        "idTrajeto" => ["required", "exists:trajeto,idTrajeto", "integer"],
+        "idLocal" => ["required", "exists:local,idLocal", "integer"],
         "idPasseador" => ["exists:funcionario,idFuncionario,tipo,passeador", "integer"],
         "idPasseioReagendado" => ["exists:passeio,idPasseio", "integer"],
         "preco" => ["required", "numeric"],
@@ -50,8 +50,8 @@ class Passeio extends \WGPC\Eloquent\Model {
         return $this->belongsTo("\App\Models\Eloquent\Passeio", "idPasseioReagendado", "idPasseio");
     }
 
-    public function trajeto() {
-        return $this->belongsTo("\App\Models\Eloquent\Trajeto", "idTrajeto", "idTrajeto");
+    public function local() {
+        return $this->belongsTo("\App\Models\Eloquent\Local", "idLocal", "idLocal");
     }
 
     public function passeador() {
@@ -63,7 +63,7 @@ class Passeio extends \WGPC\Eloquent\Model {
     }
 
     public function caes() {
-        return $this->belongsToMany("\App\Models\Eloquent\Cao", "a_cao_passeio", "idPasseio", "idCao");
+        return $this->belongsToMany("\App\Models\Eloquent\Cao", "a_cao_passeio", "idPasseio", "idCao")->withoutGlobalScope("ativo");
     }
 
     public function setDataAttribute($value) {

@@ -1,5 +1,5 @@
-<?php 
-    $hasLinkToHome = isset($hasLinkToHome) ? $hasLinkToHome : true;
+<?php
+$hasLinkToHome = isset($hasLinkToHome) ? $hasLinkToHome : true;
 ?>
 <!DOCTYPE html>
 <html>
@@ -16,10 +16,14 @@
                 padding: 0;
                 width: 100%;
                 color: #FFF;
-                background-color: #000;
+                background-color: #367A38;
                 display: table;
                 font-weight: 100;
                 font-family: 'Lato';
+            }
+
+            a {
+                color: #BEEE9E;
             }
 
             .container {

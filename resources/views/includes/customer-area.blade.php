@@ -6,7 +6,7 @@
             <label class="sr-only" for="email">E-mail</label>
             <div class="input-group">
                 <span class="input-group-addon">
-                    <i class="glyphicon glyphicon-user"></i>
+                    <i class="flaticon-smile"></i>
                 </span>
                 <input name="email" type="email" class="form-control" placeholder="E-mail">
             </div>
@@ -15,7 +15,7 @@
             <label class="sr-only" for="pass">Senha</label>
             <div class="input-group">
                 <span class="input-group-addon">
-                    <i class="glyphicon glyphicon-lock"></i>
+                    <i class="flaticon-key"></i>
                 </span>
                 <input name="senha" type="password" class="form-control" placeholder="Senha">
             </div>

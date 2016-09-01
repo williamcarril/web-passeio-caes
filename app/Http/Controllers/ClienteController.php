@@ -28,13 +28,24 @@ class ClienteController extends Controller {
     public function route_getCaesView(Request $req) {
         $cliente = $this->auth->guard("web")->user();
         $data = [
-            "caes" => $cliente->caes()->ativo()->get()
+            "caes" => $cliente->caes()->get()
         ];
-        return response()->view("cliente.caes", $data);
+        return response()->view("cliente.cao.manter", $data);
     }
 
+    /**
+     * @todo
+     */
     public function route_getVacinacao(Request $req, $id) {
-        return $id;
+        $cliente = $this->auth->guard("web")->user();
+        $cao = Cao::where("idCao", $id)->firstOrFail();
+        if (!$cliente->caes()->where("idCao", $id)->exists()) {
+            return abort(403);
+        }
+        $data = [
+            "cao" => $cao
+        ];
+        return response()->view("cliente.cao.vacinacoes", $data);
     }
 
     // </editor-fold>
@@ -65,9 +76,12 @@ class ClienteController extends Controller {
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Rotas POST que retornam JSON">
     public function route_postCadastro(Request $req) {
+        //Verifica se é necessário realizar login do usuário
+        $logarClienteNovo = false;
         $cliente = $this->auth->guard("web")->user();
         if (is_null($cliente)) {
             $cliente = new Cliente();
+            $logarClienteNovo = true;
         }
 
         if ($req->input("senha") !== $req->input("senha2")) {
@@ -117,6 +131,9 @@ class ClienteController extends Controller {
                 return $this->defaultJsonResponse(false, $cliente->getErrors());
             }
             \DB::commit();
+            if ($logarClienteNovo) {
+                $this->auth->guard("web")->login($cliente);
+            }
             return $this->defaultJsonResponse(true);
         } catch (\Exception $ex) {
             \DB::rollBack();
