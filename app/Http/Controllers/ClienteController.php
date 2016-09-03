@@ -171,6 +171,10 @@ class ClienteController extends Controller {
                 $cao->genero = $req->input("genero");
             }
             if ($req->hasFile("imagem")) {
+                if (!is_null($cao->idImagem)) {
+                    //Guarda referência da imagem antiga para ser deletada posteriormente
+                    $idImagemAntiga = $cao->idImagem;
+                }
                 $filename = $this->repository->saveImage($req->file("imagem"), 100, 100);
                 if ($filename === false) {
                     \DB::rollBack();
@@ -189,6 +193,14 @@ class ClienteController extends Controller {
             if (!$cao->save()) {
                 \DB::rollBack();
                 return $this->defaultJsonResponse(false, $cao->getErrors());
+            }
+            if (!empty($idImagemAntiga)) {
+                $imagemAntiga = Imagem::find($idImagemAntiga);
+                if (!$imagemAntiga->delete()) {
+                    \DB::rollBack();
+                    return $this->defaultJsonResponse(false, trans("alert.error.update", ["entity" => "este cachorro"]));
+                }
+                $this->repository->delete($imagemAntiga->arquivo);
             }
             \DB::commit();
             $data = $cao->toArray();

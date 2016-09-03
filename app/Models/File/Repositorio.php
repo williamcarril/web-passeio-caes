@@ -68,7 +68,8 @@ class Repositorio {
             } else {
                 if (!empty($width)) {
                     $image->widen($width);
-                } else {
+                }
+                if (!empty($height)) {
                     $image->heighten($height);
                 }
             }
@@ -84,37 +85,24 @@ class Repositorio {
         }
     }
 
-    public function save($contents, $extOrPath) {
-        //É uma extensão
-        if (pathinfo($extOrPath) == false) {
-            $to = uniqid(date("Y-m-d_")) . ".$extOrPath";
-        }
-        //É um path
-        else {
-            $to = ltrim($extOrPath, "/");
-        }
+    public function saveTo($contents, $to) {
+        $to = ltrim($to, "/");
         $toPath = "$this->path$to";
         $saved = $this->storage->put($toPath, $contents);
         if (!$saved) {
             return false;
         }
-
         return $to;
+    }
+
+    public function save($contents, $ext) {
+        $to = uniqid(date("Y-m-d_")) . ".$ext";
+        return $this->saveTo($contents, $to);
     }
 
     public function copy($source, $to = null) {
         if (is_string($source)) {
             $source = new SplFileInfo($source);
-        }
-
-        if (is_null($to)) {
-            if ($source instanceof UploadedFile) {
-                $extOrPath = $source->getClientOriginalExtension();
-            } else {
-                $extOrPath = $source->getExtension();
-            }
-        } else {
-            $extOrPath = $to;
         }
 
         $validatorKey = "source";
@@ -128,7 +116,17 @@ class Repositorio {
         if ($validator->fails()) {
             return false;
         }
-        return $this->save(file_get_contents($source), $extOrPath);
+
+        if (is_null($to)) {
+            if ($source instanceof UploadedFile) {
+                $ext = $source->getClientOriginalExtension();
+            } else {
+                $ext = $source->getExtension();
+            }
+            return $this->save(file_get_contents($source), $ext);
+        } else {
+            return $this->saveTo(file_get_contents($source), $to);
+        }
     }
 
     public function delete($filename) {

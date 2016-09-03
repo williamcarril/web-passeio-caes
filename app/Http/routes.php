@@ -13,6 +13,8 @@
 if (!\App::environment("production")) {
     Route::group(["prefix" => "tests"], function() {
         Route::get("/", ["as" => "test", "uses" => function() {
+            return pathinfo("png");
+            return (new App\Models\Eloquent\Cao())->imagem;
                 return App\Util\Calculator::distanceBetweenTwoCoordinates(-23.636766, -46.577740, -23.584800, -46.655900, "km");
             }]);
     });
