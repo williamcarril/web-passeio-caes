@@ -231,6 +231,11 @@
             var $dog = $this.parents("[data-role='cao']");
             $dog.find("[data-action='save-dog']").removeClass("hidden");
         });
+        $dogTable.on("change", "input[name='imagem']", function(ev) {
+            var $this = $(this);
+            var $dog = $this.parents("[data-role='cao']");
+            $dog.find("[data-action='save-dog']").removeClass("hidden");
+        });
 
         $dogTable.on("click", "[data-action='delete-dog']", function (ev) {
             var $this = $(this);
