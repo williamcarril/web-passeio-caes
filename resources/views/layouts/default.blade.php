@@ -7,7 +7,7 @@ $hasMap = isset($hasMap) ? $hasMap : false;
         <title>@yield("title", config("app.name"))</title>
         <link rel="stylesheet" href="{{asset("/css/styles.min.css")}}" />
         <link rel="shortcut icon" href="{{asset("/img/logo.ico")}}" >
-        
+
         <meta name="csrf-token" content="{{csrf_token()}}">
 
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -25,26 +25,33 @@ $hasMap = isset($hasMap) ? $hasMap : false;
     </head>
     <body>
         <div id="wrapper">
-            @section("header")
-            @include("layouts.header")
-            @show
-            <aside id="sidebar-wrapper">
-                @section("sidebar")
-                @include("layouts.sidebar")
+            <header id="header">
+                @section("header")
+                @include("layouts.header")
                 @show
-            </aside>
-            <div id="page-content-wrapper">
-                @include("layouts.alerts")
-                <div class="container">
-                    @section("main")
+            </header>
+            <div id="content">
+                <aside id="sidebar">
+                    @section("sidebar")
+                    @include("layouts.sidebar")
                     @show
-                </div>
+                </aside>
+                <main id="main">
+                    @include("layouts.alerts")
+                    <div class="container">
+                        @section("main")
+                        @show
+                    </div>
+                </main>
+                <footer id="footer">
+                    @section("footer")
+                    @include("layouts.footer")
+                    @show
+                </footer>
             </div>
-            @section("footer")
-            @include("layouts.footer")
-            @show
-            @include("layouts.modals.confirm")
         </div>
+        @include("layouts.modals.confirm")
+        @include("layouts.modals.credits")
         <div id="html-templates">
             @include("includes.alert", ["type" => "error", "message" => "!{message}", "name" => "error-alert"])
             @include("includes.alert", ["type" => "info", "message" => "!{message}", "name" => "info-alert"])

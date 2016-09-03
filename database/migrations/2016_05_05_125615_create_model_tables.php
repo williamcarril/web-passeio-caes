@@ -29,7 +29,7 @@ class CreateModelTables extends Migration {
                 $table->string("logradouro", 70);
                 $table->string("bairro", 40);
                 $table->char("postal", 8);
-                $table->string("numero", 12);
+                $table->string("numero", 12)->nullable();
                 $table->decimal("lat", 10, 6);
                 $table->decimal("lng", 10, 6);
                 $table->string("complemento", 50)->nullable();

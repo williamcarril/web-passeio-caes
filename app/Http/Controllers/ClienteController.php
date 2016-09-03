@@ -101,7 +101,7 @@ class ClienteController extends Controller {
             $cliente->email = $req->input("email");
         }
         if ($req->has("senha")) {
-            $cliente->senha = \bcrypt($req->input("senha"));
+            $cliente->senha = $req->input("senha");
         }
         if ($req->has("lat")) {
             $cliente->lat = $req->input("lat");

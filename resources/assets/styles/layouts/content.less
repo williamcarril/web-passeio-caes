@@ -1,21 +1,12 @@
 // -------------------------
 // Main - Layout
 // -------------------------
-#page-content-wrapper {
-    padding: 0;
-    @media @smartphones {
-        .rem("margin-top", @sextuple-space);
-    }
-
-    .rem("margin-bottom", @sextuple-space);
-
+#main {
+    min-height: 100vh;
     > .container {
         @media @desktops {
             width: 1085px;
         }
-        @media @smartphones {
-            .rem("margin-bottom", @sextuple-space);
-        }
     }
-
+    .rem("margin-bottom", @base-space);
 }

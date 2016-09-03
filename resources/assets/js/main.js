@@ -8,13 +8,12 @@
 
     //Setting up sidebar "hide" button 
     var $wrapper = $("#wrapper");
-    $("#sidebar-toggle").click(function (ev) {
-        ev.preventDefault();
-        ev.stopPropagation();
-        if ($wrapper.hasClass("toggled")) {
-            $wrapper.removeClass("toggled");
+    var $sidebar = $("#sidebar");
+    $("[data-action='sidebar-toggler']").click(function (ev) {
+        if ($sidebar.hasClass("toggled")) {
+            $sidebar.removeClass("toggled");
         } else {
-            $wrapper.addClass("toggled");
+            $sidebar.addClass("toggled");
         }
     });
 

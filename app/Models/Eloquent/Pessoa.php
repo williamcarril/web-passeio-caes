@@ -60,6 +60,10 @@ abstract class Pessoa extends \WGPC\Eloquent\Model implements Authenticatable {
         $cpf = preg_replace('/[^0-9]/', '', $value);
         $this->attributes["cpf"] = $cpf;
     }
+    
+    public function setSenhaAttribute($value) {
+        $this->attributes["senha"] = \bcrypt($value);
+    }
 
     public function getAuthIdentifier() {
         return $this->attributes[$this->getAuthIdentifierName()];

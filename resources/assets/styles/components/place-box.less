@@ -1,0 +1,42 @@
+.place-box {
+    .rem("padding", @base-space);
+    .rem("margin-bottom", @base-space);
+    box-shadow: 0 0 0 1px lighten(@divisory-color, 35%) inset;
+
+    &:hover {
+        box-shadow: 0 0 0 1px lighten(@divisory-color, 25%) inset;
+    }
+
+    &.-agendable {
+        background-color: @faded-success-color;
+    }
+
+    > .header {
+        .rem("margin-bottom", @base-space);
+        > a {
+            text-decoration: none;
+        }
+        .image, .title {
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .title {
+            max-width: 49%;
+        }
+    }
+    > .address {
+        display: block;
+        size: @small-font-size;
+        color: @featured-color;
+        .rem("margin-bottom", @half-space);
+    }
+    > .description {
+        .rem("text-indent", @quadruple-space);
+        text-align: justify;
+    }
+
+    > footer {
+        text-align: right;
+    }
+
+}
