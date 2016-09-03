@@ -2,19 +2,18 @@
 // Header - Layout
 // -------------------------
 #header {
-    background-color: @container-color;
-    color: @container-font-color;
-    clear: fix;
-    
-    z-index: 1000;
-    position: fixed;
-    left: 0;
-    width: 100%;
-    overflow-x: auto;
     .rem("padding", @base-space);
-    .rem("height", @sextuple-space);
-
+    .rem("min-height", @header-height);
+    
+    .navbar-brand {
+        .rem("padding", @base-space);
+    }
+    
+    .navbar-toggle {
+        padding: 4px 10px;
+    }
+    
     @media @desktops {
-        display: none;
+        position: relative;
     }
 }

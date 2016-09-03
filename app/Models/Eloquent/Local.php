@@ -2,7 +2,12 @@
 
 namespace App\Models\Eloquent;
 
+use App\Util\Calculator;
+
 class Local extends \WGPC\Eloquent\Model {
+
+    use Traits\Endereco,
+        Traits\Thumbnail;
 
     protected $table = "local";
     protected $primaryKey = "idLocal";
@@ -33,27 +38,44 @@ class Local extends \WGPC\Eloquent\Model {
         "logradouro" => ["required", "max:70", "string"],
         "bairro" => ["required", "max:40", "string"],
         "postal" => ["required", "size:8", "string"],
-        "numero" => ["required", "max:12", "string"],
+        "numero" => ["max:12", "string"],
         "complemento" => ["max:50", "string"],
         "lat" => ["required", "numeric"],
         "lng" => ["required", "numeric"],
         "slug" => ["required", "string", "max:70", "unique:local,slug"]
     ];
 
+    public static function boot() {
+        parent::boot();
+        static::addGlobalScope("ativo", function(\Illuminate\Database\Eloquent\Builder $builder) {
+            $builder->where("ativo", true);
+        });
+    }
+
+    public static function getDefaultThumbnail() {
+        return asset("img/place.png");
+    }
+
     public function passeios() {
         return $this->hasMany("\App\Models\Eloquent\Passeio", "idLocal", "idLocal");
     }
 
     public function verificarServico($lat, $lng) {
-        $dX = pow((pi() * $this->lat / 180) - (pi() * $lat / 180), 2);
-        $dY = pow((pi() * $this->lng / 180) - (pi() * $lng / 180), 2);
-
-        return ((pow($this->raioAtuacao, 2)) >= ($dX + $dY));
+        return Calculator::distanceBetweenTwoCoordinates($this->lat, $this->lng, $lat, $lng) <= $this->raioAtuacao;
     }
 
     public function imagens() {
         return $this->belongsToMany("\App\Models\Eloquent\Imagem", "a_local_imagem", "idLocal", "idImagem")
                         ->withPivot(["ordem"]);
+    }
+
+    public function getThumbnailAttribute() {
+        $imagem = $this->imagens()->orderBy("ordem", "asc")->first();
+        if (!is_null($imagem)) {
+            return $imagem->getUrl();
+        } else {
+            return static::getDefaultThumbnail();
+        }
     }
 
     public function setSlugAttribute($value) {

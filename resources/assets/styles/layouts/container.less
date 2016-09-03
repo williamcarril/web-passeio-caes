@@ -15,16 +15,13 @@
 }
 
 #wrapper {
-    &.toggled {
-        .rem("padding-left", 250px);
-        #sidebar-wrapper {
-            .rem("width", 250px);
-        }
-        #page-content-wrapper {
-            .rem("margin-right", -250px);
-        }
-        #footer {
-            .rem("margin-right", -250px);
-        }
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+}
+
+#content {
+    @media @desktops {
+        .rem("margin-left", @sidebar-width);
     }
 }

@@ -4,6 +4,8 @@ namespace App\Models\Eloquent;
 
 class Cao extends \WGPC\Eloquent\Model {
 
+    use Traits\Thumbnail;
+
     protected $primaryKey = "idCao";
     protected $table = 'cao';
     protected $attributes = [
@@ -31,9 +33,6 @@ class Cao extends \WGPC\Eloquent\Model {
 
     public static function boot() {
         parent::boot();
-        /**
-         * @todo create a scope trait for active field...
-         */
         static::addGlobalScope("ativo", function(\Illuminate\Database\Eloquent\Builder $builder) {
             $builder->where("ativo", true);
         });

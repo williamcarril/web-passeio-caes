@@ -23,7 +23,7 @@ class DiaTableSeeder extends Seeder {
             ]);
             \DB::commit();
         } catch (\Exception $ex) {
-            \DB::rollback();
+            \DB::rollBack();
             throw $ex;
         }
     }

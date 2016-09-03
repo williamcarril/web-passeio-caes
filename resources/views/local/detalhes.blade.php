@@ -1,8 +1,10 @@
-<?php
+@extends('layouts.default', ["hasMap" => true])
 
-/* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+@section("title") Local - {{$local->nome}} | {{env("APP_NAME")}} @endsection
 
+@section("main")
+<section>
+    <h1>Local - {{$local->nome}}</h1>
+    
+</section>
+@endsection

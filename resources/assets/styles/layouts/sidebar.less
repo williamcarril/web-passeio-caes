@@ -1,13 +1,18 @@
 // -------------------------
 // Sidebar - Layout
 // -------------------------
-#sidebar-wrapper {
+
+
+#sidebar {
+    position: fixed;
+    top: @header-height;
+    right: 0;
+    z-index: 2;
+    .rem("width", @sidebar-width);
+    min-height: 100vh;
+
     background: @container-color;
-    .rem("left", 250px);
-    .rem("margin-left", -250px);
-
     color: @container-font-color;
-
     a {
         color: @container-link-color;
         &:hover {
@@ -16,38 +21,49 @@
             background: rgba(0,0,0,0);
         }
     }
+    transition: all .4s;
+    -webkit-transform: translateX(100%);
+    transform: translateX(100%);
 
-    @media @smartphones {
-        .rem("margin-top", @sextuple-space);
+    &.toggled {
+        -webkit-transform: translateX(0);
+        transform: translateX(0);
+    }
+
+    @media @desktops {
+        right: inherit;
+        left: 0;
+        -webkit-transform: translateX(0);
+        transform: translateX(0);
     }
 }
 
-.sidebar-nav {
-    .rem("width", 250px);
+#sidebar > .sidebar {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    width: 100%;
 
     > li {
-        .rem("text-indent", @double-space);
         .rem("line-height", @quadruple-space);
+        .rem("padding", @half-space);
         border-bottom: 1px solid @container-divisory-color;
 
-        &.logo {
-            text-align: center;
-            text-indent: 0px;
-            border-top: 1px solid @container-divisory-color;
-            border-left: 1px solid @container-divisory-color;
+        > .close-icon {
+            cursor: pointer;
+            @media @desktops {
+                display: none;
+            }
+        }
 
-        }
-        &.calendar {
-            text-align: center;
-            text-indent: 0px;
-        }
         &.user {
             .rem("padding", @base-space);
-            text-indent: 0px;
-        }
-
-        a {
-            display: inline;
+            .title {
+                color: @container-font-color;
+                font-weight: bold;
+                font-size: @big-font-size;
+                .rem("padding-bottom", @half-space);
+            }
         }
     }
 }

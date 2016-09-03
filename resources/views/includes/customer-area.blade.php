@@ -1,5 +1,6 @@
 <section>
     @if(empty($customer))
+    <h1 class="title">Login</h1>
     <form method="POST" action="{{route("cliente.auth.login.post")}}" role="form">
         {!! csrf_field() !!}
         <div class="form-group">
