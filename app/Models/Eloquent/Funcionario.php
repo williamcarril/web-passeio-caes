@@ -2,7 +2,11 @@
 
 namespace App\Models\Eloquent;
 
+use App\Util\Formatter;
+
 class Funcionario extends Pessoa {
+
+    use Traits\Thumbnail;
 
     protected $primaryKey = "idFuncionario";
     protected $table = 'funcionario';
@@ -23,7 +27,7 @@ class Funcionario extends Pessoa {
         $this->fillable[] = "tipo";
     }
 
-    public function foto() {
+    public function imagem() {
         return $this->belongsTo("\App\Models\Eloquent\Imagem", "idImagem", "idImagem");
     }
 
@@ -43,6 +47,22 @@ class Funcionario extends Pessoa {
         $rules["email"][] = "unique:funcionario,email,{$this->idFuncionario},idFuncionario";
         $rules["cpf"][] = "unique:funcionario,cpf,{$this->idFuncionario},idFuncionario";
         return $rules;
+    }
+
+    public static function getDefaultThumbnail() {
+        return asset("img/user.png");
+    }
+
+    public function getThumbnailAttribute() {
+        return $this->imagem->getUrl();
+    }
+
+    public function scopePasseador($query) {
+        return $query->where('tipo', "passeador");
+    }
+
+    public function scopeAdministrador($query) {
+        return $query->where('tipo', "administrador");
     }
 
 }

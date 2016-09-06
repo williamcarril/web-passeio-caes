@@ -3,6 +3,7 @@
 namespace App\Models\Eloquent;
 
 use Illuminate\Contracts\Auth\Authenticatable;
+use App\Util\Formatter;
 
 abstract class Pessoa extends \WGPC\Eloquent\Model implements Authenticatable {
 
@@ -67,7 +68,7 @@ abstract class Pessoa extends \WGPC\Eloquent\Model implements Authenticatable {
         $cpf = preg_replace('/[^0-9]/', '', $value);
         $this->attributes["cpf"] = $cpf;
     }
-    
+
     public function setSenhaAttribute($value) {
         $this->attributes["senha"] = \bcrypt($value);
     }
@@ -90,6 +91,22 @@ abstract class Pessoa extends \WGPC\Eloquent\Model implements Authenticatable {
 
     public function setRememberToken($value) {
         $this->attributes[$this->getRememberTokenName()] = $value;
+    }
+
+    public function getCpfFormatadoAttribute() {
+        return Formatter::cpf($this->cpf);
+    }
+
+    public function getCepFormatadoAttribute() {
+        return Formatter::cep($this->postal);
+    }
+
+    public function getTelefoneFormatadoAttribute() {
+        return Formatter::phone($this->telefone);
+    }
+
+    public function getAtivoFormatadoAttribute() {
+        return $this->ativo ? "Ativo" : "Inativo";
     }
 
 }

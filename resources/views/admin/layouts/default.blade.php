@@ -4,7 +4,7 @@ $hasMap = isset($hasMap) ? $hasMap : false;
 <!DOCTYPE html>
 <html lang="{{config("app.locale")}}">
     <head>
-        <title>@yield("title", config("app.name"))</title>
+        <title>@yield("title", "Administrativo | " . config("app.name"))</title>
         <link rel="stylesheet" href="{{asset("/css/adm_styles.min.css")}}" />
         <link rel="shortcut icon" href="{{asset("/img/logo-black.ico")}}" >
 
@@ -13,13 +13,9 @@ $hasMap = isset($hasMap) ? $hasMap : false;
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-        @if(!\App::environment("production"))
         <meta name="robots" content="noindex, nofollow" />
-        @else
-        <meta name="robots" content="index, follow" />
-        @endif
 
-        <meta content="{{env("APP_NAME")}}" name="application-name"/>
+        <meta content="{{config("app.name")}}" name="application-name"/>
         <meta content="@yield('keywords', '')" name="keywords" />
         <meta content="@yield('description', '')" name="description"/>
     </head>

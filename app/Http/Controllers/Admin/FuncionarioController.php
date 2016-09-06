@@ -31,23 +31,32 @@ class FuncionarioController extends Controller {
         return response()->view("admin.login", $data);
     }
 
-    public function route_getFuncionarios() {
+    public function route_getPasseadores() {
         $data = [
-//            "funcionarios" => Funcionario::all()
+            "title" => "Passeadores",
+            "funcionarios" => Funcionario::withoutGlobalScopes()->passeador()->get()
         ];
         return response()->view("admin.funcionario.listagem", $data);
     }
 
-    public function route_getFuncionario(Request $req, $id) {
-        $funcionario = Funcionario::findOrFail($id);
-        $funcionarioAutenticado = $this->auth->guard("admin")->user();
-        $readOnly = false;
-        if ($funcionario->tipo === "administrador" && $funcionario->idFuncionario !== $funcionarioAutenticado->idFuncionario) {
-            $readOnly = true;
+    public function route_getFuncionario(Request $req) {
+        $funcionario = $this->auth->guard("admin")->user();
+        $data = [
+            "funcionario" => $funcionario
+        ];
+        return response()->view("admin.funcionario.manter", $data);
+    }
+
+    public function route_getPasseador(Request $req, $id) {
+        $passeador = Funcionario::withoutGlobalScopes()
+                ->passeador()
+                ->where("idFuncionario", $id)
+                ->first();
+        if (is_null($passeador)) {
+            return abort(404);
         }
         $data = [
-            "readOnly" => $readOnly,
-            "funcionario" => $funcionario
+            "funcionario" => $passeador
         ];
         return response()->view("admin.funcionario.manter", $data);
     }
@@ -57,7 +66,7 @@ class FuncionarioController extends Controller {
     public function route_postLogin(Request $req) {
         $email = $req->input("email");
         $senha = $req->input("senha");
-        $funcionario = Funcionario::where(["email" => $email])->first();
+        $funcionario = Funcionario::administrador()->where(["email" => $email])->first();
         if (!is_null($funcionario) && \Hash::check($senha, $funcionario->senha)) {
             $this->auth->guard("admin")->login($funcionario);
             return redirect()->route("admin.home");

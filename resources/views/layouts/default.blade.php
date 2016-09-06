@@ -19,7 +19,7 @@ $hasMap = isset($hasMap) ? $hasMap : false;
         <meta name="robots" content="index, follow" />
         @endif
 
-        <meta content="{{env("APP_NAME")}}" name="application-name"/>
+        <meta content="{{config("app.name")}}" name="application-name"/>
         <meta content="@yield('keywords', '')" name="keywords" />
         <meta content="@yield('description', '')" name="description"/>
     </head>

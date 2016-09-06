@@ -11,7 +11,7 @@
                 <i class="glyphicon glyphicon-menu-hamburger"></i>
             </button>
             @endif
-            <a href="{{route("home")}}" class="navbar-brand">
+            <a href="{{route("admin.home")}}" class="navbar-brand">
                 <img src="{{asset("img/logo-black.png")}}" alt="Anamá"/>
             </a>
         </div>
@@ -19,8 +19,23 @@
             @if(!empty($administrator))
             <ul class="nav navbar-nav">
                 <li>
-                    <a href="{{route("admin.logout.get")}}">Logout</a>
+                    <a href="#">Agendamentos</a>
                 </li>
+                <li>
+                    <a href="{{route("admin.funcionario.passeador.listagem.get")}}">
+                        Passeadores
+                    </a>
+                </li>
+                <li>
+                    <a href="#">Locais</a>
+                </li>
+                <li>
+                    <a href="#">Modalidades</a>
+                </li>
+                <li>
+                    <a href="#">Cancelamentos</a>
+                </li>
+
             </ul>
             @endif
         </div>

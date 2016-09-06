@@ -7,7 +7,8 @@ Route::group(["middleware" => "auth.admin"], function() {
     Route::get("/logout", ["as" => "admin.logout.get", "uses" => "FuncionarioController@route_getLogout"]);
 
     Route::group(["prefix" => "funcionario"], function() {
-        Route::get("/", ["as" => "admin.funcionario.listagem.get", "uses" => "FuncionarioController@route_getFuncionarios"]);
-        Route::get("{id}", ["as" => "admin.funcionario.alterar.get", "uses" => "FuncionarioController@route_getFuncionarios"]);
+        Route::get("/", ["as" => "admin.funcionario.alterar.get", "uses" => "FuncionarioController@route_getFuncionario"]);
+        Route::get("/passeador", ["as" => "admin.funcionario.passeador.listagem.get", "uses" => "FuncionarioController@route_getPasseadores"]);
+        Route::get("/passeador/{id}", ["as" => "admin.funcionario.passeador.alterar.get", "uses" => "FuncionarioController@route_getPasseador"]);
     });
 });
