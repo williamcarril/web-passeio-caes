@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Eloquent\Cliente;
 use App\Models\Eloquent\Cao;
-use App\Models\Eloquent\Imagem;
 use Illuminate\Contracts\Auth\Factory as AuthFactory;
 use App\Models\File\Repositorio;
 
@@ -13,10 +12,12 @@ class ClienteController extends Controller {
 
     private $auth;
     private $repository;
+    private $imageController;
 
-    public function __construct(Repositorio $repository, AuthFactory $auth) {
+    public function __construct(Repositorio $repository, AuthFactory $auth, ImagemController $imageController) {
         $this->repository = $repository;
         $this->auth = $auth;
+        $this->imageController = $imageController;
     }
 
     // <editor-fold defaultstate="collapsed" desc="Rotas que retornam Views">
@@ -175,15 +176,15 @@ class ClienteController extends Controller {
                     //Guarda referência da imagem antiga para ser deletada posteriormente
                     $idImagemAntiga = $cao->idImagem;
                 }
-                $filename = $this->repository->saveImage($req->file("imagem"), 100, 100);
-                if ($filename === false) {
+                $nomeDoArquivo = $this->repository->saveImage($req->file("imagem"), 100, 100);
+                if ($nomeDoArquivo === false) {
                     \DB::rollBack();
                     return $this->defaultJsonResponse(false, trans("alert.error.generic", ["message" => "salvar a imagem do cachorro"]));
                 }
-                $imagem = new Imagem();
-                $imagem->descricao = null;
-                $imagem->arquivo = $filename;
-                if (!$imagem->save()) {
+                $imagem = $this->imageController->salvar(null, $cao->nome, null, [
+                    ["arquivo" => $nomeDoArquivo]
+                ]);
+                if ($imagem->hasErrors()) {
                     \DB::rollBack();
                     return $this->defaultJsonResponse(false, $imagem->getErrors());
                 }
@@ -195,12 +196,10 @@ class ClienteController extends Controller {
                 return $this->defaultJsonResponse(false, $cao->getErrors());
             }
             if (!empty($idImagemAntiga)) {
-                $imagemAntiga = Imagem::find($idImagemAntiga);
-                if (!$imagemAntiga->delete()) {
+                if (!$this->imageController->deletar($idImagemAntiga)) {
                     \DB::rollBack();
                     return $this->defaultJsonResponse(false, trans("alert.error.update", ["entity" => "este cachorro"]));
                 }
-                $this->repository->delete($imagemAntiga->arquivo);
             }
             \DB::commit();
             $data = $cao->toArray();
@@ -232,19 +231,18 @@ class ClienteController extends Controller {
                 }
                 //Guarda a referencia do arquivo para apagar caso tudo tenha corrido bem...
                 $imagem = $cao->imagem;
+
                 $result &= $cao->delete();
             }
             if (!$result) {
                 \DB::rollBack();
                 return $this->defaultJsonResponse(false, $cao->getErrors());
             }
-            //Apaga o arquivo, caso necessário
             if (!empty($imagem)) {
-                if (!$imagem->delete()) {
+                if (!$this->imageController->deletar($imagem->idImagem)) {
                     \DB::rollBack();
                     return $this->defaultJsonResponse(false, trans("alert.error.deletion", ["entity" => "este cachorro"]));
                 }
-                $this->repository->delete($imagem->arquivo);
             }
             \DB::commit();
             return $this->defaultJsonResponse(true);

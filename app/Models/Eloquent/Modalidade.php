@@ -13,13 +13,11 @@ class Modalidade extends \WGPC\Eloquent\Model {
         "periodo",
         "frequencia",
         "ativa",
-        "coletivo",
-        "precoPorPasseio"
+        "coletivo"
     ];
     protected $casts = [
         "ativo" => "boolean",
-        "coletivo" => "boolean",
-        "precoPorPasseio" => "float"
+        "coletivo" => "boolean"
     ];
     protected $attributes = [
         "ativo" => true,
@@ -32,12 +30,11 @@ class Modalidade extends \WGPC\Eloquent\Model {
         "periodo" => ["required", "in:mensal,bimestral,trimestral,semestral,anual", "string"],
         "frequencia" => ["required", "in:semanal,bisemanal", "string"],
         "ativo" => ["required", "boolean"],
-        "coletivo" => ["required", "boolean"],
-        "precoPorPasseio" => ["required", "numeric"]
+        "coletivo" => ["required", "boolean"]
     ];
 
-    public function valores() {
-        return $this->hasMany("\App\Models\Eloquent\ModalidadeValor", "idModalidade", "idModalidade");
+    public function precos() {
+        return $this->hasMany("\App\Models\Eloquent\ModalidadePreco", "idModalidade", "idModalidade");
     }
 
 }

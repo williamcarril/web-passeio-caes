@@ -31,6 +31,14 @@ class Kernel extends HttpKernel {
             \App\Http\Middleware\ShareCustomerFromSession::class,
             \App\Http\Middleware\VerifyCsrfToken::class,
         ],
+        "admin" => [
+            \App\Http\Middleware\EncryptCookies::class,
+            \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+            \Illuminate\Session\Middleware\StartSession::class,
+            \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+            \App\Http\Middleware\ShareAdminFromSession::class,
+            \App\Http\Middleware\VerifyCsrfToken::class,
+        ],
         'api' => [
             'throttle:60,1',
             "auth:api"
@@ -46,6 +54,8 @@ class Kernel extends HttpKernel {
      */
     protected $routeMiddleware = [
         'auth' => \App\Http\Middleware\Authenticate::class,
+        'auth.customer' => \App\Http\Middleware\AuthenticateCustomer::class,
+        'auth.admin' => \App\Http\Middleware\AuthenticateAdministrator::class,
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
         'can' => \Illuminate\Foundation\Http\Middleware\Authorize::class,
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,

@@ -1,6 +1,6 @@
 @extends("layouts.default")
 
-@section("title") Vacinações - {{$cao->nome}} | {{env("APP_NAME")}} @endsection
+@section("title") Vacinações - {{$cao->nome}} | {{config("app.name")}} @endsection
 
 @section("main")
 <section>

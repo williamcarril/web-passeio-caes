@@ -46,6 +46,13 @@ abstract class Pessoa extends \WGPC\Eloquent\Model implements Authenticatable {
         "email" => ["required", "email", "string"]
     ];
 
+    public static function boot() {
+        parent::boot();
+        static::addGlobalScope("ativo", function(\Illuminate\Database\Eloquent\Builder $builder) {
+            $builder->where("ativo", true);
+        });
+    }
+
     public function setTelefoneAttribute($value) {
         $telefone = preg_replace('/[^0-9]/', '', $value);
         $this->attributes["telefone"] = $telefone;

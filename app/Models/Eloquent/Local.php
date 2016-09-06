@@ -3,6 +3,7 @@
 namespace App\Models\Eloquent;
 
 use App\Util\Calculator;
+use App\Util\Formatter;
 
 class Local extends \WGPC\Eloquent\Model {
 
@@ -42,7 +43,7 @@ class Local extends \WGPC\Eloquent\Model {
         "complemento" => ["max:50", "string"],
         "lat" => ["required", "numeric"],
         "lng" => ["required", "numeric"],
-        "slug" => ["required", "string", "max:70", "unique:local,slug"]
+        "slug" => ["required", "string", "max:70"]
     ];
 
     public static function boot() {
@@ -61,12 +62,16 @@ class Local extends \WGPC\Eloquent\Model {
     }
 
     public function verificarServico($lat, $lng) {
-        return Calculator::distanceBetweenTwoCoordinates($this->lat, $this->lng, $lat, $lng) <= $this->raioAtuacao;
+        return $this->distanciaEntre($lat, $lng) <= $this->raioAtuacao;
     }
 
     public function imagens() {
         return $this->belongsToMany("\App\Models\Eloquent\Imagem", "a_local_imagem", "idLocal", "idImagem")
                         ->withPivot(["ordem"]);
+    }
+
+    public function distanciaEntre($lat, $lng) {
+        return Calculator::distanceBetweenTwoCoordinates($this->lat, $this->lng, $lat, $lng);
     }
 
     public function getThumbnailAttribute() {
@@ -80,6 +85,15 @@ class Local extends \WGPC\Eloquent\Model {
 
     public function setSlugAttribute($value) {
         $this->attributes["slug"] = str_slug($value, '-');
+    }
+
+    public function overrideNormalRules($rules) {
+        $rules["slug"][] = "unique:local,slug,{$this->idLocal},idLocal";
+        return $rules;
+    }
+
+    public function getCepFormatadoAttribute() {
+        return Formatter::cep($this->postal);
     }
 
 }

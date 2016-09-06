@@ -7,7 +7,6 @@
     });
 
     //Setting up sidebar "hide" button 
-    var $wrapper = $("#wrapper");
     var $sidebar = $("#sidebar");
     $("[data-action='sidebar-toggler']").click(function (ev) {
         if ($sidebar.hasClass("toggled")) {
@@ -38,6 +37,8 @@
     $('.responsive-calendar').responsiveCalendar({
         "translateMonths": months
     });
+
+    $('.carousel').carousel();
 
     //Adding method to string prototype
     String.prototype.ucfirst = function () {

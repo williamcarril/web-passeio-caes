@@ -45,7 +45,7 @@ $hasLinkToHome = isset($hasLinkToHome) ? $hasLinkToHome : true;
         </style>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <meta content="Passeio de Cães" name="application-name"/>
+        <meta content="{{config("app.name")}}" name="application-name"/>
     </head>
     <body>
         <div class="container">
@@ -55,10 +55,10 @@ $hasLinkToHome = isset($hasLinkToHome) ? $hasLinkToHome : true;
                 <br/>
                 <br/>
                 @if($hasLinkToHome)
-                <p>Retorne para a HOME do site clicando <a href="{{route("home")}}">aqui.</a></p>
-                <a href="{{route("home")}}"><img src="{{asset("img/logo.png")}}" /></a>
+                <p>Retorne para a HOME do site clicando <a href="{{route("home")}}">aqui</a>.</p>
+                <a href="{{route("home")}}"><img src="{{asset("img/medium-logo-white.png")}}" /></a>
                 @else
-                <img src="{{asset("img/logo.png")}}" />
+                <img src="{{asset("img/medium-logo-white.png")}}" />
                 @endif
             </div>
         </div>

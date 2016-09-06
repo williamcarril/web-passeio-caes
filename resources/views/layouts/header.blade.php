@@ -16,6 +16,7 @@
         <div class="navbar-collapse collapse" id="navbar" aria-expanded="false">
             <ul class="nav navbar-nav">
                 <li><a href="{{route("local.listagem.get")}}">Locais</a></li>
+                <li><a href="{{route("passeio.agenda.get")}}">Agenda</a></li>
             </ul>
         </div>
     </div>

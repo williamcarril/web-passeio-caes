@@ -1,6 +1,6 @@
 @extends('layouts.default')
 
-@section("title") Locais | {{env("APP_NAME")}} @endsection
+@section("title") Locais | {{config("app.name")}} @endsection
 
 @section("main")
 <section>

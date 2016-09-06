@@ -102,7 +102,7 @@ class Repositorio {
 
     public function copy($source, $to = null) {
         if (is_string($source)) {
-            $source = new SplFileInfo($source);
+            $source = new \SplFileInfo($source);
         }
 
         $validatorKey = "source";
@@ -118,7 +118,7 @@ class Repositorio {
         }
 
         if (is_null($to)) {
-            if ($source instanceof UploadedFile) {
+            if ($source instanceof \Illuminate\Http\UploadedFile) {
                 $ext = $source->getClientOriginalExtension();
             } else {
                 $ext = $source->getExtension();

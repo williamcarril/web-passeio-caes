@@ -1,6 +1,6 @@
 @extends("layouts.default")
 
-@section("title") Cachorros | {{env("APP_NAME")}} @endsection
+@section("title") Cachorros | {{config("app.name")}} @endsection
 
 @section("main")
 <section>

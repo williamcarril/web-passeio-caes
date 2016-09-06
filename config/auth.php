@@ -36,6 +36,10 @@ return [
             'driver' => 'session',
             'provider' => 'customers',
         ],
+        'admin' => [
+            'driver' => 'session',
+            'provider' => 'admin',
+        ],
 //        'api' => [
 //            'driver' => 'token',
 //            'provider' => 'users',
@@ -61,7 +65,11 @@ return [
         'customers' => [
             'driver' => 'eloquent',
             'model' => App\Models\Eloquent\Cliente::class,
-        ]
+        ],
+        'admin' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Eloquent\Funcionario::class,
+        ],
     // 'users' => [
     //     'driver' => 'database',
     //     'table' => 'users',

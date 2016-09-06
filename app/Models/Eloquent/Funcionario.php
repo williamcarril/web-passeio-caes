@@ -7,7 +7,7 @@ class Funcionario extends Pessoa {
     protected $primaryKey = "idFuncionario";
     protected $table = 'funcionario';
 
-    protected static function boot() {
+    public static function boot() {
         parent::boot();
 
         static::$rules["idImagem"] = ["exists:imagem,idImagem", "required", "integer"];

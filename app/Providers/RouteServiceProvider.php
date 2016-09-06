@@ -15,6 +15,7 @@ class RouteServiceProvider extends ServiceProvider {
      * @var string
      */
     protected $namespace = 'App\Http\Controllers';
+    protected $adminNamespace = 'App\Http\Controllers\Admin';
 
     /**
      * Define your route model bindings, pattern filters, etc.
@@ -47,6 +48,14 @@ class RouteServiceProvider extends ServiceProvider {
      * @return void
      */
     protected function mapWebRoutes(Router $router) {
+        //Admin routes
+        $router->group([
+            'namespace' => $this->adminNamespace, 'middleware' => 'admin', "prefix" => "admin"
+                ], function ($router) {
+            require app_path('Http/routes.admin.php');
+        });
+        
+        //Web routes
         $router->group([
             'namespace' => $this->namespace, 'middleware' => 'web',
                 ], function ($router) {

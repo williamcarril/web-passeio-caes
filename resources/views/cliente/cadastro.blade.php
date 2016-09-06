@@ -1,6 +1,6 @@
 @extends("layouts.default", ["hasMap" => true])
 
-@section("title") Cadastro | {{env("APP_NAME")}} @endsection
+@section("title") Cadastro | {{config("app.name")}} @endsection
 
 @section("main")
 <section>
@@ -229,9 +229,9 @@
             });
         });
 
-        window.bootstrapListeners = function () {
-            var map = globals.maps["cadastro-map"];
-            var searchBox = globals.maps["cadastro-map"].searchBox;
+        window.bootstrapListeners = function (map, searchBox) {
+//            var map = globals.maps["cadastro-map"];
+//            var searchBox = globals.maps["cadastro-map"].searchBox;
 
             var $number = $("input[name='numero']");
             var $route = $("input[name='logradouro']");
@@ -253,7 +253,8 @@
 //                        var infowindow = new google.maps.InfoWindow;
                         map.markers.push(new google.maps.Marker({
                             position: event.latLng,
-                            map: map
+                            map: map,
+                            icon: "{!!asset('img/markers/user.png')!!}"
                         }));
 //                        infowindow.setContent(result.formatted_address);
 //                        infowindow.open(map, globals.customerLocation);
@@ -276,7 +277,8 @@
                 map.markers.push(new google.maps.Marker({
                     map: map,
                     title: place.name,
-                    position: place.geometry.location
+                    position: place.geometry.location,
+                    icon: "{!!asset('img/markers/user.png')!!}"
                 }));
 
                 if (place.geometry.viewport) {

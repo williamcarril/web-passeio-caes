@@ -1,9 +1,6 @@
 <?php
 $type = isset($type) ? $type : null;
 switch ($type) {
-    case "sidebar":
-        $classes = "-sidebar";
-        break;
     default:
         $classes = "";
 }

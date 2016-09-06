@@ -22,6 +22,7 @@ $searchBox = isset($searchBox) ? $searchBox : true;
                 "zoom": parseInt("{!! $zoom !!}"),
                 "mapTypeId": google.maps.MapTypeId.ROADMAP
             });
+            var searchBox = null;
             
             if(!globals.maps) {
                 globals.maps = [];
@@ -40,7 +41,7 @@ $searchBox = isset($searchBox) ? $searchBox : true;
             @endif
             
             @if(isset($callback))
-            window["{!! $callback !!}"]();
+            window["{!! $callback !!}"](map, searchBox);
             @endif
         });
     })();
