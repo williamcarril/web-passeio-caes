@@ -70,6 +70,10 @@ $customMarker = isset($customMarker) ? $customMarker : null;
 $alertOnPin = isset($alertOnPin) ? $alertOnPin : false;
 $tabIndex = isset($tabIndex) ? $tabIndex : null;
 
+$prepend = isset($prepend) ? $prepend : null;
+$append = isset($append) ? $append : null;
+$postPrependTabIndex = isset($postPrependTabIndex) ? $postPrependTabIndex : $tabIndex;
+$postMapLoad = isset($postMapLoad) ? $postMapLoad : null;
 ?>
 <fieldset data-name="address" id="{{$idPrefix}}-fieldset">
     @if(in_array("lat", $fields))
@@ -92,6 +96,12 @@ $tabIndex = isset($tabIndex) ? $tabIndex : null;
     }
     ?>
     @include("includes.map", $mapData)
+    @if(!empty($prepend))
+    <?php 
+        $tabIndex = $postPrependTabIndex;
+    ?>
+    {!!$prepend!!}
+    @endif
     @if(in_array("cep", $fields))
     <div class="form-group">
         <label class="control-label" for="{{$idPrefix}}-cep">CEP{{$required["cep"] ? " *" : ""}}</label>
@@ -122,13 +132,16 @@ $tabIndex = isset($tabIndex) ? $tabIndex : null;
         <input {{!is_null($tabIndex) ? "tabindex=" . post_increment($tabIndex) : ""}} {{!empty($values) ? "" : "disabled"}} value="{{!empty($values->complemento) ? $values->complemento : ""}}" {{$required["complemento"] ? "required" : ""}} name="complemento" id="{{$idPrefix}}-complemento" type="text" class="form-control" placeholder="{{$placeholders["complemento"]}}"/>
     </div>
     @endif
+    @if(!empty($append))
+    {!!$append!!}
+    @endif
 </fieldset>
 
 @section("scripts")
 @parent
 <script type="text/javascript">
     (function () {
-        var $disabledAddressFields = $("fieldset[data-name='address'] input[disabled]");
+        var $disabledAddressFields = $("fieldset[data-name='address'] input[disabled],textarea[disabled],select[disabled]");
         var $fieldset = $("#{!!$idPrefix!!}-fieldset");
         @foreach($required as $key => $required)
             @if($key === "cep")
@@ -276,6 +289,9 @@ $tabIndex = isset($tabIndex) ? $tabIndex : null;
                     globals["{!!$idPrefix!!}_mapWarning"] = true;
                 }
             }
+            @if(!empty($postMapLoad))
+            window["{!!$postMapLoad!!}"]();
+            @endif
         };
     })();
 </script>

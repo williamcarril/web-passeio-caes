@@ -42,11 +42,14 @@
     $("input[type='number'].-no-spin").on("mousewheel", function (ev) {
         ev.preventDefault();
     });
-    
+
     //Prevent default 'Hit enter' submit on forms for inputs
-    $("form").on("keypress", function(ev) {
-        if(ev.keyCode === 13 && ev.target.type !== "submit") {
+    $("form").on("keypress", function (ev) {
+        if (ev.keyCode === 13 && !(ev.target.type === "submit" || ev.target.type === "password")) {
             return false;
         }
     });
+
+    //Initializing drag and drop
+    $("ol[data-action='drag-and-drop']").sortable();
 })();

@@ -27,4 +27,9 @@ trait Enderecavel {
         return rtrim($address, ", ");
     }
 
+    public function setPostalAttribute($value) {
+        $postal = preg_replace('/[^0-9]/', '', $value);
+        $this->attributes["postal"] = $postal;
+    }
+
 }

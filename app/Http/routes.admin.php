@@ -27,5 +27,6 @@ Route::group(["middleware" => "auth.admin"], function() {
                 ->where('id', '[0-9]+');
         Route::post("/salvar", ["as" => "admin.local.salvar.post", "uses" => "LocalController@route_postLocal"]);
         Route::get("/check/nome", ["as" => "admin.local.check.nome.get", "uses" => "LocalController@route_getCheckNome"]);
+        Route::get("/check/slug", ["as" => "admin.local.check.slug.get", "uses" => "LocalController@route_getCheckSlug"]);
     });
 });

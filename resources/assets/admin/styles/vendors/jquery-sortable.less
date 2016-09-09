@@ -1,0 +1,50 @@
+body.dragging, body.dragging * {
+    cursor: move !important;
+}
+
+.dragged {
+    position: absolute;
+    opacity: 0.5;
+    z-index: 2000;
+}
+
+ol.draggable-list {
+    margin: 0;
+    .rem("padding", @base-space);
+    list-style-type: none;
+    width: 100%;
+    .rem("min-height", 160px);
+    border: 1px solid @boostrap-border-color;
+
+    display: inline-block;
+    li {
+        counter-increment: step-counter;
+        .rem("margin", @double-space);
+        float: left;
+        text-align: center;
+
+        &:before {
+            content: counter(step-counter);
+            font-size: @small-font-size;
+            background-color: black;
+            color: white;
+            font-weight: bold;
+            padding: 3px 8px;
+            border-radius: 3px;
+        }
+
+        &.image:before {
+            margin: 1%;
+            display: inline-block;
+            vertical-align: top;
+        }
+        &.image.-new:before {
+            visibility: hidden;
+        }
+        /*        &.-new:last-child {
+                    &:before {
+                        visibility: hidden;
+                    }
+                }*/
+    }
+}

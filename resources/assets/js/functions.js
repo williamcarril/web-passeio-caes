@@ -3,6 +3,14 @@
     String.prototype.ucfirst = function () {
         return this.charAt(0).toUpperCase() + this.slice(1);
     };
+    String.prototype.slugify = function() {
+        return this.toLowerCase()
+                .replace(/\s+/g, '-')           // Replace spaces with -
+                .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
+                .replace(/\-\-+/g, '-')         // Replace multiple - with single -
+                .replace(/^-+/, '')             // Trim - from start of text
+                .replace(/-+$/, '');            // Trim - from end of text
+    };
 
     //Defining a wrapper to application's global jscript variables
     globals = {};
@@ -153,9 +161,15 @@
 
     //Predefined input validation and comportment for jquery
     $.fn.extend({
-        "validate": function (rule, $data) {
+        "validate": function (rule, $data, event) {
             var $this = $(this);
             if (!($this.is("input") || $this.is("textarea") || $this.is("select"))) {
+                return $this;
+            }
+            if(event) {
+                $this.on(event, function() {
+                    $this.validate(rule, $data);
+                });
                 return $this;
             }
             var failed = false;
@@ -308,7 +322,9 @@
             success = success || function (response) {
                 if (response.status) {
                     setInputStatus($this, "error");
-                    showAlert(errorMessage, "error");
+                    if(errorMessage) {
+                        showAlert(errorMessage, "error");
+                    }
                 } else {
                     setInputStatus($this, "success");
                 }

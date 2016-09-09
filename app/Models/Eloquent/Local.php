@@ -13,6 +13,9 @@ class Local extends \WGPC\Eloquent\Model {
 
     protected $table = "local";
     protected $primaryKey = "idLocal";
+    protected $attributes = [
+        "ativo" => true
+    ];
     protected $fillable = [
         "nome",
         "descricao",
@@ -89,6 +92,10 @@ class Local extends \WGPC\Eloquent\Model {
 
     public function getCepFormatadoAttribute() {
         return Formatter::cep($this->postal);
+    }
+
+    public function getImagensOrdenadas() {
+        return $this->imagens()->orderBy("a_local_imagem.ordem", "asc")->get();
     }
 
 }

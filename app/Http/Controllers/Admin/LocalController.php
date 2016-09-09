@@ -32,8 +32,10 @@ class LocalController extends Controller {
             $data = [
                 "title" => "Alterar local",
                 "local" => $local,
+                "imagens" => $local->getImagensOrdenadas(),
                 "ignoreOnChecks" => [
-                    "nome" => $local->nome
+                    "nome" => $local->nome,
+                    "slug" => $local->slug
                 ]
             ];
         }
@@ -54,10 +56,20 @@ class LocalController extends Controller {
         return $this->defaultJsonResponse($check->exists());
     }
 
+    public function route_getCheckSlug(Request $req) {
+        $slug = $req->input("slug");
+        $ignore = $req->input("ignore", null);
+        $check = Local::where("slug", $slug);
+        if (!is_null($ignore)) {
+            $check->where("slug", "!=", $ignore);
+        }
+
+        return $this->defaultJsonResponse($check->exists());
+    }
+
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Rotas POST que retornam JSON">
     public function route_postLocal(Request $req) {
-        return $this->defaultJsonResponse(false);
         $id = $req->input("id");
         if (!is_null($id)) {
             $local = Local::find($id);
@@ -68,20 +80,14 @@ class LocalController extends Controller {
         if ($req->has("nome")) {
             $local->nome = $req->input("nome");
         }
-        if ($req->has("cpf")) {
-            $local->cpf = $req->input("cpf");
+        if($req->has("descricao")) {
+            $local->descricao = $req->input("descricao");
         }
-        if ($req->has("rg")) {
-            $local->rg = $req->input("rg");
+        if($req->has("slug")) {
+            $local->slug = $req->input("slug");
         }
-        if ($req->has("telefone")) {
-            $local->telefone = $req->input("telefone");
-        }
-        if ($req->has("email")) {
-            $local->email = $req->input("email");
-        }
-        if ($req->has("senha")) {
-            $local->senha = $req->input("senha");
+        if($req->has("raioAtuacao")) {
+            $local->raioAtuacao = $req->input("raioAtuacao");
         }
         if ($req->has("lat")) {
             $local->lat = $req->input("lat");
@@ -104,37 +110,37 @@ class LocalController extends Controller {
         if ($req->has("complemento")) {
             $local->complemento = $req->input("complemento");
         }
-        if ($req->hasFile("imagem")) {
-            if (!is_null($local->idImagem)) {
-                //Guarda referência da imagem antiga para ser deletada posteriormente
-                $idImagemAntiga = $local->idImagem;
-            }
-            $nomeDoArquivo = $this->repository->saveImage($req->file("imagem"), 100, 100);
-            if ($nomeDoArquivo === false) {
-                \DB::rollBack();
-                return $this->defaultJsonResponse(false, trans("alert.error.generic", ["message" => "salvar a imagem do funcionário"]));
-            }
-            $imagem = $this->imageController->salvar(null, $local->nome, null, [
-                ["arquivo" => $nomeDoArquivo]
-            ]);
-            if ($imagem->hasErrors()) {
-                \DB::rollBack();
-                return $this->defaultJsonResponse(false, $imagem->getErrors());
-            }
-            $local->idImagem = $imagem->idImagem;
-        }
+//        if ($req->hasFile("imagem")) {
+//            if (!is_null($local->idImagem)) {
+//                //Guarda referência da imagem antiga para ser deletada posteriormente
+//                $idImagemAntiga = $local->idImagem;
+//            }
+//            $nomeDoArquivo = $this->repository->saveImage($req->file("imagem"), 100, 100);
+//            if ($nomeDoArquivo === false) {
+//                \DB::rollBack();
+//                return $this->defaultJsonResponse(false, trans("alert.error.generic", ["message" => "salvar a imagem do funcionário"]));
+//            }
+//            $imagem = $this->imageController->salvar(null, $local->nome, null, [
+//                ["arquivo" => $nomeDoArquivo]
+//            ]);
+//            if ($imagem->hasErrors()) {
+//                \DB::rollBack();
+//                return $this->defaultJsonResponse(false, $imagem->getErrors());
+//            }
+//            $local->idImagem = $imagem->idImagem;
+//        }
 
         \DB::beginTransaction();
         try {
             if (!$local->save()) {
                 return $this->defaultJsonResponse(false, $local->getErrors());
             }
-            if (!empty($idImagemAntiga)) {
-                if (!$this->imageController->deletar($idImagemAntiga)) {
-                    \DB::rollBack();
-                    return $this->defaultJsonResponse(false, trans("alert.error.update", ["entity" => "este funcionário"]));
-                }
-            }
+//            if (!empty($idImagemAntiga)) {
+//                if (!$this->imageController->deletar($idImagemAntiga)) {
+//                    \DB::rollBack();
+//                    return $this->defaultJsonResponse(false, trans("alert.error.update", ["entity" => "este funcionário"]));
+//                }
+//            }
             \DB::commit();
             return $this->defaultJsonResponse(true);
         } catch (\Exception $ex) {

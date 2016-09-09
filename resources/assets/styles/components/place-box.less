@@ -24,14 +24,17 @@
             max-width: 49%;
         }
     }
-    > .address {
-        display: block;
-        size: @small-font-size;
-        color: @featured-color;
-        .rem("margin-bottom", @half-space);
-    }
-    > .description {
-        text-align: justify;
+    > .content {
+        .rem("min-height", 100px);
+        > .address {
+            display: block;
+            size: @small-font-size;
+            color: @featured-color;
+            .rem("margin-bottom", @half-space);
+        }
+        > .description {
+            text-align: justify;
+        }
     }
 
     > footer {

@@ -33,7 +33,7 @@ module.exports = function (grunt) {
             //Bootstrap
             "<%= path.bower %>bootstrap/dist/**/bootstrap.min.js",
             //JQuery Input Mask
-            "<%= path.bower %>jquery.inputmask/dist/jquery.inputmask.bundle.js",
+            "<%= path.bower %>jquery.inputmask/dist/min/jquery.inputmask.bundle.min.js",
             //Non-Bower Vendors Files
             "<%= path.dev.admin %>js/vendors/**/*.js",
             //General JScript Functions File
