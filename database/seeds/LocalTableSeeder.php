@@ -29,6 +29,10 @@ class LocalTableSeeder extends Seeder {
                     "slug" => "ibirapuera"
                 ]
             ]);
+
+            \DB::table("a_local_imagem")->insert([
+                "idLocal" => 1, "idImagem" => 3
+            ]);
             \DB::commit();
         } catch (\Exception $ex) {
             \DB::rollBack();

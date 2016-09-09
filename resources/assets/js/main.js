@@ -7,7 +7,6 @@
     });
 
     //Setting up sidebar "hide" button 
-    var $wrapper = $("#wrapper");
     var $sidebar = $("#sidebar");
     $("[data-action='sidebar-toggler']").click(function (ev) {
         if ($sidebar.hasClass("toggled")) {
@@ -39,8 +38,12 @@
         "translateMonths": months
     });
 
-    //Adding method to string prototype
-    String.prototype.ucfirst = function () {
-        return this.charAt(0).toUpperCase() + this.slice(1);
-    };
+    $('.carousel').carousel();
+    
+    //Prevent default 'Hit enter' submit on forms for inputs
+    $("form").on("keypress", function(ev) {
+        if(ev.keyCode === 13 && ev.target.type !== "submit") {
+            return false;
+        }
+    });
 })();

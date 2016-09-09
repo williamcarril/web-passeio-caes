@@ -1,0 +1,12 @@
+// -------------------------
+// Main - Layout
+// -------------------------
+#main {
+    min-height: 100vh;
+    > .container {
+        @media @desktops {
+            width: 1085px;
+        }
+    }
+    .rem("margin-bottom", @base-space);
+}

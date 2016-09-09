@@ -17,7 +17,8 @@ class Passeio extends \WGPC\Eloquent\Model {
         "fim",
         "data",
         "status",
-        "coletivo"
+        "coletivo",
+        "porte"
     ];
     protected static $rules = [
         "idAgendamento" => ["required", "exists:agendamento,idAgendamento", "integer"],
@@ -30,12 +31,13 @@ class Passeio extends \WGPC\Eloquent\Model {
         "inicio" => ["required", "date_format:H:i:s", "less_or_equal:fim"],
         "fim" => ["required", "date_format:H:i:s", "greater_or_equal:inicio"],
         "data" => ["required", "date"],
-        "status" => ["required", "in:pendente,cancelado,em_andamento,feito", "string"]
+        "status" => ["required", "in:pendente,cancelado,em_andamento,feito", "string"],
+        "porte" => ["in:pequeno,medio,grande", "string"],
     ];
     protected $dates = ["data"];
     protected $casts = [
         "preco" => "float",
-        "coletivo" => "boolean"
+        "coletivo" => "boolean",
     ];
     protected $attributes = [
         "coletivo" => false,

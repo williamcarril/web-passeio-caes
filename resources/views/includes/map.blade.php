@@ -4,9 +4,10 @@ $zoom = !empty($zoom) ? $zoom : 16;
 $lat = !empty($lat) ? $lat : -23.63793;
 $lng = !empty($lng) ? $lng : -46.57817;
 $searchBox = isset($searchBox) ? $searchBox : true;
+$tabIndex = isset($tabIndex) ? $tabIndex : null;
 ?>
 @if($searchBox)
-<input class="search-box -map" id="search-{{$id}}" type="text" placeholder="Buscar local...">
+<input {{!is_null($tabIndex) ? "tabindex=$tabIndex" : ""}} class="search-box -map" id="search-{{$id}}" type="text" placeholder="Buscar local...">
 @endif
 <div class="map" id="{{$id}}" data-role="map"></div>
 @section("scripts")
@@ -22,6 +23,7 @@ $searchBox = isset($searchBox) ? $searchBox : true;
                 "zoom": parseInt("{!! $zoom !!}"),
                 "mapTypeId": google.maps.MapTypeId.ROADMAP
             });
+            var searchBox = null;
             
             if(!globals.maps) {
                 globals.maps = [];
@@ -40,7 +42,7 @@ $searchBox = isset($searchBox) ? $searchBox : true;
             @endif
             
             @if(isset($callback))
-            window["{!! $callback !!}"]();
+            window["{!! $callback !!}"](map, searchBox);
             @endif
         });
     })();

@@ -4,7 +4,7 @@ namespace App\Models\Eloquent\Traits;
 
 use App\Util\Formatter;
 
-trait Endereco {
+trait Enderecavel {
 
     public function getEndereco(array $components = ["logradouro", "bairro", "numero", "complemento", "postal"]) {
         $address = "";

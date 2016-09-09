@@ -1,6 +1,6 @@
 @extends("layouts.default")
 
-@section("title") Cachorros | {{env("APP_NAME")}} @endsection
+@section("title") Cachorros | {{config("app.name")}} @endsection
 
 @section("main")
 <section>
@@ -218,7 +218,7 @@
 
         $dogTable.on("blur", "input[name='nome'],input[name='raca'],select[name='porte'],select[name='genero']", function () {
             var $this = $(this);
-            validate.inputs.empty($this);
+            $this.validate("empty");
         });
 
         $dogTable.on("editable-label:done", "[data-name='nome'],[data-name='raca'],[data-name='porte'],[data-name='genero']", function (ev) {

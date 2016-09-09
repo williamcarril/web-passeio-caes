@@ -2,7 +2,7 @@
 
 namespace App\Models\Eloquent\Traits;
 
-trait Thumbnail {
+trait Thumbnailable {
 
     public static function getDefaultThumbnail() {
         return asset("img/picture.png");

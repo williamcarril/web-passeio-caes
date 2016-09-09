@@ -21,7 +21,29 @@ class Formatter {
     }
 
     public function formatCep($cep) {
+        if (strlen($cep) !== 8) {
+            return $cep;
+        }
         return substr($cep, 0, 5) . "-" . substr($cep, 5);
+    }
+
+    public function formatCpf($cpf) {
+        if (strlen($cpf) !== 11) {
+            return $cpf;
+        }
+        return substr($cpf, 0, 3) . "." . substr($cpf, 3, 3) . "." . substr($cpf, 6, 3) . "-" . substr($cpf, 9);
+    }
+
+    public function formatPhone($phone) {
+        if (strlen($phone) > 11 && strlen($phone) < 10) {
+            return $phone;
+        }
+        if (strlen($phone) === 11) {
+            $sizeBeforeHyphen = 5;
+        } else {
+            $sizeBeforeHyphen = 4;
+        }
+        return "(" . substr($phone, 0, 2) . ") " . substr($phone, 2, $sizeBeforeHyphen) . "-" . substr($phone, $sizeBeforeHyphen + 2);
     }
 
 }

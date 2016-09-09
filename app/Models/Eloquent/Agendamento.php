@@ -9,12 +9,16 @@ class Agendamento extends \WGPC\Eloquent\Model {
     protected $fillable = [
         "idModalidade",
         "idCliente",
-        "data"
+        "data",
+        "idAgendamentoNovo",
+        "status"
     ];
     protected static $rules = [
         "idModalidade" => ["required", "exists:modalidade,idModalidade", "integer"],
         "idCliente" => ["required", "exists:cliente,idCliente", "integer"],
-        "data" => ["required", "date"]
+        "data" => ["required", "date"],
+        "idAgendamentoNovo" => ["exists:agendamento,idAgendamento", "integer"],
+        "status" => ["required", "string", "in:feito,cancelado,pendente_funcionario,pendente_cliente"]
     ];
     protected $dates = ["data"];
 
@@ -32,6 +36,10 @@ class Agendamento extends \WGPC\Eloquent\Model {
 
     public function dias() {
         return $this->belongsToMany("\App\Models\Eloquent\Dia", "a_agendamento_dia", "idAgendamento", "idDia");
+    }
+    
+    public function caes() {
+        return $this->belongsToMany("\App\Models\Eloquent\Cao", "a_agendamento_cao", "idAgendamento", "idCao");
     }
 
 }

@@ -4,14 +4,16 @@ namespace App\Models\Eloquent;
 
 class Funcionario extends Pessoa {
 
+    use Traits\Thumbnailable;
+
     protected $primaryKey = "idFuncionario";
     protected $table = 'funcionario';
 
-    protected static function boot() {
+    public static function boot() {
         parent::boot();
 
         static::$rules["idImagem"] = ["exists:imagem,idImagem", "required", "integer"];
-        static::$rules["rg"] = ["required", "string", "unique:funcionario,rg"];
+        static::$rules["rg"] = ["required", "string"];
         static::$rules["tipo"] = ["required", "in:passeador,administrador", "string"];
     }
 
@@ -21,9 +23,10 @@ class Funcionario extends Pessoa {
         $this->fillable[] = "idImagem";
         $this->fillable[] = "rg";
         $this->fillable[] = "tipo";
+        $this->guarded[] = "tipo";
     }
 
-    public function foto() {
+    public function imagem() {
         return $this->belongsTo("\App\Models\Eloquent\Imagem", "idImagem", "idImagem");
     }
 
@@ -42,7 +45,29 @@ class Funcionario extends Pessoa {
     protected function overrideNormalRules($rules) {
         $rules["email"][] = "unique:funcionario,email,{$this->idFuncionario},idFuncionario";
         $rules["cpf"][] = "unique:funcionario,cpf,{$this->idFuncionario},idFuncionario";
+        $rules["rg"][] = "unique:funcionario,rg,{$this->idFuncionario},idFuncionario";
         return $rules;
+    }
+
+    public static function getDefaultThumbnail() {
+        return asset("img/user.png");
+    }
+
+    public function getThumbnailAttribute() {
+        return $this->imagem->getUrl();
+    }
+
+    public function setRgAttribute($value) {
+        $rg = preg_replace('/[^0-9a-zA-Z]/', '', $value);
+        $this->attributes["rg"] = $rg;
+    }
+
+    public function scopePasseador($query) {
+        return $query->where('tipo', "passeador");
+    }
+
+    public function scopeAdministrador($query) {
+        return $query->where('tipo', "administrador");
     }
 
 }

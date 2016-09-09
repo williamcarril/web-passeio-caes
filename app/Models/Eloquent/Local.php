@@ -3,11 +3,13 @@
 namespace App\Models\Eloquent;
 
 use App\Util\Calculator;
+use App\Util\Formatter;
 
 class Local extends \WGPC\Eloquent\Model {
 
-    use Traits\Endereco,
-        Traits\Thumbnail;
+    use Traits\Enderecavel,
+        Traits\Thumbnailable,
+        Traits\Ativavel;
 
     protected $table = "local";
     protected $primaryKey = "idLocal";
@@ -32,7 +34,7 @@ class Local extends \WGPC\Eloquent\Model {
         "lng" => "float",
     ];
     protected static $rules = [
-        "nome" => ["required", "max:70", "string", "unique:local,nome"],
+        "nome" => ["required", "max:70", "string"],
         "raioAtuacao" => ["integer", "required"],
         "ativo" => ["boolean", "required"],
         "logradouro" => ["required", "max:70", "string"],
@@ -42,15 +44,8 @@ class Local extends \WGPC\Eloquent\Model {
         "complemento" => ["max:50", "string"],
         "lat" => ["required", "numeric"],
         "lng" => ["required", "numeric"],
-        "slug" => ["required", "string", "max:70", "unique:local,slug"]
+        "slug" => ["required", "string", "max:70"]
     ];
-
-    public static function boot() {
-        parent::boot();
-        static::addGlobalScope("ativo", function(\Illuminate\Database\Eloquent\Builder $builder) {
-            $builder->where("ativo", true);
-        });
-    }
 
     public static function getDefaultThumbnail() {
         return asset("img/place.png");
@@ -61,12 +56,16 @@ class Local extends \WGPC\Eloquent\Model {
     }
 
     public function verificarServico($lat, $lng) {
-        return Calculator::distanceBetweenTwoCoordinates($this->lat, $this->lng, $lat, $lng) <= $this->raioAtuacao;
+        return $this->distanciaEntre($lat, $lng) <= $this->raioAtuacao;
     }
 
     public function imagens() {
         return $this->belongsToMany("\App\Models\Eloquent\Imagem", "a_local_imagem", "idLocal", "idImagem")
                         ->withPivot(["ordem"]);
+    }
+
+    public function distanciaEntre($lat, $lng) {
+        return Calculator::distanceBetweenTwoCoordinates($this->lat, $this->lng, $lat, $lng);
     }
 
     public function getThumbnailAttribute() {
@@ -80,6 +79,16 @@ class Local extends \WGPC\Eloquent\Model {
 
     public function setSlugAttribute($value) {
         $this->attributes["slug"] = str_slug($value, '-');
+    }
+
+    public function overrideNormalRules($rules) {
+        $rules["slug"][] = "unique:local,slug,{$this->idLocal},idLocal";
+        $rules["nome"][] = "unique:local,nome,{$this->idLocal},idLocal";
+        return $rules;
+    }
+
+    public function getCepFormatadoAttribute() {
+        return Formatter::cep($this->postal);
     }
 
 }

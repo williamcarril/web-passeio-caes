@@ -4,7 +4,7 @@ sudo chmod 777 vendor
 sudo chmod 777 -R storage
 sudo chmod 777 bootstrap/cache
 
-sudo ln -sv /storage/app/repository /public/repository
+sudo ln -svf /var/www/tcc/storage/app/repository /var/www/tcc/public/repository
 
 composer install
 php artisan migrate --force

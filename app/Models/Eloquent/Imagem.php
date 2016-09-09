@@ -7,15 +7,15 @@ class Imagem extends \WGPC\Eloquent\Model {
     protected $table = "imagem";
     protected $primaryKey = "idImagem";
     protected $fillable = [
+        "nome",
         "descricao",
-        "data",
-        "arquivo"
+        "data"
     ];
     protected $dates = ["data"];
     protected static $rules = [
         "data" => ["required", "date"],
-        "arquivo" => ["required", "max:255", "string", "unique:imagem,arquivo"],
-        "descricao" => ["string"]
+        "descricao" => ["string"],
+        "nome" => ["string", "max:75"],
     ];
 
     public function setDataAttribute($value) {
@@ -30,8 +30,25 @@ class Imagem extends \WGPC\Eloquent\Model {
         }, 1);
     }
 
-    public function getUrl() {
-        return repository("$this->arquivo");
+    public function getUrl($tamanho = null) {
+        if (!is_null($tamanho)) {
+            $arquivo = $this->arquivos()->where("tamanho", $tamanho)->first();
+        } else {
+            $arquivo = $this->arquivos()->orderBy(
+                            \DB::raw("CASE coalesce(tamanho, 'null')
+                                WHEN 'null' THEN 0
+                                WHEN 'mobile' THEN 1
+                                WHEN 'desktop' THEN 2
+                    END"), "ASC")->first();
+        }
+        if (is_null($arquivo)) {
+            return null;
+        }
+        return $arquivo->getUrl();
+    }
+
+    public function arquivos() {
+        return $this->hasMany("App\Models\Eloquent\ImagemArquivo", "idImagem", "idImagem");
     }
 
 }
