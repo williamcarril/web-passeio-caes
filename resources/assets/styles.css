@@ -436,14 +436,18 @@ textarea.-error {
 .place-box > .header .title {
   max-width: 49%;
 }
-.place-box > .address {
+.place-box > .content {
+  Ignore: a;min-height:100px;
+  Ignore: a;min-height:6.25rem;
+}
+.place-box > .content > .address {
   display: block;
   size: 10px;
   color: #367A38;
   Ignore: a;margin-bottom:5px;
   Ignore: a;margin-bottom:0.3125rem;
 }
-.place-box > .description {
+.place-box > .content > .description {
   text-align: justify;
 }
 .place-box > footer {

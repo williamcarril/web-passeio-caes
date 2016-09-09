@@ -59,13 +59,9 @@
     (function () {
         var $form = $("#form-cadastro-cliente");
 
-        $form.find("input[name='nome']").on("blur", function() {
-            $(this).validate("empty");
-        });
+        $form.find("input[name='nome']").validate("empty", null, "blur");
 
-        $form.find("input[name='telefone']").on("blur", function() {
-            $(this).validate("phone");
-        });
+        $form.find("input[name='telefone']").validate("phone", null, "blur");
 
         $form.find("input[name='cpf']").on("blur", function () {
             var $this = $(this);

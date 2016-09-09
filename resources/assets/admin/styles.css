@@ -56,6 +56,55 @@
 }
 /*@tablets: ~"only screen and (min-width: 768px) and (max-width: 959px)";*/
 /*@desktops: ~"only screen and (min-width: 960px)";*/
+body.dragging,
+body.dragging * {
+  cursor: move !important;
+}
+.dragged {
+  position: absolute;
+  opacity: 0.5;
+  z-index: 2000;
+}
+ol.draggable-list {
+  margin: 0;
+  Ignore: a;padding:10px;
+  Ignore: a;padding:0.625rem;
+  list-style-type: none;
+  width: 100%;
+  Ignore: a;min-height:160px;
+  Ignore: a;min-height:10rem;
+  border: 1px solid #ccc;
+  display: inline-block;
+}
+ol.draggable-list li {
+  counter-increment: step-counter;
+  Ignore: a;margin:20px;
+  Ignore: a;margin:1.25rem;
+  float: left;
+  text-align: center;
+  /*        &.-new:last-child {
+                    &:before {
+                        visibility: hidden;
+                    }
+                }*/
+}
+ol.draggable-list li:before {
+  content: counter(step-counter);
+  font-size: 10px;
+  background-color: black;
+  color: white;
+  font-weight: bold;
+  padding: 3px 8px;
+  border-radius: 3px;
+}
+ol.draggable-list li.image:before {
+  margin: 1%;
+  display: inline-block;
+  vertical-align: top;
+}
+ol.draggable-list li.image.-new:before {
+  visibility: hidden;
+}
 *,
 *:before,
 *:after {
@@ -415,47 +464,6 @@ input[type=number].-no-spin::-webkit-outer-spin-button {
   background-color: #000;
   color: #999;
   border-color: #FFF;
-}
-.place-box {
-  Ignore: a;padding:10px;
-  Ignore: a;padding:0.625rem;
-  Ignore: a;margin-bottom:10px;
-  Ignore: a;margin-bottom:0.625rem;
-  box-shadow: 0 0 0 1px #6a6a6a inset;
-}
-.place-box:hover {
-  box-shadow: 0 0 0 1px #515151 inset;
-}
-.place-box.-agendable {
-  background-color: rgba(92, 184, 92, 0.08);
-}
-.place-box > .header {
-  Ignore: a;margin-bottom:10px;
-  Ignore: a;margin-bottom:0.625rem;
-}
-.place-box > .header > a {
-  text-decoration: none;
-}
-.place-box > .header .image,
-.place-box > .header .title {
-  display: inline-block;
-  vertical-align: middle;
-}
-.place-box > .header .title {
-  max-width: 49%;
-}
-.place-box > .address {
-  display: block;
-  size: 10px;
-  color: #111;
-  Ignore: a;margin-bottom:5px;
-  Ignore: a;margin-bottom:0.3125rem;
-}
-.place-box > .description {
-  text-align: justify;
-}
-.place-box > footer {
-  text-align: right;
 }
 .search-box.-map {
   margin-top: 10px;

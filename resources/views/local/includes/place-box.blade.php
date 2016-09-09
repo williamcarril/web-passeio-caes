@@ -10,11 +10,13 @@ $link = isset($link) ? $link : "#";
             <h2 class="title">{{$name}}</h2>
         </a>
     </header>
-    <a class="address" href="http://maps.google.com/?q={{"$lat,$lng"}}" target="_blank">
-        <i class="glyphicon glyphicon-map-marker"></i>
-        {{$address}}
-    </a>
-    <p class="description">{{\str_limit($description, 105)}}</p>
+    <section class="content">
+        <a class="address" href="http://maps.google.com/?q={{"$lat,$lng"}}" target="_blank">
+            <i class="glyphicon glyphicon-map-marker"></i>
+            {{\str_limit($address, 35)}}
+        </a>
+        <p class="description">{{\str_limit($description, 105)}}</p>
+    </section>
     <footer class="footer">
         <div class="button-group">
             @if($agendable)

@@ -92,15 +92,15 @@
                 radius: parseFloat("{!!$local->raioAtuacao!!}")
             }));
 
-            @if (!empty($customer))
-                    var customerLatLng = new google.maps.LatLng(parseFloat("{!!$customer->lat!!}"), parseFloat("{!!$customer->lng!!}"));
-            map.markers.push(new google.maps.Marker({
-            position: customerLatLng,
+            @if(!empty($customer))
+                var customerLatLng = new google.maps.LatLng(parseFloat("{!!$customer->lat!!}"), parseFloat("{!!$customer->lng!!}"));
+                map.markers.push(new google.maps.Marker({
+                    position: customerLatLng,
                     map: map,
                     icon: "{!!asset('img/markers/user.png')!!}"
-            }));
-                    @endif
-                    for (var i = 0; i < map.markers.length; i++) {
+                }));
+            @endif
+            for (var i = 0; i < map.markers.length; i++) {
                 bounds.extend(map.markers[i].getPosition());
             }
             for (var i = 0; i < map.circles.length; i++) {

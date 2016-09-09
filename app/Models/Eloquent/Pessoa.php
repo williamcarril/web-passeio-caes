@@ -7,7 +7,8 @@ use App\Util\Formatter;
 
 abstract class Pessoa extends \WGPC\Eloquent\Model implements Authenticatable {
 
-    use Traits\Ativavel;
+    use Traits\Ativavel,
+        Traits\Enderecavel;
 
     protected $attributes = [
         "ativo" => true
@@ -52,11 +53,6 @@ abstract class Pessoa extends \WGPC\Eloquent\Model implements Authenticatable {
     public function setTelefoneAttribute($value) {
         $telefone = preg_replace('/[^0-9]/', '', $value);
         $this->attributes["telefone"] = $telefone;
-    }
-
-    public function setPostalAttribute($value) {
-        $postal = preg_replace('/[^0-9]/', '', $value);
-        $this->attributes["postal"] = $postal;
     }
 
     public function setCpfAttribute($value) {
