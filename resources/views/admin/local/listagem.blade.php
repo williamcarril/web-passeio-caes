@@ -1,17 +1,16 @@
 <?php
-$title = isset($title) ? $title : "Funcionários";
 $inactiveText = trans("action.inactive");
 $activeText = trans("action.active");
 ?>
 @extends("admin.layouts.default")
 
-@section("title") {{$title}} | {{config("app.name")}} @endsection
+@section("title") Locais de Passeio | {{config("app.name")}} @endsection
 
 @section("main")
 <section>
-    <h1>{{$title}}</h1>
+    <h1>Locais de Passeio</h1>
     <div class="table-responsive">
-        <a class="btn btn-default" href="{{route("admin.funcionario.passeador.novo.get")}}">
+        <a class="btn btn-default" href="{{route("admin.local.novo.get")}}">
             <i class="glyphicon glyphicon-plus"></i>
             Novo
         </a>
@@ -20,31 +19,24 @@ $activeText = trans("action.active");
                 <tr>
                     <th>Foto</th>
                     <th>Nome</th>
-                    <th>CPF</th>
-                    <th>RG</th>
-                    <th>Telefone</th>
-                    <th>E-mail</th>
+                    <th>Endereço</th>
                     <th>Status</th>
-                    <th></th>
                 </tr>
             </thead>
             <tbody>
-                @foreach($funcionarios as $funcionario)
-                <tr data-id="{{$funcionario->idFuncionario}}" class="{{!$funcionario->ativo ? "_error-color" : ""}}">
-                    <td><img src="{{$funcionario->thumbnail}}" alt="Foto"/></td>
-                    <td>{{$funcionario->nome}}</td>
-                    <td>{{$funcionario->cpfFormatado}}</td>
-                    <td>{{$funcionario->rg}}</td>
-                    <td>{{$funcionario->telefoneFormatado}}</td>
-                    <td>{{$funcionario->email}}</td>
-                    <td data-name="ativo">{{$funcionario->ativoFormatado}}</td>
+                @foreach($locais as $local)
+                <tr data-id="{{$local->idLocal}}" class="{{!$local->ativo ? "_error-color" : ""}}">
+                    <td><img src="{{$local->thumbnail}}" alt="Foto"/></td>
+                    <td>{{$local->nome}}</td>
+                    <td>{{$local->getEndereco(["logradouro", "bairro"])}}</td>
+                    <td data-name="ativo">{{$local->ativoFormatado}}</td>
                     <td>
                         <div class="button-group">
-                            <a href="{{route("admin.funcionario.passeador.alterar.get", ["id" => $funcionario->idFuncionario])}}" class="btn btn-default">
+                            <a href="{{route("admin.local.alterar.get", ["id" => $local->idLocal])}}" class="btn btn-default">
                                 <i class="glyphicon glyphicon-edit"></i>
                             </a>
-                            <button type="button" class="btn {{$funcionario->ativo ? "btn-danger" : "btn-success"}}" data-action="change-status" data-value="{{$funcionario->ativo ? 1 : 0}}">
-                                @if($funcionario->ativo)
+                            <button type="button" class="btn {{$local->ativo ? "btn-danger" : "btn-success"}}" data-action="change-status" data-value="{{$local->ativo ? 1 : 0}}">
+                                @if($local->ativo)
                                 {{$inactiveText}}
                                 @else
                                 {{$activeText}}
@@ -66,10 +58,10 @@ $activeText = trans("action.active");
     (function () {
         $("[data-action='change-status']").click(function (ev) {
             var $this = $(this);
-            var $funcionario = $this.parents("[data-id]");
-            var id = $funcionario.attr("data-id");
+            var $local = $this.parents("[data-id]");
+            var id = $local.attr("data-id");
             $.ajax({
-                "url": "{{route('admin.funcionario.passeador.status.post')}}",
+                "url": "{{route('admin.local.status.post')}}",
                 "type": "POST",
                 "data": {
                     "id": id
@@ -78,24 +70,24 @@ $activeText = trans("action.active");
                     $this.addClass("loading").addClass("disabled");
                 },
                 "success": function (response) {
-                    if(!response.status) {
+                    if (!response.status) {
                         showAlert(response.messages, "error");
                     } else {
-                        switch($this.attr("data-value")) {
+                        switch ($this.attr("data-value")) {
                             case "0":
                                 $this.attr("data-value", "1");
                                 $this.text("{!!$inactiveText!!}");
                                 $this.removeClass("btn-success").addClass("btn-danger");
-                                $funcionario.removeClass("_error-color");
+                                $local.removeClass("_error-color");
                                 break;
                             case "1":
                                 $this.attr("data-value", "0");
                                 $this.text("{!!$activeText!!}");
                                 $this.removeClass("btn-danger").addClass("btn-success");
-                                $funcionario.addClass("_error-color");
+                                $local.addClass("_error-color");
                                 break;
                         }
-                        $funcionario.find("[data-name='ativo']").text(response.data.status);
+                        $local.find("[data-name='ativo']").text(response.data.status);
                     }
                 },
                 "error": function () {

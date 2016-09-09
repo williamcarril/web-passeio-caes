@@ -64,7 +64,8 @@ class ClienteController extends Controller {
     }
 
     public function route_getCheckCpf(Request $req) {
-        $cpf = $req->input("cpf");
+        $cpf = preg_replace('/[^0-9]/', '', $req->input("cpf"));
+        
         $cliente = $this->auth->guard("web")->user();
 
         $check = Cliente::where("cpf", $cpf);
@@ -267,7 +268,7 @@ class ClienteController extends Controller {
 
     public function route_getLogout(Request $req) {
         $this->auth->guard("web")->logout();
-        return redirect()->back();
+        return redirect()->route("home");
     }
 
     // </editor-fold>

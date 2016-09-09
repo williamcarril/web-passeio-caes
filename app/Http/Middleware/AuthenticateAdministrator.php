@@ -36,9 +36,7 @@ class AuthenticateAdministrator {
             if ($request->ajax()) {
                 return response('Unauthorized.', 401);
             } else {
-                return redirect()
-                        ->route('admin.login.get')
-                        ->withErrors("Por favor, autentifique-se no sistema.");
+                return redirect()->route('admin.login.get');
             }
         }
 

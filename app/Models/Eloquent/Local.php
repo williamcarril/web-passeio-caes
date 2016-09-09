@@ -7,8 +7,9 @@ use App\Util\Formatter;
 
 class Local extends \WGPC\Eloquent\Model {
 
-    use Traits\Endereco,
-        Traits\Thumbnail;
+    use Traits\Enderecavel,
+        Traits\Thumbnailable,
+        Traits\Ativavel;
 
     protected $table = "local";
     protected $primaryKey = "idLocal";
@@ -33,7 +34,7 @@ class Local extends \WGPC\Eloquent\Model {
         "lng" => "float",
     ];
     protected static $rules = [
-        "nome" => ["required", "max:70", "string", "unique:local,nome"],
+        "nome" => ["required", "max:70", "string"],
         "raioAtuacao" => ["integer", "required"],
         "ativo" => ["boolean", "required"],
         "logradouro" => ["required", "max:70", "string"],
@@ -45,13 +46,6 @@ class Local extends \WGPC\Eloquent\Model {
         "lng" => ["required", "numeric"],
         "slug" => ["required", "string", "max:70"]
     ];
-
-    public static function boot() {
-        parent::boot();
-        static::addGlobalScope("ativo", function(\Illuminate\Database\Eloquent\Builder $builder) {
-            $builder->where("ativo", true);
-        });
-    }
 
     public static function getDefaultThumbnail() {
         return asset("img/place.png");
@@ -89,6 +83,7 @@ class Local extends \WGPC\Eloquent\Model {
 
     public function overrideNormalRules($rules) {
         $rules["slug"][] = "unique:local,slug,{$this->idLocal},idLocal";
+        $rules["nome"][] = "unique:local,nome,{$this->idLocal},idLocal";
         return $rules;
     }
 

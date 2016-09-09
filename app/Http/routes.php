@@ -13,8 +13,10 @@
 if (!\App::environment("production")) {
     Route::group(["prefix" => "tests"], function() {
         Route::get("/", ["as" => "test", "uses" => function() {
-                
-            }]);
+            $value = 1;
+            $teste = increment($value);
+            return $value. " " . $teste;
+        }]);
     });
 }
 
@@ -30,7 +32,7 @@ Route::group(["prefix" => "cliente"], function() {
     Route::get("/logout", ["as" => "cliente.auth.logout.get", "uses" => "ClienteController@route_getLogout"]);
 
     Route::group(["middleware" => "auth.customer"], function() {
-        Route::get("/cachorro", ["as" => "cliente.caes.get", "uses" => "ClienteController@route_getCaesView"]);
+        Route::get("/cachorros", ["as" => "cliente.caes.get", "uses" => "ClienteController@route_getCaesView"]);
         Route::post("/cachorro", ["as" => "cliente.caes.post", "uses" => "ClienteController@route_postCaes"]);
         Route::post("/cachorro/delete", ["as" => "cliente.caes.delete.post", "uses" => "ClienteController@route_postDeleteCao"]);
         Route::get("/cachorro/{id}/vacinas", ["as" => "cliente.caes.vacina.get", "uses" => "ClienteController@route_getVacinacao"]);
@@ -52,10 +54,6 @@ Route::group(["prefix" => "passeio"], function() {
 
 Route::group(["prefix" => "api", "namespace" => "Api"], function() {
     Route::group(["prefix" => "v1"], function() {
-        Route::resource("modalidades", "ModalidadeController");
-        Route::resource("vacinas", "VacinaController");
-        Route::resource("trajetos", "TrajetoController");
-        Route::resource("multimidias", "MultimidiaController");
     });
 });
 

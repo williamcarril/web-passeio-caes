@@ -4,7 +4,7 @@ namespace App\Models\Eloquent;
 
 class Cao extends \WGPC\Eloquent\Model {
 
-    use Traits\Thumbnail;
+    use Traits\Thumbnailable;
 
     protected $primaryKey = "idCao";
     protected $table = 'cao';

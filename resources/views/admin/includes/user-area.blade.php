@@ -4,8 +4,8 @@
     </center>
     Olá, {{$administrator->nome}}.
     <section>
-        <a href="{{route("admin.funcionario.alterar.get")}}">
-            <i class="glyphicon glyphicon-pencil"></i>
+        <a href="{{route("admin.funcionario.salvar.get")}}">
+            <i class="glyphicon glyphicon-edit"></i>
             Alterar cadastro
         </a>
         <br/>

@@ -28,7 +28,7 @@
     Olá, {{$customer->nome}}.
     <section>
         <a href="{{route("cliente.cadastro.get")}}">
-            <i class="glyphicon glyphicon-pencil"></i>
+            <i class="glyphicon glyphicon-edit"></i>
             Alterar cadastro
         </a>
         <br/>

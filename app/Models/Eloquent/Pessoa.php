@@ -7,6 +7,8 @@ use App\Util\Formatter;
 
 abstract class Pessoa extends \WGPC\Eloquent\Model implements Authenticatable {
 
+    use Traits\Ativavel;
+
     protected $attributes = [
         "ativo" => true
     ];
@@ -46,13 +48,6 @@ abstract class Pessoa extends \WGPC\Eloquent\Model implements Authenticatable {
         "complemento" => ["max:50", "string"],
         "email" => ["required", "email", "string"]
     ];
-
-    public static function boot() {
-        parent::boot();
-        static::addGlobalScope("ativo", function(\Illuminate\Database\Eloquent\Builder $builder) {
-            $builder->where("ativo", true);
-        });
-    }
 
     public function setTelefoneAttribute($value) {
         $telefone = preg_replace('/[^0-9]/', '', $value);
@@ -103,10 +98,6 @@ abstract class Pessoa extends \WGPC\Eloquent\Model implements Authenticatable {
 
     public function getTelefoneFormatadoAttribute() {
         return Formatter::phone($this->telefone);
-    }
-
-    public function getAtivoFormatadoAttribute() {
-        return $this->ativo ? "Ativo" : "Inativo";
     }
 
 }

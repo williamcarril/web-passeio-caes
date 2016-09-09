@@ -1,4 +1,9 @@
 (function () {
+    //Adding method to string prototype
+    String.prototype.ucfirst = function () {
+        return this.charAt(0).toUpperCase() + this.slice(1);
+    };
+
     //Defining a wrapper to application's global jscript variables
     globals = {};
 
@@ -146,35 +151,60 @@
         return $DOMEmailInput[0].checkValidity();
     };
 
-    //Predefined input validation and comportment
-    validate.inputs = {};
-    validate.inputs.empty = function ($input) {
-        var isEmpty = validate.empty($input.val());
-        if (!isEmpty) {
-            setInputStatus($input, "success");
-        } else {
-            setInputStatus($input, "error");
+    //Predefined input validation and comportment for jquery
+    $.fn.extend({
+        "validate": function (rule, $data) {
+            var $this = $(this);
+            if (!($this.is("input") || $this.is("textarea") || $this.is("select"))) {
+                return $this;
+            }
+            var failed = false;
+            switch (rule) {
+                case "empty":
+                    failed = validate.empty($this.val());
+                    break;
+                case "phone":
+                    failed = !validate.phone($this.val());
+                    break;
+                case "cep":
+                    failed = !validate.cep($this.val());
+                    break;
+                case "email":
+                    failed = !validate.email($this.val());
+                    break;
+                case "nonEmptyEquals":
+                    if (!($data.is("input") || $data.is("textarea") || $data.is("select"))) {
+                        failed = true;
+                    } else {
+                        failed = validate.empty($this.val()) || !validate.equals($this.val(), $data.val());
+                    }
+                    if (failed) {
+                        setInputStatus($data, "error");
+                    } else {
+                        setInputStatus($data, "success");
+                    }
+                    break;
+                case "equals":
+                    if (!($data.is("input") || $data.is("textarea") || $data.is("select"))) {
+                        failed = true;
+                    } else {
+                        failed = !validate.equals($this.val(), $data.val());
+                    }
+                    if (failed) {
+                        setInputStatus($data, "error");
+                    } else {
+                        setInputStatus($data, "success");
+                    }
+                    break;
+            }
+            if (failed) {
+                setInputStatus($this, "error");
+            } else {
+                setInputStatus($this, "success");
+            }
+            return $this;
         }
-        return isEmpty;
-    };
-    validate.inputs.phone = function ($input) {
-        var isPhone = validate.phone($input.val());
-        if (isPhone) {
-            setInputStatus($input, "success");
-        } else {
-            setInputStatus($input, "error");
-        }
-        return isPhone;
-    };
-    validate.inputs.cep = function ($input) {
-        var isCep = validate.cep($input.val());
-        if (isCep) {
-            setInputStatus($input, "success");
-        } else {
-            setInputStatus($input, "error");
-        }
-        return isCep;
-    };
+    });
 
     //Default confirm modal function
     var $confirm = $("#confirm-modal");
@@ -220,4 +250,88 @@
         }
         return text.replace(new RegExp(articleMark, "gm"), article);
     };
+
+    //Default ajax request to a simple form element.
+    $.fn.extend({
+        "defaultAjaxSubmit": function (redirectUrl, redirectTimer) {
+            var $this = $(this);
+            if (!$this.is("form")) {
+                return $this;
+            }
+            redirectTimer = redirectTimer || 3000;
+            var $submitButton = $this.find("button[type='submit']");
+            $this.submit(function (ev) {
+                ev.stopPropagation();
+                ev.preventDefault();
+                $.ajax({
+                    "url": $this.attr("action"),
+                    "type": $this.attr("method"),
+                    "data": new FormData($this[0]),
+                    "processData": false,
+                    "contentType": false,
+                    "beforeSend": function () {
+                        if ($submitButton) {
+                            $submitButton.addClass("disabled").addClass("loading");
+                        }
+                    },
+                    "success": function (response) {
+                        if (!response.status) {
+                            showAlert(response.messages, "error");
+                            $submitButton.removeClass("disabled");
+                        } else {
+                            showAlert('Operação realizada com sucesso!', "success");
+                            if (redirectUrl) {
+                                setInterval(function () {
+                                    window.location.replace(redirectUrl);
+                                }, redirectTimer);
+                            }
+                        }
+                    },
+                    "error": function () {
+                        showAlert("Ocorreu um problema ao enviar a requisição. Por favor, atualize a página ou tente novamente mais tarde.", "error");
+                        $submitButton.removeClass("disabled");
+                    },
+                    "complete": function () {
+                        $submitButton.removeClass("loading");
+                    }
+                });
+            });
+            return $this;
+        }
+    });
+
+    //Default ajax validation function
+    $.fn.extend({
+        "ajaxValidation": function (url, type, data, errorMessage, success, beforeSend, complete, error) {
+            var $this = $(this);
+            errorMessage = errorMessage || "O valor informado é inválido.";
+            success = success || function (response) {
+                if (response.status) {
+                    setInputStatus($this, "error");
+                    showAlert(errorMessage, "error");
+                } else {
+                    setInputStatus($this, "success");
+                }
+            };
+            beforeSend = beforeSend || function () {
+                $this.addClass("loading");
+            };
+            complete = complete || function () {
+                $this.removeClass("loading");
+            };
+            error = error || function () {
+                setInputStatus($this, "success");
+            };
+            $.ajax({
+                "url": url,
+                "type": type,
+                "data": data,
+                "success": success,
+                "beforeSend": beforeSend,
+                "error": error,
+                "complete": complete
+            });
+            return $this;
+        }
+    });
 })();

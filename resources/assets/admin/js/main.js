@@ -38,8 +38,15 @@
         "translateMonths": months
     });
 
-    //Adding method to string prototype
-    String.prototype.ucfirst = function () {
-        return this.charAt(0).toUpperCase() + this.slice(1);
-    };
+    //Removing input number scroll
+    $("input[type='number'].-no-spin").on("mousewheel", function (ev) {
+        ev.preventDefault();
+    });
+    
+    //Prevent default 'Hit enter' submit on forms for inputs
+    $("form").on("keypress", function(ev) {
+        if(ev.keyCode === 13 && ev.target.type !== "submit") {
+            return false;
+        }
+    });
 })();

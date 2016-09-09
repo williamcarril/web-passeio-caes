@@ -8,6 +8,7 @@ $width = isset($width) ? $width : "100px";
 $height = isset($height) ? $height : "100px";
 $placeholder = isset($placeholder) ? $placeholder : "Selecione uma imagem";
 $icon = isset($icon) ? $icon : true;
+$required = isset($required) ? $required : false;
 ?>
 <label class="image-uploader" for="{{$id}}" data-action="image-uploader">
     @if(!is_null($image))
@@ -25,5 +26,5 @@ $icon = isset($icon) ? $icon : true;
         {{$placeholder}}
     </span>
     @endif
-    <input data-role="input" id="{{$id}}" name="{{$name}}" type="file" accept=".jpg, .png, .jpeg, .bmp, .tif, .tiff|images/*">
+    <input {{$required ? "required" : ""}} data-role="input" id="{{$id}}" name="{{$name}}" type="file" accept=".jpg, .png, .jpeg, .bmp, .tif, .tiff|images/*">
 </label>

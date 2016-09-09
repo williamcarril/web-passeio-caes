@@ -173,6 +173,14 @@ select.-error,
 textarea.-error {
   border: 1px solid #d9534f;
 }
+input[type=number].-no-spin {
+  -moz-appearance: textfield;
+}
+input[type=number].-no-spin::-webkit-inner-spin-button,
+input[type=number].-no-spin::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
 #alerts {
   z-index: 9999;
   position: fixed;

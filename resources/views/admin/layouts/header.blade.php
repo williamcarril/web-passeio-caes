@@ -27,7 +27,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#">Locais</a>
+                    <a href="{{route("admin.local.listagem.get")}}">Locais</a>
                 </li>
                 <li>
                     <a href="#">Modalidades</a>

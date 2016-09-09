@@ -37,11 +37,11 @@ module.exports = function (grunt) {
             //Non-Bower Vendors Files
             "<%= path.dev.admin %>js/vendors/**/*.js",
             //General JScript Functions File
-            "<%= path.dev.admin %>js/functions.js",
+            "<%= path.dev.site %>js/functions.js",
             //General JScript File
             "<%= path.dev.admin %>js/main.js",
             //Custom Components Files
-            "<%= path.dev.admin %>js/components/**/*.js"
+            "<%= path.dev.site %>js/components/**/*.js"
         ]
     };
 
