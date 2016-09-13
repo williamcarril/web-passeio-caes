@@ -74,10 +74,9 @@ $title = isset($title) ? $title : "Funcionário";
 <script type="text/javascript">
     (function () {
         var $form = $("#form-manter-funcionario");
+        var ignoreOnChecks = {};
         @if(!empty($ignoreOnChecks))
             var ignoreOnChecks = $.parseJSON('{!! json_encode($ignoreOnChecks) !!}');
-        @else
-            var ignoreOnChecks = {};
         @endif
         $form.find("input[name='nome']").validate("empty", null, "blur");
 

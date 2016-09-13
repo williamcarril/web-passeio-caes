@@ -38,21 +38,40 @@ $urlLocalDetalhes = route('local.detalhes.get', ['slug' => '']);
             </div>
         </fieldset>
         <fieldset>
-            <legend>Fotos</legend>
+            <legend>
+                Fotos
+            </legend>
+            <p>
+                <b>Tamanhos sugeridos:</b><br/>
+                <b>Mobile:</b> {{$tamanhos["mobile"]}}<br/>
+                <b>Desktop:</b> {{$tamanhos["desktop"]}}
+            </p>
             <div class="form-group">
-                Parei aqui...
                 <ol class="draggable-list" data-action="drag-and-drop">
                     @if(!empty($imagens))
                     @foreach($imagens as $imagem)
-                    <li class="image">
+                    <li class="image" data-role="imagem" data-id="{{$imagem->idImagem}}">
+                        <button type="button" class="close" aria-label="Close" data-action="remover-imagem"><span aria-hidden="true">&times;</span></button>
                         <input type="hidden" name="idImagem[]" value="{{$imagem->idImagem}}"/>
-                        @include("includes.image-uploader", ["image" => $imagem->getUrl(), "imageDescription" => $imagem->descricao, "width" => "100", "height" => "100", "placeholder" => false, "icon" => false, "name" => "imagem[]"])
+                        <div class="tabbed-image">
+                            <div class="tab-controls">
+                                <a class="tab-toggler btn btn-default active" href="#mobile-image-{{$imagem->idImagem}}" role="tab" data-toggle="tab">Mobile</a>
+                                <a class="tab-toggler btn btn-default" href="#desktop-image-{{$imagem->idImagem}}" role="tab" data-toggle="tab">Desktop</a>
+                            </div>
+                            <div class="tab-content">
+                                <div class="tab-pane fade in active" role="tabpanel" id="mobile-image-{{$imagem->idImagem}}">
+                                @include("includes.image-uploader", ["image" => $imagem->getUrl("mobile"), "imageDescription" => $imagem->descricao, "width" => "100", "height" => "100", "placeholder" => false, "icon" => false, "name" => "imagemMobile[]"])
+                                </div>
+                                <div class="tab-pane fade" role="tabpanel" id="desktop-image-{{$imagem->idImagem}}">
+                                @include("includes.image-uploader", ["image" => $imagem->getUrl("desktop"), "imageDescription" => $imagem->descricao, "width" => "100", "height" => "100", "placeholder" => false, "icon" => false, "name" => "imagemDesktop[]"])
+                                </div>
+                            </div>
+                        </div>
                     </li>
                     @endforeach
                     @endif
-                    <li class="image -new">
-                        <input type="hidden" name="idImagem[]" value=""/>
-                        @include("includes.image-uploader", ["placeholder" => false, "icon" => false, "name" => "imagem[]", "image" => asset("img/picture-black.png")])
+                    <li class="control non-draggable">
+                        <button type="button" class="btn btn-success" data-action="adicionar-imagem"><i class="glyphicon glyphicon-plus"></i></button>
                     </li>
                 </ol>
             </div>
@@ -84,9 +103,23 @@ $urlLocalDetalhes = route('local.detalhes.get', ['slug' => '']);
 @endsection
 
 @section("templates")
-<li class="image -new" data-template="nova-imagem">
+<li class="image" data-role="imagem" data-template="nova-imagem" data-id="">
+    <button type="button" class="close" aria-label="Close" data-action="remover-imagem"><span aria-hidden="true">&times;</span></button>
     <input type="hidden" name="idImagem[]" value=""/>
-    @include("includes.image-uploader", ["placeholder" => false, "icon" => false, "name" => "imagem[]", "image" => asset("img/picture-black.png")])
+    <div class="tabbed-image">
+        <div class="tab-controls">
+            <a class="tab-toggler btn btn-default active" href="#" role="tab" data-toggle="tab" data-role="mobile-image-toggler">Mobile</a>
+            <a class="tab-toggler btn btn-default" href="#" role="tab" data-toggle="tab" data-role="desktop-image-toggler">Desktop</a>
+        </div>
+        <div class="tab-content">
+            <div class="tab-pane fade in active" role="tabpanel" data-role="mobile-image">
+            @include("includes.image-uploader", ["placeholder" => false, "icon" => false, "name" => "imagemMobile[]", "image" => asset("img/picture-black.png")])
+            </div>
+            <div class="tab-pane fade" role="tabpanel" data-role="desktop-image">
+            @include("includes.image-uploader", ["placeholder" => false, "icon" => false, "name" => "imagemDesktop[]", "image" => asset("img/picture-black.png")])
+            </div>
+        </div>
+    </div>
 </li>
 @endsection
 
@@ -95,6 +128,8 @@ $urlLocalDetalhes = route('local.detalhes.get', ['slug' => '']);
 <script type="text/javascript">
 (function () {
     var $form = $("#form-manter-local");
+    var $dragAndDrop = $form.find("[data-action='drag-and-drop']");
+    var $novaImagemTemplate = globals.templates.find("[data-template='nova-imagem']");
     var $slug = $form.find("input[name='slug']");
     var $urlFinal = $form.find("[data-role='url-final']")
     var urlSemSlug = "{!! $urlLocalDetalhes !!}";
@@ -175,8 +210,49 @@ $urlLocalDetalhes = route('local.detalhes.get', ['slug' => '']);
         }));
         map.fitBounds(map.circles[0].getBounds());
     }
+    
+    $dragAndDrop.on("click", "[data-action='remover-imagem']", function(ev) {
+        ev.preventDefault();
+        ev.stopPropagation();
+        var $this = $(this);
+        var $imagem  = $this.parents("[data-role='imagem']"); 
+        $imagem.remove();
+    });
+    
+    $dragAndDrop.on("click", "[data-action='adicionar-imagem']", function(ev) {
+        ev.preventDefault();
+        ev.stopPropagation();
+        var $parent = $(this).parent(".control");
+        var $clone = $novaImagemTemplate.clone();
+        var mobileId = uniqid();
+        var desktopId = uniqid();
+        $clone.find("[data-role='mobile-image-toggler']").attr("href", "#" + mobileId);
+        $clone.find("[data-role='mobile-image']").attr("id", mobileId);
+        $clone.find("[data-role='desktop-image-toggler']").attr("href", "#" + desktopId);
+        $clone.find("[data-role='desktop-image']").attr("id", desktopId);
+        
+        var $images = $clone.find("[data-action='image-uploader']");
+        for(var i = 0; i < $images.length; i++) {
+            $images.eq(i).imageUploader("id", uniqid());
+        }
 
-    $form.defaultAjaxSubmit("{!! route('admin.local.listagem.get') !!}");
+        $clone.removeAttr("data-template");
+        $clone.insertBefore($parent);
+    });
+
+    $form.defaultAjaxSubmit("{!! route('admin.local.listagem.get') !!}", function($form, $button) {
+        var $fotosNovas = $form.find("[data-role='imagem'][data-id='']");
+        for(var i = 0; i < $fotosNovas.length; i++) {
+            var $arquivos = $fotosNovas.eq(i).find("input[type='file']");
+            for(var j = 0; j < $arquivos.length; j++) {
+                if(!$arquivos.eq(j).val()) {
+                    showAlert("Por favor, selecione uma imagem para a versão mobile e desktop para cada uma das fotos novas.", "error");
+                    return false;
+                }
+            }
+        }
+        return true;
+    });
 })();
 </script>
 @endsection

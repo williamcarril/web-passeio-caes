@@ -8,14 +8,12 @@ class Imagem extends \WGPC\Eloquent\Model {
     protected $primaryKey = "idImagem";
     protected $fillable = [
         "nome",
-        "descricao",
         "data"
     ];
     protected $dates = ["data"];
     protected static $rules = [
         "data" => ["required", "date"],
-        "descricao" => ["string"],
-        "nome" => ["string", "max:75"],
+        "nome" => ["string", "max:75"]
     ];
 
     public function setDataAttribute($value) {

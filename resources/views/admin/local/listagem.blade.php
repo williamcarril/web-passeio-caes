@@ -35,7 +35,7 @@ $activeText = trans("action.active");
                             <a href="{{route("admin.local.alterar.get", ["id" => $local->idLocal])}}" class="btn btn-default">
                                 <i class="glyphicon glyphicon-edit"></i>
                             </a>
-                            <button type="button" class="btn {{$local->ativo ? "btn-danger" : "btn-success"}}" data-action="change-status" data-value="{{$local->ativo ? 1 : 0}}">
+                            <button type="button" class="btn btn-sm {{$local->ativo ? "btn-danger" : "btn-success"}}" data-action="change-status" data-value="{{$local->ativo ? 1 : 0}}">
                                 @if($local->ativo)
                                 {{$inactiveText}}
                                 @else

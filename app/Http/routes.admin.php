@@ -29,4 +29,14 @@ Route::group(["middleware" => "auth.admin"], function() {
         Route::get("/check/nome", ["as" => "admin.local.check.nome.get", "uses" => "LocalController@route_getCheckNome"]);
         Route::get("/check/slug", ["as" => "admin.local.check.slug.get", "uses" => "LocalController@route_getCheckSlug"]);
     });
+    
+    Route::group(["prefix" => "modalidade"], function() {
+        Route::get("/", ["as" => "admin.modalidade.listagem.get", "uses" => "ModalidadeController@route_getModalidades"]);
+        Route::post("/alterarStatus", ["as" => "admin.modalidade.status.post", "uses" => "ModalidadeController@route_postAlterarStatus"]);
+        Route::get("/novo", ["as" => "admin.modalidade.novo.get", "uses" => "ModalidadeController@route_getModalidade"]);
+        Route::get("/{id}", ["as" => "admin.modalidade.alterar.get", "uses" => "ModalidadeController@route_getModalidade"])
+                ->where('id', '[0-9]+');
+        Route::post("/salvar", ["as" => "admin.modalidade.salvar.post", "uses" => "ModalidadeController@route_postModalidade"]);
+        Route::get("/check/nome", ["as" => "admin.modalidade.check.nome.get", "uses" => "ModalidadeController@route_getCheckNome"]);
+    });
 });

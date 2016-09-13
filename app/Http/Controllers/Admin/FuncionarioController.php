@@ -115,6 +115,7 @@ class FuncionarioController extends Controller {
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Rotas POST que retornam JSON">
     public function route_postFuncionario(Request $req) {
+
         $id = $req->input("id");
         if (!is_null($id)) {
             $funcionario = Funcionario::find($id);
@@ -163,31 +164,29 @@ class FuncionarioController extends Controller {
         if ($req->has("numero")) {
             $funcionario->numero = $req->input("numero");
         }
-        if ($req->has("complemento")) {
-            $funcionario->complemento = $req->input("complemento");
-        }
-        if ($req->hasFile("imagem")) {
-            if (!is_null($funcionario->idImagem)) {
-                //Guarda referência da imagem antiga para ser deletada posteriormente
-                $idImagemAntiga = $funcionario->idImagem;
-            }
-            $nomeDoArquivo = $this->repository->saveImage($req->file("imagem"), 100, 100);
-            if ($nomeDoArquivo === false) {
-                \DB::rollBack();
-                return $this->defaultJsonResponse(false, trans("alert.error.generic", ["message" => "salvar a imagem do funcionário"]));
-            }
-            $imagem = $this->imageController->salvar(null, $funcionario->nome, null, [
-                ["arquivo" => $nomeDoArquivo]
-            ]);
-            if ($imagem->hasErrors()) {
-                \DB::rollBack();
-                return $this->defaultJsonResponse(false, $imagem->getErrors());
-            }
-            $funcionario->idImagem = $imagem->idImagem;
-        }
-
+        $funcionario->complemento = $req->input("complemento", null);
         \DB::beginTransaction();
         try {
+            if ($req->hasFile("imagem")) {
+                if (!is_null($funcionario->idImagem)) {
+                    //Guarda referência da imagem antiga para ser deletada posteriormente
+                    $idImagemAntiga = $funcionario->idImagem;
+                }
+                $nomeDoArquivo = $this->repository->saveImage($req->file("imagem"), 100, 100);
+                if ($nomeDoArquivo === false) {
+                    \DB::rollBack();
+                    return $this->defaultJsonResponse(false, trans("alert.error.generic", ["message" => "salvar a imagem do funcionário"]));
+                }
+                $imagem = $this->imageController->salvar(null, $funcionario->nome, [
+                    ["arquivo" => $nomeDoArquivo]
+                ]);
+                if ($imagem->hasErrors()) {
+                    \DB::rollBack();
+                    return $this->defaultJsonResponse(false, $imagem->getErrors());
+                }
+                $funcionario->idImagem = $imagem->idImagem;
+            }
+
             if (!$funcionario->save()) {
                 return $this->defaultJsonResponse(false, $funcionario->getErrors());
             }

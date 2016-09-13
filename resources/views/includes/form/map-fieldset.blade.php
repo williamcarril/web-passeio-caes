@@ -147,7 +147,7 @@ $postMapLoad = isset($postMapLoad) ? $postMapLoad : null;
             @if($key === "cep")
                 <?php continue; ?>
             @endif
-            $fieldset.find("input[name='{!!$names[$key]!!}']").on("blur", function () {
+            $fieldset.find("input[name='{!!$names[$key]!!}'],textarea[name='{!!$names[$key]!!}'],select[name='{!!$names[$key]!!}']").on("blur", function () {
                 @if($required)
                     $(this).validate("empty")
                 @else

@@ -13,9 +13,9 @@
 if (!\App::environment("production")) {
     Route::group(["prefix" => "tests"], function() {
         Route::get("/", ["as" => "test", "uses" => function() {
-            $value = 1;
-            $teste = increment($value);
-            return $value. " " . $teste;
+            return call_user_func_array(function($teste = null) {
+                return is_null($teste) ? "teste nulo" : "nao nulo";
+            }, [""]);
         }]);
     });
 }

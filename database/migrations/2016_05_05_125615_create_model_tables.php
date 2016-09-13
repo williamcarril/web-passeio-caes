@@ -14,7 +14,6 @@ class CreateModelTables extends Migration {
         \Schema::create("imagem", function($table) {
             $table->increments("idImagem");
             $table->string("nome", 75)->nullable();
-            $table->text("descricao")->nullable();
             $table->date("data");
         });
 
@@ -52,7 +51,7 @@ class CreateModelTables extends Migration {
             $table->enum("frequencia", ["semanal", "bisemanal"])->nullable();
             $table->boolean("ativo")->default(true);
             $table->boolean("coletivo")->default(false);
-            $table->decimal("precoPorPasseio", 6, 2)->unsigned();
+            $table->decimal("precoPorCaoPorHora", 6, 2)->unsigned();
         });
 
         \Schema::create("dia", function($table) {
@@ -142,6 +141,7 @@ class CreateModelTables extends Migration {
             $table->integer("idCliente")->unsigned();
             $table->foreign("idCliente")->references("idCliente")->on("cliente");
             $table->timestamp("data")->default(\DB::raw("CURRENT_TIMESTAMP"));
+            $table->text("observacao")->nullable();
         });
 
         \Schema::create("passeio", function($table) {
