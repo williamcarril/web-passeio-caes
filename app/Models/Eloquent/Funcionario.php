@@ -2,6 +2,8 @@
 
 namespace App\Models\Eloquent;
 
+use App\Models\Eloquent\Enums\FuncionarioTipo;
+
 class Funcionario extends Pessoa {
 
     use Traits\Thumbnailable;
@@ -14,7 +16,7 @@ class Funcionario extends Pessoa {
 
         static::$rules["idImagem"] = ["exists:imagem,idImagem", "required", "integer"];
         static::$rules["rg"] = ["required", "string"];
-        static::$rules["tipo"] = ["required", "in:passeador,administrador", "string"];
+        static::$rules["tipo"] = ["required", "in:" . implode(",", FuncionarioTipo::getConstants()), "string"];
     }
 
     public function __construct(array $attributes = array()) {

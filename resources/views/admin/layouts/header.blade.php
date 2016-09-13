@@ -30,12 +30,11 @@
                     <a href="{{route("admin.local.listagem.get")}}">Locais</a>
                 </li>
                 <li>
-                    <a href="#">Modalidades</a>
+                    <a href="{{route("admin.modalidade.listagem.get")}}">Modalidades</a>
                 </li>
                 <li>
                     <a href="#">Cancelamentos</a>
                 </li>
-
             </ul>
             @endif
         </div>

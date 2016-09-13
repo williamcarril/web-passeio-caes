@@ -51,5 +51,17 @@
     });
 
     //Initializing drag and drop
-    $("ol[data-action='drag-and-drop']").sortable();
+    $("ol[data-action='drag-and-drop']").sortable({
+        "cancel": '.non-draggable',
+        "placeholder": "placeholder",
+         "items": "li:not(:last-child)"
+    });
+    
+    //Adding active class on tabbed image controls
+    $("body").on("click", ".tab-toggler", function() {
+        var $this = $(this);
+        var $parent = $this.parent(".tab-controls");
+        $parent.find(".tab-toggler").removeClass("active");
+        $this.addClass("active");
+    });
 })();

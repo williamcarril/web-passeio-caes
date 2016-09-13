@@ -123,9 +123,7 @@ class ClienteController extends Controller {
         if ($req->has("numero")) {
             $cliente->numero = $req->input("numero");
         }
-        if ($req->has("complemento")) {
-            $cliente->complemento = $req->input("complemento");
-        }
+        $cliente->complemento = $req->input("complemento", null);
 
         \DB::beginTransaction();
         try {
@@ -182,7 +180,7 @@ class ClienteController extends Controller {
                     \DB::rollBack();
                     return $this->defaultJsonResponse(false, trans("alert.error.generic", ["message" => "salvar a imagem do cachorro"]));
                 }
-                $imagem = $this->imageController->salvar(null, $cao->nome, null, [
+                $imagem = $this->imageController->salvar(null, $cao->nome, [
                     ["arquivo" => $nomeDoArquivo]
                 ]);
                 if ($imagem->hasErrors()) {

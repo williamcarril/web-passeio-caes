@@ -9,16 +9,17 @@ use App\Models\Eloquent\ImagemArquivo as Arquivo;
 
 class ImagemController extends Controller {
 
-    public function salvar($id = null, $nome = null, $descricao = null, array $arquivos = []) {
-        if (!is_null($id)) {
+    public function salvar($id = null, $nome = null, array $arquivos = [], $renovarArquivos = true) {
+        if (!empty($id)) {
             $imagem = Imagem::find($id);
         } else {
             $imagem = new Imagem();
         }
         $imagem->nome = $nome;
-        $imagem->descricao = $descricao;
         $imagem->save();
-        $imagem->arquivos()->delete();
+        if($renovarArquivos) {
+            $imagem->arquivos()->delete();
+        }
         $errosArquivos = [];
         foreach ($arquivos as $arquivo) {
             $valores = array_merge([
@@ -43,12 +44,19 @@ class ImagemController extends Controller {
     }
 
     public function salvarArquivo($idImagem, $nomeDoArquivo, $tamanho = null) {
-        $arquivo = new Arquivo();
+        $arquivo = Arquivo::where("idImagem", $idImagem)->where("tamanho", $tamanho)->first();
+        if(is_null($arquivo)) {
+            $arquivo = new Arquivo();
+        }
         $arquivo->arquivo = $nomeDoArquivo;
         $arquivo->tamanho = $tamanho;
         $arquivo->idImagem = $idImagem;
         $arquivo->save();
         return $arquivo;
+    }
+    
+    public function atualizarArquivo($idImagem, $nomeDoArquivo, $tamanho) {
+        
     }
 
 }

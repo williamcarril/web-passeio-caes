@@ -350,7 +350,7 @@
 
                         var $image = $dogHtml.find("[data-name='imagem']").find("[data-action='image-uploader']");
                         $image.imageUploader("preview", dog.thumbnail);
-                        $image.imageUploader("id", new Date() + Math.random() * 10000);
+                        $image.imageUploader("id", uniqid());
 
                         $dogHtml.find("[data-role='vaccination-link']").attr("href", function () {
                             var $this = $(this);

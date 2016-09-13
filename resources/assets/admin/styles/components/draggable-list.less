@@ -1,13 +1,6 @@
-body.dragging, body.dragging * {
-    cursor: move !important;
-}
-
-.dragged {
-    position: absolute;
-    opacity: 0.5;
-    z-index: 2000;
-}
-
+// -------------------------
+// Draggable list - Component
+// -------------------------
 ol.draggable-list {
     margin: 0;
     .rem("padding", @base-space);
@@ -32,19 +25,25 @@ ol.draggable-list {
             padding: 3px 8px;
             border-radius: 3px;
         }
-
-        &.image:before {
+    }
+    li.image {
+        &:before {
             margin: 1%;
             display: inline-block;
             vertical-align: top;
         }
-        &.image.-new:before {
-            visibility: hidden;
+    }
+    li.control {
+        &:before {
+            display: none;
         }
-        /*        &.-new:last-child {
-                    &:before {
-                        visibility: hidden;
-                    }
-                }*/
+    }
+    li.placeholder {
+        &:before {
+            display: none;
+        }
+        .rem("min-height", 50px);
+        min-width: 1px;
+        background-color: black;
     }
 }

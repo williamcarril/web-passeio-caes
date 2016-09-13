@@ -5,8 +5,19 @@ namespace App\Http\Controllers\Admin;
 use Illuminate\Http\Request;
 use App\Models\Eloquent\Local;
 use App\Http\Controllers\Controller;
+use App\Models\Eloquent\Enums\ImagemTamanho;
+use App\Models\File\Repositorio;
+use App\Http\Controllers\ImagemController;
 
 class LocalController extends Controller {
+
+    private $repository;
+    private $imageController;
+
+    public function __construct(Repositorio $repository, ImagemController $imageController) {
+        $this->repository = $repository;
+        $this->imageController = $imageController;
+    }
 
     // <editor-fold defaultstate="collapsed" desc="Rotas que retornam Views">
     public function route_getLocais() {
@@ -39,6 +50,10 @@ class LocalController extends Controller {
                 ]
             ];
         }
+        $data["tamanhos"] = [
+            "mobile" => ImagemTamanho::MOBILE_LARGURA . "x" . ImagemTamanho::MOBILE_ALTURA,
+            "desktop" => ImagemTamanho::DESKTOP_LARGURA . "x" . ImagemTamanho::DESKTOP_ALTURA
+        ];
 
         return response()->view("admin.local.salvar", $data);
     }
@@ -70,6 +85,7 @@ class LocalController extends Controller {
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Rotas POST que retornam JSON">
     public function route_postLocal(Request $req) {
+//        return $this->defaultJsonResponse(false, null, $req->file("imagemMobile")[1]->getBasename());
         $id = $req->input("id");
         if (!is_null($id)) {
             $local = Local::find($id);
@@ -80,13 +96,13 @@ class LocalController extends Controller {
         if ($req->has("nome")) {
             $local->nome = $req->input("nome");
         }
-        if($req->has("descricao")) {
+        if ($req->has("descricao")) {
             $local->descricao = $req->input("descricao");
         }
-        if($req->has("slug")) {
+        if ($req->has("slug")) {
             $local->slug = $req->input("slug");
         }
-        if($req->has("raioAtuacao")) {
+        if ($req->has("raioAtuacao")) {
             $local->raioAtuacao = $req->input("raioAtuacao");
         }
         if ($req->has("lat")) {
@@ -104,43 +120,45 @@ class LocalController extends Controller {
         if ($req->has("bairro")) {
             $local->bairro = $req->input("bairro");
         }
-        if ($req->has("numero")) {
-            $local->numero = $req->input("numero");
-        }
-        if ($req->has("complemento")) {
-            $local->complemento = $req->input("complemento");
-        }
-//        if ($req->hasFile("imagem")) {
-//            if (!is_null($local->idImagem)) {
-//                //Guarda referência da imagem antiga para ser deletada posteriormente
-//                $idImagemAntiga = $local->idImagem;
-//            }
-//            $nomeDoArquivo = $this->repository->saveImage($req->file("imagem"), 100, 100);
-//            if ($nomeDoArquivo === false) {
-//                \DB::rollBack();
-//                return $this->defaultJsonResponse(false, trans("alert.error.generic", ["message" => "salvar a imagem do funcionário"]));
-//            }
-//            $imagem = $this->imageController->salvar(null, $local->nome, null, [
-//                ["arquivo" => $nomeDoArquivo]
-//            ]);
-//            if ($imagem->hasErrors()) {
-//                \DB::rollBack();
-//                return $this->defaultJsonResponse(false, $imagem->getErrors());
-//            }
-//            $local->idImagem = $imagem->idImagem;
-//        }
+        $local->numero = $req->input("numero", null);
+        $local->complemento = $req->input("complemento", null);
 
         \DB::beginTransaction();
         try {
             if (!$local->save()) {
                 return $this->defaultJsonResponse(false, $local->getErrors());
             }
-//            if (!empty($idImagemAntiga)) {
-//                if (!$this->imageController->deletar($idImagemAntiga)) {
-//                    \DB::rollBack();
-//                    return $this->defaultJsonResponse(false, trans("alert.error.update", ["entity" => "este funcionário"]));
-//                }
-//            }
+            //Salvando fotos
+            $ids = $req->input("idImagem", []);
+            $arquivosMobile = $req->file("imagemMobile", []);
+            $arquivosDesktop = $req->file("imagemDesktop", []);
+
+            //Descobrindo quais fotos foram removidas
+            $idsAntigos = array_map(function($imagem) {
+                return $imagem["idImagem"];
+            }, $local->imagens->toArray());
+
+            //Limpa as relações entre locais e fotos
+            $local->imagens()->detach();
+
+            //Deleta as imagens removidas
+            $idsRemovidos = array_diff($idsAntigos, $ids);
+            foreach ($idsRemovidos as $idRemovido) {
+                if (!$this->imageController->deletar($idRemovido)) {
+                    \DB::rollBack();
+                    return $this->defaultJsonResponse(false, trans("alert.error.update", ["entity" => "este local de passeio"]));
+                }
+            }
+
+            //Salvando/atualizando fotos
+            foreach ($ids as $i => $id) {
+                $imagem = $this->salvarFoto($id, $local, $arquivosMobile[$i], $arquivosDesktop[$i]);
+                if ($imagem === false) {
+                    \DB::rollBack();
+                    return $this->defaultJsonResponse(false, trans("alert.error.generic", ["message" => "salvar a foto do local de passeio"]));
+                }
+                $local->imagens()->attach($imagem->idImagem, ["ordem" => $i]);
+            }
             \DB::commit();
             return $this->defaultJsonResponse(true);
         } catch (\Exception $ex) {
@@ -162,6 +180,34 @@ class LocalController extends Controller {
         return $this->defaultJsonResponse(true, null, [
                     "status" => $local->ativoFormatado
         ]);
+    }
+
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Métodos privados">
+    private function salvarFoto($id, $local, $arquivoMobile, $arquivoDesktop) {
+        $arquivos = [];
+        if (!empty($arquivoMobile)) {
+            $arquivoMobile = $this->repository->saveImage($arquivoMobile, ImagemTamanho::MOBILE_LARGURA, ImagemTamanho::MOBILE_ALTURA);
+
+            if ($arquivoMobile === false) {
+                return false;
+            }
+            $arquivos[] = ["arquivo" => $arquivoMobile, "tamanho" => ImagemTamanho::MOBILE];
+        }
+        if (!empty($arquivoDesktop)) {
+            $arquivoDesktop = $this->repository->saveImage($arquivoDesktop, ImagemTamanho::DESKTOP_LARGURA, ImagemTamanho::DESKTOP_ALTURA);
+
+            if ($arquivoDesktop === false) {
+                return false;
+            }
+            $arquivos[] = ["arquivo" => $arquivoDesktop, "tamanho" => ImagemTamanho::DESKTOP];
+        }
+        $imagem = $this->imageController->salvar($id, $local->nome, $arquivos, false);
+
+        if ($imagem->hasErrors()) {
+            return false;
+        }
+        return $imagem;
     }
 
     // </editor-fold>

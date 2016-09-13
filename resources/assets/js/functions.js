@@ -267,16 +267,22 @@
 
     //Default ajax request to a simple form element.
     $.fn.extend({
-        "defaultAjaxSubmit": function (redirectUrl, redirectTimer) {
+        "defaultAjaxSubmit": function (redirectUrl, validation, redirectTimer) {
             var $this = $(this);
             if (!$this.is("form")) {
                 return $this;
             }
             redirectTimer = redirectTimer || 3000;
+            validation = validation || function() {
+                return true;
+            };
             var $submitButton = $this.find("button[type='submit']");
             $this.submit(function (ev) {
                 ev.stopPropagation();
                 ev.preventDefault();
+                if(!validation($this, $submitButton)) {
+                    return false;
+                }
                 $.ajax({
                     "url": $this.attr("action"),
                     "type": $this.attr("method"),
@@ -350,4 +356,24 @@
             return $this;
         }
     });
+    
+    //Creates an unique number (IDs, for example)
+    window.uniqid = function(prefix) {
+        prefix = prefix || "";
+        var date = new Date();
+        return  prefix 
+                + date.getFullYear() 
+                + "-" 
+                + date.getMonth() 
+                + "-" 
+                + date.getSeconds() 
+                + "_" 
+                + date.getHours() 
+                + "-"
+                + date.getMinutes()
+                + "-"
+                + date.getSeconds()
+                + "_"
+                + Math.random().toFixed(6) * 1000000;
+    };
 })();

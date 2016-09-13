@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder {
         $this->call(LocalTableSeeder::class);
         $this->call(ClienteTableSeeder::class);
         $this->call(FuncionarioTableSeeder::class);
+        $this->call(ModalidadeTableSeeder::class);
 
         Model::reguard();
     }

@@ -2,6 +2,9 @@
 
 namespace App\Models\Eloquent;
 
+namespace App\Models\Eloquent\Enums\Porte;
+namespace App\Models\Eloquent\Enums\Status;
+
 class Passeio extends \WGPC\Eloquent\Model {
 
     protected $table = "passeio";
@@ -31,8 +34,8 @@ class Passeio extends \WGPC\Eloquent\Model {
         "inicio" => ["required", "date_format:H:i:s", "less_or_equal:fim"],
         "fim" => ["required", "date_format:H:i:s", "greater_or_equal:inicio"],
         "data" => ["required", "date"],
-        "status" => ["required", "in:pendente,cancelado,em_andamento,feito", "string"],
-        "porte" => ["in:pequeno,medio,grande", "string"],
+        "status" => ["required", "string"],
+        "porte" => ["string"],
     ];
     protected $dates = ["data"];
     protected $casts = [
@@ -43,6 +46,12 @@ class Passeio extends \WGPC\Eloquent\Model {
         "coletivo" => false,
         "status" => "pendente"
     ];
+
+    public static function boot() {
+        parent::boot();
+        static::$rules["porte"][] = "in:" . implode(",", Porte::getConstants());
+        static::$rules["status"][] = "in:" . implode(",", Status::getConstants());
+    }
 
     public function agendamento() {
         return $this->belongsTo("\App\Models\Eloquent\Agendamento", "idAgendamento", "idAgendamento");

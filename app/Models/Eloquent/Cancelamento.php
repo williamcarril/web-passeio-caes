@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Models\Eloquent;
-
+use App\Models\Eloquent\Enums\CancelamentoStatus;
 class Cancelamento extends \WGPC\Eloquent\Model {
 
     protected $primaryKey = "idCancelamento";
@@ -18,10 +18,10 @@ class Cancelamento extends \WGPC\Eloquent\Model {
     protected static $rules = [
         "idPessoa" => ["required", "integer"],
         "justificativa" => ["required", "string"],
-        "status" => ["in:pendente,verificado", "string"],
+        "status" => ["required" , "string"],
         "tipoPessoa" => ["required", "in:funcionario,cliente", "string"],
         "data" => ["required", "date"],
-        "idPasseio" => ["required", "exists:passeio,idPasseio", "integer"]
+        "idPasseio" => ["required", "exists:passeio,idPasseio", "integer"],
     ];
     
     protected $dates = ["data"];
@@ -42,6 +42,7 @@ class Cancelamento extends \WGPC\Eloquent\Model {
                 }
             ]
         ];
+        static::$rules["status"][] = "in:" . implode(",", CancelamentoStatus::getConstants());
     }
 
     public function setDataAttribute($value) {
