@@ -2,8 +2,9 @@
 
 namespace App\Models\Eloquent;
 
-namespace App\Models\Eloquent\Enums\Porte;
-namespace App\Models\Eloquent\Enums\Status;
+use \App\Models\Eloquent\Enums\Porte;
+use \App\Models\Eloquent\Enums\PasseioStatus as Status;
+use \App\Models\Eloquent\Enums\AgendamentoStatus;
 
 class Passeio extends \WGPC\Eloquent\Model {
 
@@ -11,11 +12,10 @@ class Passeio extends \WGPC\Eloquent\Model {
     protected $primaryKey = "idPasseio";
     protected $fillable = [
         "idAgendamento",
-        "idModalidade",
         "idLocal",
         "idPasseador",
         "idPasseioReagendado",
-        "preco",
+        "precoPorCaoPorHora",
         "inicio",
         "fim",
         "data",
@@ -29,7 +29,7 @@ class Passeio extends \WGPC\Eloquent\Model {
         "idLocal" => ["required", "exists:local,idLocal", "integer"],
         "idPasseador" => ["exists:funcionario,idFuncionario,tipo,passeador", "integer"],
         "idPasseioReagendado" => ["exists:passeio,idPasseio", "integer"],
-        "preco" => ["required", "numeric"],
+        "precoPorCaoPorHora" => ["required", "numeric"],
         "coletivo" => ["boolean", "required"],
         "inicio" => ["required", "date_format:H:i:s", "less_or_equal:fim"],
         "fim" => ["required", "date_format:H:i:s", "greater_or_equal:inicio"],
@@ -37,9 +37,8 @@ class Passeio extends \WGPC\Eloquent\Model {
         "status" => ["required", "string"],
         "porte" => ["string"],
     ];
-    protected $dates = ["data"];
     protected $casts = [
-        "preco" => "float",
+        "precoPorCaoPorHora" => "float",
         "coletivo" => "boolean",
     ];
     protected $attributes = [
@@ -99,26 +98,44 @@ class Passeio extends \WGPC\Eloquent\Model {
         return array_values($clientes);
     }
 
+    public function getModalidadeAttribute() {
+        $agendamento = $this->agendamento()->first();
+        if (is_null($agendamento)) {
+            return null;
+        }
+        return $agendamento->modalidade;
+    }
+
+    public function scopeAgendamentoConfirmado($query) {
+        return $query->whereHas("agendamento", function($q) {
+                    $q->where("status", AgendamentoStatus::FEITO);
+                });
+    }
+
     public function scopePendente($query) {
-        return $query->where('status', "pendente");
+        return $query->where("status", Status::PENDENTE);
     }
 
     public function scopeCancelado($query) {
-        return $query->where('status', "cancelado");
+        return $query->where("status", Status::CANCELADO);
     }
 
     public function scopeEmAndamento($query) {
-        return $query->where('status', "em_andamento");
+        return $query->where("status", Status::EM_ANDAMENTO);
     }
 
     public function scopeFeito($query) {
-        return $query->where('status', "feito");
+        return $query->where("status", Status::FEITO);
+    }
+
+    public function scopeNaoCancelado($query) {
+        return $query->where("status", "!=", Status::CANCELADO);
     }
 
     public function scopeNaoFinalizado($query) {
         return $query->where(function($q) {
-                    $q->orWhere("status", "pendente");
-                    $q->orWhere("status", "em_andamento");
+                    $q->orWhere("status", Status::PENDENTE);
+                    $q->orWhere("status", Status::EM_ANDAMENTO);
                 });
     }
 

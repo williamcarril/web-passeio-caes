@@ -13,16 +13,14 @@ class Agendamento extends \WGPC\Eloquent\Model {
         "idCliente",
         "data",
         "idAgendamentoNovo",
-        "status",
-        "observacao"
+        "status"
     ];
     protected static $rules = [
         "idModalidade" => ["required", "exists:modalidade,idModalidade", "integer"],
         "idCliente" => ["required", "exists:cliente,idCliente", "integer"],
         "data" => ["required", "date"],
         "idAgendamentoNovo" => ["exists:agendamento,idAgendamento", "integer"],
-        "status" => ["required", "string"],
-        "observacao" => ["string"]
+        "status" => ["required", "string"]
     ];
     protected $dates = ["data"];
 
@@ -48,4 +46,7 @@ class Agendamento extends \WGPC\Eloquent\Model {
         return $this->belongsToMany("\App\Models\Eloquent\Cao", "a_agendamento_cao", "idAgendamento", "idCao");
     }
 
+    public function modalidade() {
+        return $this->belongsTo("\App\Models\Eloquent\Modalidade", "idModalidade", "idModalidade");
+    }
 }

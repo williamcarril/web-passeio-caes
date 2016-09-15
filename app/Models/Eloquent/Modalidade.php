@@ -20,12 +20,12 @@ class Modalidade extends \WGPC\Eloquent\Model {
         "frequencia",
         "ativo",
         "coletivo",
-        "precoPorCao"
+        "precoPorCaoPorHora"
     ];
     protected $casts = [
         "ativo" => "boolean",
         "coletivo" => "boolean",
-        "precoPorCao" => "float"
+        "precoPorCaoPorHora" => "float"
     ];
     protected $attributes = [
         "ativo" => true,

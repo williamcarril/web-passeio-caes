@@ -141,7 +141,6 @@ class CreateModelTables extends Migration {
             $table->integer("idCliente")->unsigned();
             $table->foreign("idCliente")->references("idCliente")->on("cliente");
             $table->timestamp("data")->default(\DB::raw("CURRENT_TIMESTAMP"));
-            $table->text("observacao")->nullable();
         });
 
         \Schema::create("passeio", function($table) {
@@ -154,7 +153,7 @@ class CreateModelTables extends Migration {
             $table->foreign("idPasseador")->references("idFuncionario")->on("funcionario");
             $table->integer("idPasseioReagendado")->unsigned()->nullable();
             $table->foreign("idPasseioReagendado")->references("idPasseio")->on("passeio");
-            $table->decimal("preco", 6, 2);
+            $table->decimal("precoPorCaoPorHora", 6, 2);
             $table->boolean("coletivo")->default(false);
             $table->time("inicio");
             $table->time("fim");

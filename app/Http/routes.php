@@ -46,6 +46,7 @@ Route::group(["prefix" => "local"], function() {
 
 Route::group(["prefix" => "passeio"], function() {
     Route::get("/agenda", ["as" => "passeio.agenda.get", "uses" => "PasseioController@route_getAgenda"]);
+    Route::get("/ano/{ano}/mes/{mes?}/dia/{dia?}", ["as" => "passeio.data.json.get", "uses" => "PasseioController@route_getPasseiosJson"]);
     Route::group(["middleware" => "auth.customer"], function() {
         Route::get("/", ["as" => "passeio.listagem.get", "uses" => "PasseioController@route_getPasseios"]);
         Route::get("/{id}", ["as" => "passeio.detalhes.get", "uses" => "PasseioController@route_getPasseio"]);

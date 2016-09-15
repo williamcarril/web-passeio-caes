@@ -18,6 +18,8 @@ module.exports = function (grunt) {
             "<%= path.bower %>jquery.inputmask/dist/jquery.inputmask.bundle.js",
             //Picturefill
             "<%= path.bower %>picturefill/dist/picturefill.min.js",
+            //Timetable
+            "<%= path.bower %>timetable.js/dist/**/timetable.js",
             //Non-Bower Vendors Files
             "<%= path.dev.site %>js/vendors/**/*.js",
             //General JScript Functions File
@@ -85,6 +87,8 @@ module.exports = function (grunt) {
         "site": [
             //Bootstrap
             "<%= path.bower %>bootstrap/dist/**/bootstrap.css",
+            //Bower files
+            "<%= path.bower %>timetable.js/dist/**/timetablejs.css",
             //General CSS File
             "<%= path.dev.site %>styles.css"
         ],

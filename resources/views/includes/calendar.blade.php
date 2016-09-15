@@ -4,8 +4,9 @@ switch ($type) {
     default:
         $classes = "";
 }
+$id = isset($id) ? $id : uniqid("calendar");
 ?>
-<div class="responsive-calendar {{$classes}}">
+<div id="{{$id}}" class="responsive-calendar {{$classes}}">
     <div class="controls">
         <a class="pull-left" data-go="prev">
             <div class="btn">

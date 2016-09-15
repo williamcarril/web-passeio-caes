@@ -34,9 +34,6 @@
         "Novembro",
         "Dezembro"
     ];
-    $('.responsive-calendar').responsiveCalendar({
-        "translateMonths": months
-    });
 
     $('.carousel').carousel();
     

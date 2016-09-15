@@ -11,19 +11,25 @@ ol.draggable-list {
 
     display: inline-block;
     li {
-        counter-increment: step-counter;
         .rem("margin", @double-space);
         float: left;
         text-align: center;
 
         &:before {
-            content: counter(step-counter);
             font-size: @small-font-size;
             background-color: black;
             color: white;
             font-weight: bold;
             padding: 3px 8px;
             border-radius: 3px;
+        }
+        
+        &:not(.placeholder) {
+            counter-increment: step-counter;
+
+        }
+        &:not(.placeholder):before {
+            content: counter(step-counter);
         }
     }
     li.image {

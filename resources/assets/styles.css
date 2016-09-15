@@ -357,7 +357,7 @@ textarea.-error {
   color: #999;
 }
 .responsive-calendar .day a:hover {
-  background-color: #666;
+  background-color: #e6e6e6;
 }
 .responsive-calendar .day.header {
   border-bottom: 1px #367A38 solid;
