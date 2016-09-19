@@ -26,6 +26,34 @@ class AgendamentoTableSeeder extends Seeder {
                 "idAgendamento" => 1
             ]
         ]);
+        
+        \DB::table("agendamento")->insert([
+            [
+                "idAgendamento" => 2,
+                "idCliente" => 2,
+                "idModalidade" => 2,
+                "data" => date("Y-m-d"),
+                "status" => "feito"
+            ]
+        ]);
+        
+        \DB::table("a_agendamento_cao")->insert([
+            [
+                "idCao" => 4,
+                "idAgendamento" => 2
+            ]
+        ]);
+        
+        \DB::table("a_agendamento_dia")->insert([
+            [
+                "idAgendamento" => 2,
+                "idDia" => 2
+            ],
+            [
+                "idAgendamento" => 2,
+                "idDia" => 4
+            ],
+        ]);
     }
 
 }

@@ -320,34 +320,6 @@ textarea.-error {
 .responsive-calendar {
   Ignore: a;margin-top:10px;
   Ignore: a;margin-top:0.625rem;
-  /*    &.-sidebar {
-        .day a {
-            color: @container-link-color;
-        }
-        .day a:hover { 
-            background-color: @container-link-hover-color;
-        }
-        .day.header {
-            border-bottom: 1px @container-divisory-color solid;
-        }
-        .day.active a {
-            background-color: #1d86c8;
-            color: #ffffff;
-        }
-        .day.active a:hover {
-            background-color: #36a0e2;
-        }
-        .day.active .not-current {
-            background-color: #8fcaef;
-            color: #ffffff;
-        }
-        .day.active .not-current:hover {
-            background-color: #bcdff5;
-        }
-        .day.not-current a {
-            color: #ddd;
-        }
-    }*/
 }
 .responsive-calendar .day {
   Ignore: a;font-size:16px;
@@ -363,21 +335,19 @@ textarea.-error {
   border-bottom: 1px #367A38 solid;
 }
 .responsive-calendar .day.active a {
-  background-color: #1d86c8;
-  color: #ffffff;
+  border: 1px solid #E6FFBF;
+  background-color: #367A38;
+  color: #FFF;
 }
 .responsive-calendar .day.active a:hover {
-  background-color: #36a0e2;
+  background-color: #4daf50;
 }
-.responsive-calendar .day.active .not-current {
-  background-color: #8fcaef;
-  color: #ffffff;
+.responsive-calendar .day.today a {
+  color: #BEEE9E;
+  background-color: #469d48;
 }
-.responsive-calendar .day.active .not-current:hover {
-  background-color: #bcdff5;
-}
-.responsive-calendar .day.not-current a {
-  color: #ddd;
+.responsive-calendar .day.today a:hover {
+  background-color: #70c072;
 }
 .carousel.-fit-content {
   display: inline-block;

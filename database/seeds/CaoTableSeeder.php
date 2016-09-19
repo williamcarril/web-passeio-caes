@@ -15,7 +15,7 @@ class CaoTableSeeder extends Seeder {
                 "idCao" => 1,
                 "nome" => "Cleiton",
                 "raca" => "Shiba Inu",
-                "porte" => "medio",
+                "porte" => "pequeno",
                 "genero" => "macho",
                 "idCliente" => 1,
                 "idImagem" => 2,
@@ -41,6 +41,16 @@ class CaoTableSeeder extends Seeder {
                 "idImagem" => 7,
                 "ativo" => true
             ],
+            [
+                "idCao" => 4,
+                "nome" => "Rodolfo",
+                "raca" => "Pug",
+                "porte" => "pequeno",
+                "genero" => "macho",
+                "idCliente" => 4,
+                "idImagem" => 8,
+                "ativo" => true
+            ]
         ]);
     }
 

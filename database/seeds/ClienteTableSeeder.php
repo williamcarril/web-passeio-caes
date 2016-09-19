@@ -58,6 +58,21 @@ class ClienteTableSeeder extends Seeder {
                     "email" => "victornb@msn.com",
                     "senha" => \bcrypt("123")
                 ],
+                [
+                    "idCliente" => 4,
+                    "nome" => "Gabriel C. Silva",
+                    "telefone" => "1182157431",
+                    "ativo" => true,
+                    "cpf" => "92029499307",
+                    "logradouro" => "Rua Bel Aliance",
+                    "bairro" => "Jardim Sao Caetano",
+                    "postal" => "09581420",
+                    "numero" => "106-138",
+                    "lat" => -23.636766,
+                    "lng" => -46.577740,
+                    "email" => "gc@hotmail.com",
+                    "senha" => \bcrypt("123")
+                ],
             ]);
             \DB::commit();
         } catch (\Exception $ex) {

@@ -36,3 +36,14 @@ $id = isset($id) ? $id : uniqid("calendar");
         <!-- the place where days will be generated -->
     </div>
 </div>
+@section("scripts")
+@parent
+@if(!empty($events))
+<script type="text/javascript">
+    (function () {
+        var events = $.parseJSON('{!!json_encode($events)!!}');
+        $("#{!!$id!!}").responsiveCalendar("edit", events);
+    })();
+</script>
+@endif
+@endsection

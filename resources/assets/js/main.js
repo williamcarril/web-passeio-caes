@@ -19,22 +19,7 @@
     //Bootstrapping JQuery Input Mask plugin on data-inputmask inputs.
     $(":input").inputmask();
 
-    //Customizing and Bootstrapping calendars
-    var months = [
-        "Janeiro",
-        "Fevereiro",
-        "Março",
-        "Abril",
-        "Maio",
-        "Junho",
-        "Julho",
-        "Agosto",
-        "Setembro",
-        "Outubro",
-        "Novembro",
-        "Dezembro"
-    ];
-
+    //Initializing Carousels
     $('.carousel').carousel();
     
     //Prevent default 'Hit enter' submit on forms for inputs

@@ -19,6 +19,22 @@
     var $templates = $("#html-templates");
     globals.templates = $templates;
 
+    //Translated months
+    globals.months = [
+        "Janeiro",
+        "Fevereiro",
+        "Março",
+        "Abril",
+        "Maio",
+        "Junho",
+        "Julho",
+        "Agosto",
+        "Setembro",
+        "Outubro",
+        "Novembro",
+        "Dezembro"
+    ];
+
     //Default alert function
     var $alerts = $("#alerts");
     window.showAlert = function (messages, type, $wrapper) {
@@ -307,8 +323,10 @@
                             }
                         }
                     },
-                    "error": function () {
-                        showAlert("Ocorreu um problema ao enviar a requisição. Por favor, atualize a página ou tente novamente mais tarde.", "error");
+                    "error": function (request) {
+                        if (request.statusText !== 'abort') {
+                            showAlert("Ocorreu um problema ao enviar a requisição. Por favor, atualize a página ou tente novamente mais tarde.", "error");
+                        }
                         $submitButton.removeClass("disabled");
                     },
                     "complete": function () {
@@ -341,7 +359,7 @@
             complete = complete || function () {
                 $this.removeClass("loading");
             };
-            error = error || function () {
+            error = error || function (request) {
                 setInputStatus($this, "success");
             };
             $.ajax({
