@@ -140,24 +140,26 @@ class CreateModelTables extends Migration {
             $table->foreign("idModalidade")->references("idModalidade")->on("modalidade");
             $table->integer("idCliente")->unsigned();
             $table->foreign("idCliente")->references("idCliente")->on("cliente");
+            $table->decimal("precoPorCaoPorHora", 6, 2)->unsigned();
             $table->timestamp("data")->default(\DB::raw("CURRENT_TIMESTAMP"));
+            $table->enum("status", ["feito", "cancelado", "pendente_funcionario", "pendente_cliente"]);
+            $table->integer("idAgendamentoNovo")->unsigned()->nullable();
+            $table->foreign("idAgendamentoNovo")->references("idAgendamento")->on("agendamento");
         });
 
         \Schema::create("passeio", function($table) {
             $table->increments("idPasseio");
-            $table->integer("idAgendamento")->unsigned();
-            $table->foreign("idAgendamento")->references("idAgendamento")->on("agendamento");
             $table->integer("idLocal")->unsigned();
             $table->foreign("idLocal")->references("idLocal")->on("local");
             $table->integer("idPasseador")->unsigned()->nullable();
             $table->foreign("idPasseador")->references("idFuncionario")->on("funcionario");
-            $table->integer("idPasseioReagendado")->unsigned()->nullable();
-            $table->foreign("idPasseioReagendado")->references("idPasseio")->on("passeio");
-            $table->decimal("precoPorCaoPorHora", 6, 2);
+            $table->integer("idPasseioOriginal")->unsigned()->nullable();
+            $table->foreign("idPasseioOriginal")->references("idPasseio")->on("passeio");
             $table->boolean("coletivo")->default(false);
             $table->time("inicio");
             $table->time("fim");
             $table->date("data");
+            $table->enum("porte", ["pequeno", "medio", "grande"])->nullable();
             $table->enum("status", ["pendente", "cancelado", "em_progresso", "feito"])->default("pendente");
         });
 
@@ -203,6 +205,20 @@ class CreateModelTables extends Migration {
             $table->integer("idDia")->unsigned();
             $table->foreign("idDia")->references("idDia")->on("dia");
             $table->primary(["idDia", "idAgendamento"]);
+        });
+
+        \Schema::create("a_agendamento_passeio", function($table) {
+            $table->integer("idAgendamento")->unsigned();
+            $table->foreign("idAgendamento")->references("idAgendamento")->on("agendamento");
+            $table->integer("idPasseio")->unsigned();
+            $table->foreign("idPasseio")->references("idPasseio")->on("passeio");
+        });
+        
+        \Schema::create("a_agendamento_cao", function($table) {
+            $table->integer("idAgendamento")->unsigned();
+            $table->foreign("idAgendamento")->references("idAgendamento")->on("agendamento");
+            $table->integer("idCao")->unsigned();
+            $table->foreign("idCao")->references("idCao")->on("cao");
         });
     }
 

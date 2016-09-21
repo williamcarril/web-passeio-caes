@@ -16,10 +16,12 @@ foreach ($passeios as $passeio) {
 
 @section("main")
 <section>
+    <h1>Agenda de passeios</h1>
     @include("includes.calendar", ["id" => "agenda", "events" => $events])
-    <div id="horarios" class="timetable">
-
-    </div>
+    <section id="horarios" class="hidden">
+        <h2>Horários</h2>
+        <div id="timetable" class="timetable">
+    </section>
 </section>
 @endsection
 
@@ -28,10 +30,11 @@ foreach ($passeios as $passeio) {
     (function () {
         var $agenda = $("#agenda");
         var $horarios = $("#horarios");
+        var $timetable = $horarios.find("#timetable");
         var url = "{!! route('passeio.data.json.get', ['dia' => '!dia', 'mes' => '!mes', 'ano' => '!ano']) !!}";
         var urlSemDia = "{!! route('passeio.data.json.get', ['mes' => '!mes', 'ano' => '!ano']) !!}";
         var dayClickAjax = null;
-        
+
         $agenda.responsiveCalendar({
             "translateMonths": globals.months,
             "onMonthChange": function () {
@@ -44,7 +47,7 @@ foreach ($passeios as $passeio) {
                         "coletivo": true
                     },
                     "beforeSend": function () {
-                        $horarios.fadeOut(400);
+                        $timetable.fadeOut(400);
                     },
                     "success": function (response) {
                         if (!response.status) {
@@ -91,7 +94,8 @@ foreach ($passeios as $passeio) {
                         "coletivo": true
                     },
                     "beforeSend": function () {
-                        $horarios.fadeOut(400);
+                        $horarios.removeClass("hidden");
+                        $timetable.fadeOut(400);
                     },
                     "success": function (response) {
                         if (!response.status) {
@@ -110,8 +114,9 @@ foreach ($passeios as $passeio) {
 
                             timetable.addEvent(passeio.modalidade, passeio.local, inicio, fim);
                         }
-                        renderer.draw('#horarios'); // any css selector
-                        $horarios.fadeIn(400);
+                        renderer.draw('#timetable'); // any css selector
+                        $timetable.fadeIn(400);
+                        $timetable.scrollView();
                     },
                     "error": function (request) {
                         if (request.statusText === 'abort') {

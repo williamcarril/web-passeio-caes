@@ -1,0 +1,22 @@
+// -------------------------
+// Timetable - Component
+// -------------------------
+.timetable {
+    .time-label {
+        cursor: pointer;
+
+        &:hover {
+            color: red;
+        }
+    }
+    .time-entry {
+        cursor: pointer;
+        .rem("font-size", @small-font-size);
+    }
+    
+    aside .row-heading {
+        @media @smartphones {
+            overflow-x: scroll;
+        }
+    }
+}

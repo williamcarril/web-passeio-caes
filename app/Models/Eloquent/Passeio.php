@@ -11,11 +11,9 @@ class Passeio extends \WGPC\Eloquent\Model {
     protected $table = "passeio";
     protected $primaryKey = "idPasseio";
     protected $fillable = [
-        "idAgendamento",
         "idLocal",
         "idPasseador",
-        "idPasseioReagendado",
-        "precoPorCaoPorHora",
+        "idPasseioOriginal",
         "inicio",
         "fim",
         "data",
@@ -24,12 +22,10 @@ class Passeio extends \WGPC\Eloquent\Model {
         "porte"
     ];
     protected static $rules = [
-        "idAgendamento" => ["required", "exists:agendamento,idAgendamento", "integer"],
         "idModalidade" => ["required", "exists:modalidade,idModalidade", "integer"],
         "idLocal" => ["required", "exists:local,idLocal", "integer"],
         "idPasseador" => ["exists:funcionario,idFuncionario,tipo,passeador", "integer"],
-        "idPasseioReagendado" => ["exists:passeio,idPasseio", "integer"],
-        "precoPorCaoPorHora" => ["required", "numeric"],
+        "idPasseioOriginal" => ["exists:passeio,idPasseio", "integer"],
         "coletivo" => ["boolean", "required"],
         "inicio" => ["required", "date_format:H:i:s", "less_or_equal:fim"],
         "fim" => ["required", "date_format:H:i:s", "greater_or_equal:inicio"],
@@ -52,14 +48,18 @@ class Passeio extends \WGPC\Eloquent\Model {
         static::$rules["status"][] = "in:" . implode(",", Status::getConstants());
     }
 
-    public function agendamento() {
-        return $this->belongsTo("\App\Models\Eloquent\Agendamento", "idAgendamento", "idAgendamento");
+    public function agendamentos() {
+        return $this->belongsToMany("\App\Models\Eloquent\Agendamento", "a_agendamento_passeio", "idPasseio", "idAgendamento");
     }
 
-    public function passeioReagendado() {
-        return $this->belongsTo("\App\Models\Eloquent\Passeio", "idPasseioReagendado", "idPasseio");
+    public function passeioOriginal() {
+        return $this->belongsTo("\App\Models\Eloquent\Passeio", "idPasseioOriginal", "idPasseio");
     }
 
+    public function passeioRemarcado() {
+        return $this->hasOne("\App\Models\Eloquent\Passeio", "idPasseio", "idPasseioOriginal");
+    }
+    
     public function local() {
         return $this->belongsTo("\App\Models\Eloquent\Local", "idLocal", "idLocal");
     }

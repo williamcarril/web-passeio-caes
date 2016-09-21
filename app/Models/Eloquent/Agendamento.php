@@ -13,13 +13,15 @@ class Agendamento extends \WGPC\Eloquent\Model {
         "idCliente",
         "data",
         "idAgendamentoNovo",
-        "status"
+        "status",
+        "precoPorCaoPorHora"
     ];
     protected static $rules = [
         "idModalidade" => ["required", "exists:modalidade,idModalidade", "integer"],
         "idCliente" => ["required", "exists:cliente,idCliente", "integer"],
         "data" => ["required", "date"],
         "idAgendamentoNovo" => ["exists:agendamento,idAgendamento", "integer"],
+        "precoPorCaoPorHora" => ["required", "numeric"],
         "status" => ["required", "string"]
     ];
     protected $dates = ["data"];
@@ -35,7 +37,7 @@ class Agendamento extends \WGPC\Eloquent\Model {
     }
 
     public function passeios() {
-        return $this->hasMany("\App\Models\Eloquent\Passeio", "idAgendamento", "idAgendamento");
+        return $this->belongsToMany("\App\Models\Eloquent\Passeio", "a_agendamento_passeio", "idAgendamento", "idPasseio");
     }
 
     public function dias() {
@@ -49,4 +51,5 @@ class Agendamento extends \WGPC\Eloquent\Model {
     public function modalidade() {
         return $this->belongsTo("\App\Models\Eloquent\Modalidade", "idModalidade", "idModalidade");
     }
+
 }

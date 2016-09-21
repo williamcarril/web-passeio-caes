@@ -7206,3 +7206,19 @@ textarea.-error {
 .table tbody > tr > td {
   vertical-align: middle;
 }
+.timetable .time-label {
+  cursor: pointer;
+}
+.timetable .time-label:hover {
+  color: red;
+}
+.timetable .time-entry {
+  cursor: pointer;
+  Ignore: a;font-size:10px;
+  Ignore: a;font-size:0.625rem;
+}
+@media only screen and (max-width: 767px) {
+  .timetable aside .row-heading {
+    overflow-x: scroll;
+  }
+}

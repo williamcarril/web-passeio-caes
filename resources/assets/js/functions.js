@@ -3,7 +3,7 @@
     String.prototype.ucfirst = function () {
         return this.charAt(0).toUpperCase() + this.slice(1);
     };
-    String.prototype.slugify = function() {
+    String.prototype.slugify = function () {
         return this.toLowerCase()
                 .replace(/\s+/g, '-')           // Replace spaces with -
                 .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
@@ -182,8 +182,8 @@
             if (!($this.is("input") || $this.is("textarea") || $this.is("select"))) {
                 return $this;
             }
-            if(event) {
-                $this.on(event, function() {
+            if (event) {
+                $this.on(event, function () {
                     $this.validate(rule, $data);
                 });
                 return $this;
@@ -289,14 +289,14 @@
                 return $this;
             }
             redirectTimer = redirectTimer || 3000;
-            validation = validation || function() {
+            validation = validation || function () {
                 return true;
             };
             var $submitButton = $this.find("button[type='submit']");
             $this.submit(function (ev) {
                 ev.stopPropagation();
                 ev.preventDefault();
-                if(!validation($this, $submitButton)) {
+                if (!validation($this, $submitButton)) {
                     return false;
                 }
                 $.ajax({
@@ -346,7 +346,7 @@
             success = success || function (response) {
                 if (response.status) {
                     setInputStatus($this, "error");
-                    if(errorMessage) {
+                    if (errorMessage) {
                         showAlert(errorMessage, "error");
                     }
                 } else {
@@ -374,24 +374,33 @@
             return $this;
         }
     });
-    
+
     //Creates an unique number (IDs, for example)
-    window.uniqid = function(prefix) {
+    window.uniqid = function (prefix) {
         prefix = prefix || "";
         var date = new Date();
-        return  prefix 
-                + date.getFullYear() 
-                + "-" 
-                + date.getMonth() 
-                + "-" 
-                + date.getSeconds() 
-                + "_" 
-                + date.getHours() 
+        return  prefix
+                + date.getFullYear()
+                + "-"
+                + date.getMonth()
+                + "-"
+                + date.getSeconds()
+                + "_"
+                + date.getHours()
                 + "-"
                 + date.getMinutes()
                 + "-"
                 + date.getSeconds()
                 + "_"
                 + Math.random().toFixed(6) * 1000000;
+    };
+
+    //Defining scrollTo function
+    $.fn.scrollView = function () {
+        return this.each(function () {
+            $('html, body').animate({
+                scrollTop: $(this).offset().top
+            }, 1000);
+        });
     };
 })();
