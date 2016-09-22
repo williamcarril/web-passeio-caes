@@ -20,6 +20,8 @@ module.exports = function (grunt) {
             "<%= path.bower %>picturefill/dist/picturefill.min.js",
             //Timetable
             "<%= path.bower %>timetable.js/dist/**/timetable.js",
+            //Bootstrap Timepicker
+            "<%= path.bower %>bootstrap-timepicker/js/bootstrap-timepicker.js",
             //Non-Bower Vendors Files
             "<%= path.dev.site %>js/vendors/**/*.js",
             //General JScript Functions File
@@ -36,6 +38,8 @@ module.exports = function (grunt) {
             "<%= path.bower %>bootstrap/dist/**/bootstrap.min.js",
             //JQuery Input Mask
             "<%= path.bower %>jquery.inputmask/dist/min/jquery.inputmask.bundle.min.js",
+            //Bootstrap Timepicker
+            "<%= path.bower %>bootstrap-timepicker/js/bootstrap-timepicker.js",
             //Non-Bower Vendors Files
             "<%= path.dev.admin %>js/vendors/**/*.js",
             //General JScript Functions File
@@ -87,6 +91,8 @@ module.exports = function (grunt) {
         "site": [
             //Bootstrap
             "<%= path.bower %>bootstrap/dist/**/bootstrap.css",
+            //Bootstrap Timepicker
+            "<%= path.bower %>bootstrap-timepicker/css/timepicker.less",
             //Bower files
             "<%= path.bower %>timetable.js/dist/**/timetablejs.css",
             //General CSS File
@@ -95,6 +101,8 @@ module.exports = function (grunt) {
         "admin": [
             //Bootstrap
             "<%= path.bower %>bootstrap/dist/**/bootstrap.css",
+            //Bootstrap Timepicker
+            "<%= path.bower %>bootstrap-timepicker/css/timepicker.less",
             //General CSS File
             "<%= path.dev.admin %>styles.css"
         ]

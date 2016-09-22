@@ -42,15 +42,25 @@ Route::group(["prefix" => "cliente"], function() {
 Route::group(["prefix" => "local"], function() {
     Route::get("/", ["as" => "local.listagem.get", "uses" => "LocalController@route_getLocais"]);
     Route::get("/{slug}", ["as" => "local.detalhes.get", "uses" => "LocalController@route_getLocal"]);
+    Route::get("/{id}/json", ["as" => "local.json.get", "uses" => "LocalController@route_getLocalJson"]);
+});
+
+Route::group(["prefix" => "agendamento"], function() {
+    Route::group(["middleware" => "auth.customer"], function() {
+        Route::get("/", ["as" => "passeio.agenda.get", "uses" => "AgendamentoController@route_getAgenda"]);
+    });
 });
 
 Route::group(["prefix" => "passeio"], function() {
-    Route::get("/agenda", ["as" => "passeio.agenda.get", "uses" => "PasseioController@route_getAgenda"]);
-    Route::get("/ano/{ano}/mes/{mes?}/dia/{dia?}", ["as" => "passeio.data.json.get", "uses" => "PasseioController@route_getPasseiosJson"]);
+    Route::get("/ano/{ano}/mes/{mes?}/dia/{dia?}", ["as" => "passeio.porData.json.get", "uses" => "PasseioController@route_getPasseiosJson"]);
     Route::group(["middleware" => "auth.customer"], function() {
         Route::get("/", ["as" => "passeio.listagem.get", "uses" => "PasseioController@route_getPasseios"]);
         Route::get("/{id}", ["as" => "passeio.detalhes.get", "uses" => "PasseioController@route_getPasseio"]);
     });
+});
+
+Route::group(["prefix" => "modalidade"], function() {
+    Route::get("/{id}/json", ["as" => "modalidade.json.get", "uses" => "ModalidadeController@route_getModalidadeJson"]);
 });
 
 Route::group(["prefix" => "api", "namespace" => "Api"], function() {

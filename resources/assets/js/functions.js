@@ -403,4 +403,16 @@
             }, 1000);
         });
     };
+
+    //Basic date formatation function
+    window.simpleDateFormatter = function (day, month, year, format) {
+        format = format || "d/m/Y";
+        if(parseInt(day) < 10) {
+            day = "0" + day;
+        }
+        if(parseInt(month) < 10) {
+            month = "0" + month;
+        }
+        return format.replace("d", day).replace("m", month).replace("Y", year);
+    };
 })();

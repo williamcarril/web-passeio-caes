@@ -50,4 +50,25 @@ class LocalController extends Controller {
     }
 
     // </editor-fold>
+    
+    // <editor-fold defaultstate="collapsed" desc="Rotas GET que retornam JSON">
+    public function route_getLocalJson(Request $req, $id) {
+        $fields = explode(",", $req->input("fields", ""));
+        
+        $local = Local::find($id);
+        $arr = $local->toArray();
+        $arr["link"] = $local->link;
+        $arr["thumbnail"] = $local->thumbnail;
+        
+        if(!empty($fields)) {
+            foreach($arr as $key => $value) {
+                if(!in_array($key, $fields)) {
+                    unset($arr[$key]);
+                }
+            }
+        }
+        
+        return $this->defaultJsonResponse(true, null, $arr);
+    }
+    // </editor-fold>
 }

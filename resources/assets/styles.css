@@ -153,6 +153,18 @@ Creation date: 29/08/2016 18:46
 ._error-color {
   color: #d9534f;
 }
+._text-justify {
+  text-align: justify;
+}
+._small-font {
+  font-size: 10px;
+}
+._medium-font {
+  font-size: 16px;
+}
+._large-font {
+  font-size: 20px;
+}
 input.loading,
 select.loading,
 textarea.loading {
@@ -360,6 +372,9 @@ textarea.-error {
 .editable-label > span {
   cursor: pointer;
 }
+fieldset > legend > .indicator {
+  font-size: 16px;
+}
 .image-uploader {
   cursor: pointer;
 }
@@ -447,19 +462,38 @@ textarea.-error {
 .table tbody > tr > td {
   vertical-align: middle;
 }
+.timetable {
+  Ignore: a;margin-bottom:10px;
+  Ignore: a;margin-bottom:0.625rem;
+}
 .timetable .time-label {
   cursor: pointer;
 }
 .timetable .time-label:hover {
-  color: red;
+  font-weight: bold;
+}
+.timetable .time-label.-starting-time {
+  color: #5cb85c;
+}
+.timetable .time-label.-ending-time {
+  color: #d9534f;
 }
 .timetable .time-entry {
   cursor: pointer;
-  Ignore: a;font-size:10px;
-  Ignore: a;font-size:0.625rem;
+  font-size: 16px;
+  background-color: #367A38;
+  border-color: #E6FFBF;
+}
+.timetable .time-entry:hover {
+  background-color: #70c072;
+  border-color: #E6FFBF;
 }
 @media only screen and (max-width: 767px) {
   .timetable aside .row-heading {
     overflow-x: scroll;
   }
+}
+.timetable-wrapper {
+  Ignore: a;min-height:120px;
+  Ignore: a;min-height:7.5rem;
 }

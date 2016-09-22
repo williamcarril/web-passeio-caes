@@ -59,7 +59,7 @@ class Passeio extends \WGPC\Eloquent\Model {
     public function passeioRemarcado() {
         return $this->hasOne("\App\Models\Eloquent\Passeio", "idPasseio", "idPasseioOriginal");
     }
-    
+
     public function local() {
         return $this->belongsTo("\App\Models\Eloquent\Local", "idLocal", "idLocal");
     }
@@ -98,17 +98,19 @@ class Passeio extends \WGPC\Eloquent\Model {
         return array_values($clientes);
     }
 
-    public function getModalidadeAttribute() {
-        $agendamento = $this->agendamento()->first();
-        if (is_null($agendamento)) {
-            return null;
+    public function getTipoAttribute() {
+        if ($this->coletivo) {
+            return "Passeio Coletivo";
         }
-        return $agendamento->modalidade;
+        return "Passeio Unitário";
     }
 
-    public function scopeAgendamentoConfirmado($query) {
-        return $query->whereHas("agendamento", function($q) {
+    public function scopeAgendamentoConfirmado($query, $idCliente = null) {
+        return $query->whereHas("agendamentos", function($q) use ($idCliente) {
                     $q->where("status", AgendamentoStatus::FEITO);
+                    if (!is_null($idCliente)) {
+                        $q->where("idCliente", $idCliente);
+                    }
                 });
     }
 
