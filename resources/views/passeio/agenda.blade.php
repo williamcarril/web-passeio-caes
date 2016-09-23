@@ -86,7 +86,7 @@ foreach ($passeios as $passeio) {
                         <div class="form-group">
                             <label class="control-label col-sm-2">Coletivo</label>
                             <div class="col-sm-3">
-                                <p class='form-control-static' data-name="coletivo">
+                                <p class='form-control-static' data-name="coletivo" data-value="">
                                 </p>
                             </div>
                         </div>
@@ -101,15 +101,26 @@ foreach ($passeios as $passeio) {
                             <div class="form-group">
                                 <label class="control-label col-sm-2">Frequência</label>
                                 <div class="col-sm-3">
-                                    <p class='form-control-static' data-name="frequencia">
+                                    <p class='form-control-static' data-name="frequencia" data-value="">
                                     </p>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2">Dias</label>
+                                <div class="col-sm-6 _text-center">
+                                    @foreach($dias as $dia)
+                                    <label class="control-label col-sm-3 _text-center" for="agendamento-dia-{{$dia->idDia}}">
+                                        {{$dia->nome}}
+                                        <input name='modalidadeDias[]' class="form-control" id="agendamento-dia-{{$dia->idDia}}" type="checkbox" value="{{$dia->idDia}}" data-role="dia">
+                                    </label>
+                                    @endforeach
                                 </div>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="control-label col-sm-2">Valor <br/>(cachorro / hora)</label>
                             <div class="col-sm-3">
-                                <p class='form-control-static' data-name="precoPorCaoPorHora">
+                                <p class='form-control-static' data-name="precoPorCaoPorHora" data-value="">
                                 </p>
                             </div>
                         </div>
@@ -152,7 +163,62 @@ foreach ($passeios as $passeio) {
                     </div>
                 </div>
             </fieldset>
-
+            <fieldset data-role="caes">
+                <legend  class="_cursor-pointer" data-toggle="collapse" data-target="#cao-collapsable">
+                    Cachorros
+                    <i class="indicator glyphicon glyphicon-chevron-down"></i>
+                </legend>
+                <div id="cao-collapsable" class="collapse in table-responsive">
+                    <p>Selecione quais de seus cachorros participarão do(s) passeio(s) agendado(s):</p>
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>Foto</th>
+                                <th>Nome</th>
+                                <th>Porte</th>
+                                <th>Participação</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($caes as $cao)
+                            <tr data-id="{{$cao->idCao}}" data-role="cao" class="_error-color">
+                                <td>
+                                    <img width="100px" height="100px" src='{{$cao->thumbnail}}' />
+                                </td>
+                                <td data-name="nome">
+                                    {{$cao->nome}}
+                                </td>
+                                <td  data-name="porte" data-value="{{$cao->porte}}">
+                                    {{$cao->porteFormatado}}
+                                </td>
+                                <td data-name="participacao">
+                                    <input class="hidden" type="checkbox" name="caes[]" value="{{$cao->idCao}}" data-role="value"/>
+                                    <span data-role="label">
+                                        Não participará
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="button-group">
+                                        <button class="btn btn-success" type="button" data-action="incluir-cao">
+                                            <i class="glyphicon glyphicon-ok"></i>
+                                            Incluir
+                                        </button>
+                                        <button class="btn btn-danger hidden" type="button" data-action="remover-cao">
+                                            <i class="glyphicon glyphicon-remove"></i>
+                                            Remover
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </fieldset>
+            <hr/>
+            <p><b>Preço por passeio:</b> <span data-role="precoPorPasseio">Não definido</span></p>
+            <p><b>Preço total:</b> <span data-role="precoTotal">Não definido</span></p>
             <hr/>
             <p>
                 * - Para selecionar os horários de início e fim, insira manualmente ou clique em alguma das horas na lista de horários do dia.
@@ -162,7 +228,7 @@ foreach ($passeios as $passeio) {
             </p>
             <hr/>
             <a class="btn btn-success pull-right" href="#">
-                Confirmar agendamento
+                Confirmar solicitação de agendamento
             </a>
         </form>
     </div>
@@ -179,9 +245,16 @@ foreach ($passeios as $passeio) {
 
         var $modalidade = $form.find("[data-role='modalidade']");
         var $modalidadeInformation = $modalidade.find("[data-role='modalidade-information']");
+        var $packageOnlyFields = $modalidadeInformation.find("[data-role='package-only-fields']");
+        var $modalidadeDias = $packageOnlyFields.find("[data-role='dia']");
 
         var $local = $form.find("[data-role='local']");
         var $localInformation = $local.find("[data-role='local-information']");
+
+        var $caes = $form.find("[data-role='caes']");
+
+        var $precoPorPasseio = $form.find("[data-role='precoPorPasseio']");
+        var $precoTotal = $form.find("[data-role='precoTotal']");
 
         var $startingTime = $form.find("input[name='inicio']");
         var $endingTime = $form.find("input[name='fim']");
@@ -359,7 +432,7 @@ foreach ($passeios as $passeio) {
         $modalidade.find("select[name='modalidade']").change(function (ev) {
             var $this = $(this);
             var idModalidade = $this.val();
-            var $packageOnlyFields = $modalidadeInformation.find("[data-role='package-only-fields']");
+            $modalidadeDias.prop("checked", false);
             if (!idModalidade) {
                 $modalidadeInformation.addClass("hidden");
                 $packageOnlyFields.addClass("hidden");
@@ -380,20 +453,43 @@ foreach ($passeios as $passeio) {
 
                     $modalidadeInformation.find("[data-name='descricao']").text(modalidade.descricao);
                     $modalidadeInformation.find("[data-name='tipo']").text(modalidade.tipo);
-                    $modalidadeInformation.find("[data-name='coletivo']").text(modalidade.coletivo ? "Sim" : "Não");
-                    $modalidadeInformation.find("[data-name='precoPorCaoPorHora']").text("R$ " + modalidade.precoPorCaoPorHora.toFixed(2).replace(".", ","));
+                    
+                    var $coletivo = $modalidadeInformation.find("[data-name='coletivo']");
+                    $coletivo.text(modalidade.coletivo ? "Sim" : "Não");
+                    $coletivo.attr("data-value", modalidade.coletivo ? "1" : "0");
+                    
+                    var $preco = $modalidadeInformation.find("[data-name='precoPorCaoPorHora']");
+                    $preco.text(formatMoney(modalidade.precoPorCaoPorHora));
+                    $preco.attr("data-value", modalidade.precoPorCaoPorHora);
+                    
                     $modalidadeInformation.find("[data-name='periodo']").text(modalidade.periodo);
-                    $modalidadeInformation.find("[data-name='frequencia']").text(modalidade.frequencia);
-                    $modalidadeInformation.find("[data-name='periodo']").text(modalidade.periodo);
+                    
+                    var $frequencia = $modalidadeInformation.find("[data-name='frequencia']");
+                    $frequencia.text(modalidade.frequencia);
+                    $frequencia.attr("data-value", modalidade.frequenciaNumericaPorSemana);
+                    
+                    var $periodo = $modalidadeInformation.find("[data-name='periodo']");
+                    $periodo.text(modalidade.periodo);
+                    $periodo.attr("data-value", modalidade.periodoNumericoPorMes);
 
                     if (modalidade.pacote) {
+                        $modalidade.attr("data-package", 1);
                         $packageOnlyFields.removeClass("hidden");
                     } else {
+                        $modalidade.attr("data-package", 0);
                         $packageOnlyFields.addClass("hidden");
                     }
 
                     $modalidadeInformation.removeClass("hidden");
                     $modalidade.scrollView();
+
+                    $caes.find("[data-role='cao']").each(function (index, value) {
+                        alterarParticipacao($(value), false);
+                    });
+                    $caes.find(".collapse").collapse("show");
+
+                    $precoPorPasseio.text("Não definido");
+                    $precoTotal.text("Não definido");
                 },
                 "error": function (request) {
                     if (request.statusText === 'abort') {
@@ -447,6 +543,108 @@ foreach ($passeios as $passeio) {
                 }
             });
         });
+
+        $modalidadeDias.on("change", function (ev) {
+            var $this = $(this);
+            var maxDias = $packageOnlyFields.find("[data-name='frequencia']").attr("data-value");
+            var $diasChecados = $modalidadeDias.filter(":checked");
+            if ($diasChecados.length > maxDias) {
+                ev.preventDefault();
+                ev.stopPropagation();
+                $this.prop("checked", false);
+            }
+        });
+
+        $caes.on("click", "[data-action='incluir-cao']", function (ev) {
+            var $this = $(this);
+            var $cao = $this.parents("[data-role='cao']");
+            alterarParticipacao($cao, true);
+        });
+        $caes.on("click", "[data-action='remover-cao']", function (ev) {
+            var $this = $(this);
+            var $cao = $this.parents("[data-role='cao']");
+            alterarParticipacao($cao, false);
+        });
+
+        function alterarParticipacao($cao, participacao) {
+            var $participacao = $cao.find("[data-name='participacao']");
+            var $btnIncluir = $cao.find("[data-action='incluir-cao']");
+            var $btnRemover = $cao.find("[data-action='remover-cao']");
+            var $value = $participacao.find("[data-role='value']");
+            var $label = $participacao.find("[data-role='label']");
+
+
+            if (participacao) {
+                var coletivo = $modalidade.find("[data-name='coletivo']").attr("data-value");
+                if (coletivo == 1) {
+                    var $caesQueParticiparao = $caes.find("[data-role='cao']").filter(function () {
+                        return $(this).find("input[name='caes[]']:checked").length > 0;
+                    });
+                    var porte = $cao.find("[data-name='porte']").attr("data-value");
+                    for (var i = 0; i < $caesQueParticiparao.length; i++) {
+                        var porteDoCaoQueParticipara = $caesQueParticiparao.eq(i).find("[data-name='porte']").attr("data-value");
+                        if (porte !== porteDoCaoQueParticipara) {
+                            showAlert("Somente cães de porte iguais podem fazer parte de um mesmo passeio coletivo.", "warning");
+                            return;
+                        }
+                    }
+                }
+
+                $value.prop("checked", true);
+                $label.text("Participará");
+                $btnIncluir.addClass("hidden");
+                $btnRemover.removeClass("hidden");
+                $cao.addClass("_success-color").removeClass("_error-color");
+            } else {
+                $value.prop("checked", false);
+                $label.text("Não participará");
+                $btnRemover.addClass("hidden");
+                $btnIncluir.removeClass("hidden");
+                $cao.addClass("_error-color").removeClass("_success-color");
+            }
+            calcularPrecos();
+        }
+
+        function calcularPrecos() {
+            var $caesQueParticiparao = $caes.find("[data-role='cao']").filter(function () {
+                return $(this).find("input[name='caes[]']:checked").length > 0;
+            });
+            if($caesQueParticiparao.length <= 0) {
+                $precoPorPasseio.text("Não definido");
+                $precoTotal.text("Não definido");
+                return;
+            }
+            var precoPorCaoPorHora = $modalidade.find("[data-name='precoPorCaoPorHora']").attr("data-value");
+            if(!precoPorCaoPorHora) {
+                $precoPorPasseio.text("Não definido");
+                $precoTotal.text("Não definido");
+                return;
+            }
+            precoPorCaoPorHora = parseFloat(precoPorCaoPorHora);
+            
+            var pacote = $modalidade.attr("data-package") == "1" ? true : false;
+            var starting = $startingTime.val();
+            var ending = $endingTime.val();
+            
+            if(!starting || !ending) {
+                $precoPorPasseio.text("Não definido");
+                $precoTotal.text("Não definido");
+                return;
+            }
+            var interval = diffTime(ending, starting);
+            
+            var precoPorPasseio = $caesQueParticiparao.length * interval * precoPorCaoPorHora;
+            $precoPorPasseio.text(formatMoney(precoPorPasseio));
+            
+            if(!pacote) {
+                $precoTotal.text($precoPorPasseio.text());
+            } else {
+                var frequencia = $modalidade.find("[data-name='frequencia']").attr("data-value");
+                var periodo = $modalidade.find("[data-name='periodo']").attr("data-value");
+                var precoTotal = precoPorPasseio * (frequencia * 4) * periodo;
+                $precoTotal.text(formatMoney(precoTotal));
+            }
+        }
     })();
 </script>
 @endsection

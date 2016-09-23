@@ -79,4 +79,11 @@ class Cao extends \WGPC\Eloquent\Model {
         }
     }
 
+    public function getPorteFormatadoAttribute() {
+        return ucfirst($this->porte);
+    }
+
+    public function getGeneroFormatadoAttribute() {
+        return ucfirst($this->genero);
+    }
 }

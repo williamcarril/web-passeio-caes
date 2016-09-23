@@ -407,12 +407,36 @@
     //Basic date formatation function
     window.simpleDateFormatter = function (day, month, year, format) {
         format = format || "d/m/Y";
-        if(parseInt(day) < 10) {
+        if (parseInt(day) < 10) {
             day = "0" + day;
         }
-        if(parseInt(month) < 10) {
+        if (parseInt(month) < 10) {
             month = "0" + month;
         }
         return format.replace("d", day).replace("m", month).replace("Y", year);
     };
+
+    //Basic monetary formatation function
+    window.formatMoney = function (value, currency, decimalSeparator) {
+        currency = currency || "R$";
+        decimalSeparator = decimalSeparator || ",";
+        return currency + " " + parseFloat(value).toFixed(2).replace(".", decimalSeparator);
+    }
+
+    //Simple time difference calculator
+    window.diffTime = function (time1, time2, precision) {
+        precision = precision ? precision.toLowerCase() : "h";
+        var diff = new Date("2000-01-01 " + time1) - new Date("2000-01-01 " + time2)
+
+        switch (precision) {
+            case "h":
+                return diff / 3600000;
+            case "m":
+                return diff / 60000;
+            case "s":
+                return diff / 1000;
+            case "ms":
+                return diff;
+        }
+    }
 })();

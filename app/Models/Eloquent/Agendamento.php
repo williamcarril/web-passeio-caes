@@ -52,4 +52,18 @@ class Agendamento extends \WGPC\Eloquent\Model {
         return $this->belongsTo("\App\Models\Eloquent\Modalidade", "idModalidade", "idModalidade");
     }
 
+    /**
+     * @todo
+     */
+    public function getPrecoPorPasseioAttribute() {
+        
+    }
+
+    /**
+     * @todo
+     */
+    public function getPrecoTotalAttribute() {
+        
+    }
+
 }
