@@ -7160,20 +7160,24 @@ ol.draggable-list {
   display: inline-block;
 }
 ol.draggable-list li {
-  counter-increment: step-counter;
   Ignore: a;margin:20px;
   Ignore: a;margin:1.25rem;
   float: left;
   text-align: center;
 }
 ol.draggable-list li:before {
-  content: counter(step-counter);
   font-size: 10px;
   background-color: black;
   color: white;
   font-weight: bold;
   padding: 3px 8px;
   border-radius: 3px;
+}
+ol.draggable-list li:not(.placeholder) {
+  counter-increment: step-counter;
+}
+ol.draggable-list li:not(.placeholder):before {
+  content: counter(step-counter);
 }
 ol.draggable-list li.image:before {
   margin: 1%;

@@ -20,17 +20,18 @@ class Modalidade extends \WGPC\Eloquent\Model {
         "frequencia",
         "ativo",
         "coletivo",
-        "precoPorCao"
+        "precoPorCaoPorHora"
     ];
     protected $casts = [
         "ativo" => "boolean",
         "coletivo" => "boolean",
-        "precoPorCao" => "float"
+        "precoPorCaoPorHora" => "float"
     ];
     protected $attributes = [
         "ativo" => true,
         "coletivo" => false
     ];
+    protected $appends = ["frequenciaNumericaPorSemana", "periodoNumericoPorMes"];
     protected static $rules = [
         "nome" => ["required", "string"],
         "descricao" => ["required", "string"],
@@ -53,7 +54,7 @@ class Modalidade extends \WGPC\Eloquent\Model {
         $rules["nome"][] = "unique:modalidade,nome,{$this->idModalidade},idModalidade";
         return $rules;
     }
-    
+
     public function getTipoFormatadoAttribute() {
         return Servico::format($this->tipo);
     }
@@ -74,6 +75,32 @@ class Modalidade extends \WGPC\Eloquent\Model {
 
     public function getColetivoFormatadoAttribute() {
         return $this->coletivo ? "Sim" : "Não";
+    }
+
+    public function getFrequenciaNumericaPorSemanaAttribute() {
+        switch ($this->frequencia) {
+            case Frequencia::SEMANAL:
+                return 1;
+            case Frequencia::BISEMANAL:
+                return 2;
+        }
+        return null;
+    }
+    
+    public function getPeriodoNumericoPorMesAttribute() {
+        switch($this->periodo) {
+            case Periodo::MENSAL:
+                return 1;
+            case Periodo::BIMESTRAL:
+                return 2;
+            case Periodo::TRIMESTRAL:
+                return 3;
+            case Periodo::SEMESTRAL:
+                return 6;
+            case Periodo::ANUAL:
+                return 12;
+        }
+        return null;
     }
 
 }

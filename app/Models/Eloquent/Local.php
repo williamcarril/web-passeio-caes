@@ -93,6 +93,10 @@ class Local extends \WGPC\Eloquent\Model {
     public function getCepFormatadoAttribute() {
         return Formatter::cep($this->postal);
     }
+    
+    public function getLinkAttribute() {
+        return route("local.detalhes.get", ["slug" => $this->slug]);
+    }
 
     public function getImagensOrdenadas() {
         return $this->imagens()->orderBy("a_local_imagem.ordem", "asc")->get();

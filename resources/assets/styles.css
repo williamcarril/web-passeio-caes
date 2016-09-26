@@ -139,19 +139,34 @@ Creation date: 29/08/2016 18:46
   border: none !important;
 }
 ._full-width {
-  width: 100%;
+  width: 100% !important;
 }
 ._cursor-pointer {
-  cursor: pointer;
+  cursor: pointer !important;
 }
 ._warning-color {
-  color: #f0ad4e;
+  color: #f0ad4e !important;
 }
 ._success-color {
-  color: #5cb85c;
+  color: #5cb85c !important;
 }
 ._error-color {
-  color: #d9534f;
+  color: #d9534f !important;
+}
+._text-justify {
+  text-align: justify !important;
+}
+._text-center {
+  text-align: center !important;
+}
+._small-font {
+  font-size: 10px !important;
+}
+._medium-font {
+  font-size: 16px !important;
+}
+._large-font {
+  font-size: 20px !important;
 }
 input.loading,
 select.loading,
@@ -320,34 +335,6 @@ textarea.-error {
 .responsive-calendar {
   Ignore: a;margin-top:10px;
   Ignore: a;margin-top:0.625rem;
-  /*    &.-sidebar {
-        .day a {
-            color: @container-link-color;
-        }
-        .day a:hover { 
-            background-color: @container-link-hover-color;
-        }
-        .day.header {
-            border-bottom: 1px @container-divisory-color solid;
-        }
-        .day.active a {
-            background-color: #1d86c8;
-            color: #ffffff;
-        }
-        .day.active a:hover {
-            background-color: #36a0e2;
-        }
-        .day.active .not-current {
-            background-color: #8fcaef;
-            color: #ffffff;
-        }
-        .day.active .not-current:hover {
-            background-color: #bcdff5;
-        }
-        .day.not-current a {
-            color: #ddd;
-        }
-    }*/
 }
 .responsive-calendar .day {
   Ignore: a;font-size:16px;
@@ -357,27 +344,25 @@ textarea.-error {
   color: #999;
 }
 .responsive-calendar .day a:hover {
-  background-color: #666;
+  background-color: #e6e6e6;
 }
 .responsive-calendar .day.header {
   border-bottom: 1px #367A38 solid;
 }
 .responsive-calendar .day.active a {
-  background-color: #1d86c8;
-  color: #ffffff;
+  border: 1px solid #E6FFBF;
+  background-color: #367A38;
+  color: #FFF;
 }
 .responsive-calendar .day.active a:hover {
-  background-color: #36a0e2;
+  background-color: #4daf50;
 }
-.responsive-calendar .day.active .not-current {
-  background-color: #8fcaef;
-  color: #ffffff;
+.responsive-calendar .day.today a {
+  color: #BEEE9E;
+  background-color: #469d48;
 }
-.responsive-calendar .day.active .not-current:hover {
-  background-color: #bcdff5;
-}
-.responsive-calendar .day.not-current a {
-  color: #ddd;
+.responsive-calendar .day.today a:hover {
+  background-color: #70c072;
 }
 .carousel.-fit-content {
   display: inline-block;
@@ -389,6 +374,9 @@ textarea.-error {
 }
 .editable-label > span {
   cursor: pointer;
+}
+fieldset > legend > .indicator {
+  font-size: 16px;
 }
 .image-uploader {
   cursor: pointer;
@@ -476,4 +464,39 @@ textarea.-error {
 }
 .table tbody > tr > td {
   vertical-align: middle;
+}
+.timetable {
+  Ignore: a;margin-bottom:10px;
+  Ignore: a;margin-bottom:0.625rem;
+}
+.timetable .time-label {
+  cursor: pointer;
+}
+.timetable .time-label:hover {
+  font-weight: bold;
+}
+.timetable .time-label.-starting-time {
+  color: #5cb85c;
+}
+.timetable .time-label.-ending-time {
+  color: #d9534f;
+}
+.timetable .time-entry {
+  cursor: pointer;
+  font-size: 16px;
+  background-color: #367A38;
+  border-color: #E6FFBF;
+}
+.timetable .time-entry:hover {
+  background-color: #70c072;
+  border-color: #E6FFBF;
+}
+@media only screen and (max-width: 767px) {
+  .timetable aside .row-heading {
+    overflow-x: scroll;
+  }
+}
+.timetable-wrapper {
+  Ignore: a;min-height:120px;
+  Ignore: a;min-height:7.5rem;
 }

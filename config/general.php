@@ -6,3 +6,9 @@
  * and open the template in the editor.
  */
 
+return [
+    "businessTime" => [
+        "start" => "9",
+        "end" => "19"
+    ]
+];

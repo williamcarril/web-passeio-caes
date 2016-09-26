@@ -76,6 +76,100 @@ class ImagemTableSeeder extends Seeder {
                 "arquivo" => $file
             ]
         ]);
+
+        \DB::table("imagem")->insert([
+            [
+                "idImagem" => 4,
+                "data" => date("Y-m-d"),
+                "nome" => "V_Administrator"
+            ]
+        ]);
+        $file = $this->repositorio->copy(public_path("img/mock/v_administrator.png"));
+        \DB::table("imagem_arquivo")->insert([
+            [
+                "idImagemArquivo" => 5,
+                "idImagem" => 4,
+                "tamanho" => null,
+                "arquivo" => $file
+            ]
+        ]);
+        
+        \DB::table("imagem")->insert([
+            [
+                "idImagem" => 5,
+                "data" => date("Y-m-d"),
+                "nome" => "Chico Mendes"
+            ]
+        ]);
+        $file = $this->repositorio->copy(public_path("img/mock/chico-mendes_big.png"));
+        \DB::table("imagem_arquivo")->insert([
+            [
+                "idImagemArquivo" => 6,
+                "idImagem" => 5,
+                "tamanho" => "desktop",
+                "arquivo" => $file
+            ]
+        ]);
+        $file = $this->repositorio->copy(public_path("img/mock/chico-mendes_small.png"));
+        \DB::table("imagem_arquivo")->insert([
+            [
+                "idImagemArquivo" => 7,
+                "idImagem" => 5,
+                "tamanho" => "mobile",
+                "arquivo" => $file
+            ]
+        ]);
+        
+        \DB::table("imagem")->insert([
+            [
+                "idImagem" => 6,
+                "data" => date("Y-m-d"),
+                "nome" => "Cão Grande"
+            ]
+        ]);
+        $file = $this->repositorio->copy(public_path("img/mock/dog_big.png"));
+        \DB::table("imagem_arquivo")->insert([
+            [
+                "idImagemArquivo" => 8,
+                "idImagem" => 6,
+                "tamanho" => null,
+                "arquivo" => $file
+            ]
+        ]);
+        
+        \DB::table("imagem")->insert([
+            [
+                "idImagem" => 7,
+                "data" => date("Y-m-d"),
+                "nome" => "Cão Pequeno"
+            ]
+        ]);
+        $file = $this->repositorio->copy(public_path("img/mock/dog_small.png"));
+        \DB::table("imagem_arquivo")->insert([
+            [
+                "idImagemArquivo" => 9,
+                "idImagem" => 7,
+                "tamanho" => null,
+                "arquivo" => $file
+            ]
+        ]);
+        
+        \DB::table("imagem")->insert([
+            [
+                "idImagem" => 8,
+                "data" => date("Y-m-d"),
+                "nome" => "Cão Pequeno (Pug)"
+            ]
+        ]);
+        $file = $this->repositorio->copy(public_path("img/mock/dog_medium_pug.png"));
+        \DB::table("imagem_arquivo")->insert([
+            [
+                "idImagemArquivo" => 10,
+                "idImagem" => 8,
+                "tamanho" => null,
+                "arquivo" => $file
+            ]
+        ]);
     }
 
 }

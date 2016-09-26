@@ -3,7 +3,7 @@
     String.prototype.ucfirst = function () {
         return this.charAt(0).toUpperCase() + this.slice(1);
     };
-    String.prototype.slugify = function() {
+    String.prototype.slugify = function () {
         return this.toLowerCase()
                 .replace(/\s+/g, '-')           // Replace spaces with -
                 .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
@@ -18,6 +18,22 @@
     //HTML Templates Wrapper
     var $templates = $("#html-templates");
     globals.templates = $templates;
+
+    //Translated months
+    globals.months = [
+        "Janeiro",
+        "Fevereiro",
+        "Março",
+        "Abril",
+        "Maio",
+        "Junho",
+        "Julho",
+        "Agosto",
+        "Setembro",
+        "Outubro",
+        "Novembro",
+        "Dezembro"
+    ];
 
     //Default alert function
     var $alerts = $("#alerts");
@@ -166,8 +182,8 @@
             if (!($this.is("input") || $this.is("textarea") || $this.is("select"))) {
                 return $this;
             }
-            if(event) {
-                $this.on(event, function() {
+            if (event) {
+                $this.on(event, function () {
                     $this.validate(rule, $data);
                 });
                 return $this;
@@ -273,14 +289,14 @@
                 return $this;
             }
             redirectTimer = redirectTimer || 3000;
-            validation = validation || function() {
+            validation = validation || function () {
                 return true;
             };
             var $submitButton = $this.find("button[type='submit']");
             $this.submit(function (ev) {
                 ev.stopPropagation();
                 ev.preventDefault();
-                if(!validation($this, $submitButton)) {
+                if (!validation($this, $submitButton)) {
                     return false;
                 }
                 $.ajax({
@@ -307,8 +323,10 @@
                             }
                         }
                     },
-                    "error": function () {
-                        showAlert("Ocorreu um problema ao enviar a requisição. Por favor, atualize a página ou tente novamente mais tarde.", "error");
+                    "error": function (request) {
+                        if (request.statusText !== 'abort') {
+                            showAlert("Ocorreu um problema ao enviar a requisição. Por favor, atualize a página ou tente novamente mais tarde.", "error");
+                        }
                         $submitButton.removeClass("disabled");
                     },
                     "complete": function () {
@@ -328,7 +346,7 @@
             success = success || function (response) {
                 if (response.status) {
                     setInputStatus($this, "error");
-                    if(errorMessage) {
+                    if (errorMessage) {
                         showAlert(errorMessage, "error");
                     }
                 } else {
@@ -341,7 +359,7 @@
             complete = complete || function () {
                 $this.removeClass("loading");
             };
-            error = error || function () {
+            error = error || function (request) {
                 setInputStatus($this, "success");
             };
             $.ajax({
@@ -356,19 +374,19 @@
             return $this;
         }
     });
-    
+
     //Creates an unique number (IDs, for example)
-    window.uniqid = function(prefix) {
+    window.uniqid = function (prefix) {
         prefix = prefix || "";
         var date = new Date();
-        return  prefix 
-                + date.getFullYear() 
-                + "-" 
-                + date.getMonth() 
-                + "-" 
-                + date.getSeconds() 
-                + "_" 
-                + date.getHours() 
+        return  prefix
+                + date.getFullYear()
+                + "-"
+                + date.getMonth()
+                + "-"
+                + date.getSeconds()
+                + "_"
+                + date.getHours()
                 + "-"
                 + date.getMinutes()
                 + "-"
@@ -376,4 +394,49 @@
                 + "_"
                 + Math.random().toFixed(6) * 1000000;
     };
+
+    //Defining scrollTo function
+    $.fn.scrollView = function () {
+        return this.each(function () {
+            $('html, body').animate({
+                scrollTop: $(this).offset().top
+            }, 1000);
+        });
+    };
+
+    //Basic date formatation function
+    window.simpleDateFormatter = function (day, month, year, format) {
+        format = format || "d/m/Y";
+        if (parseInt(day) < 10) {
+            day = "0" + day;
+        }
+        if (parseInt(month) < 10) {
+            month = "0" + month;
+        }
+        return format.replace("d", day).replace("m", month).replace("Y", year);
+    };
+
+    //Basic monetary formatation function
+    window.formatMoney = function (value, currency, decimalSeparator) {
+        currency = currency || "R$";
+        decimalSeparator = decimalSeparator || ",";
+        return currency + " " + parseFloat(value).toFixed(2).replace(".", decimalSeparator);
+    }
+
+    //Simple time difference calculator
+    window.diffTime = function (time1, time2, precision) {
+        precision = precision ? precision.toLowerCase() : "h";
+        var diff = new Date("2000-01-01 " + time1) - new Date("2000-01-01 " + time2)
+
+        switch (precision) {
+            case "h":
+                return diff / 3600000;
+            case "m":
+                return diff / 60000;
+            case "s":
+                return diff / 1000;
+            case "ms":
+                return diff;
+        }
+    }
 })();

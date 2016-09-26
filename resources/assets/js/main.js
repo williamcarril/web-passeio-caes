@@ -19,31 +19,31 @@
     //Bootstrapping JQuery Input Mask plugin on data-inputmask inputs.
     $(":input").inputmask();
 
-    //Customizing and Bootstrapping calendars
-    var months = [
-        "Janeiro",
-        "Fevereiro",
-        "Março",
-        "Abril",
-        "Maio",
-        "Junho",
-        "Julho",
-        "Agosto",
-        "Setembro",
-        "Outubro",
-        "Novembro",
-        "Dezembro"
-    ];
-    $('.responsive-calendar').responsiveCalendar({
-        "translateMonths": months
+    //Initializing Carousels
+    $('.carousel').carousel();
+
+    //Initializing timepickers
+    $(".timepicker").timepicker({
+        "showMeridian": false,
+        "defaultTime": false,
+        "snapToStep": true,
+        "minuteStep": 15
     });
 
-    $('.carousel').carousel();
-    
     //Prevent default 'Hit enter' submit on forms for inputs
-    $("form").on("keypress", function(ev) {
-        if(ev.keyCode === 13 && !(ev.target.type === "submit" || ev.target.type === "password")) {
+    $("form").on("keypress", function (ev) {
+        if (ev.keyCode === 13 && !(ev.target.type === "submit" || ev.target.type === "password")) {
             return false;
         }
     });
+
+    //Toggling chevron arrow on fieldset collapses
+    function toggleChevron(e) {
+        $(e.target)
+                .prev("legend")
+                .find('i.indicator')
+                .toggleClass('glyphicon-chevron-down glyphicon-chevron-right');
+    }
+    $('fieldset .collapse').on('hidden.bs.collapse', toggleChevron);
+    $('fieldset .collapse').on('shown.bs.collapse', toggleChevron);
 })();

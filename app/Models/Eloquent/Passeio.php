@@ -2,20 +2,18 @@
 
 namespace App\Models\Eloquent;
 
-namespace App\Models\Eloquent\Enums\Porte;
-namespace App\Models\Eloquent\Enums\Status;
+use \App\Models\Eloquent\Enums\Porte;
+use \App\Models\Eloquent\Enums\PasseioStatus as Status;
+use \App\Models\Eloquent\Enums\AgendamentoStatus;
 
 class Passeio extends \WGPC\Eloquent\Model {
 
     protected $table = "passeio";
     protected $primaryKey = "idPasseio";
     protected $fillable = [
-        "idAgendamento",
-        "idModalidade",
         "idLocal",
         "idPasseador",
-        "idPasseioReagendado",
-        "preco",
+        "idPasseioOriginal",
         "inicio",
         "fim",
         "data",
@@ -24,12 +22,10 @@ class Passeio extends \WGPC\Eloquent\Model {
         "porte"
     ];
     protected static $rules = [
-        "idAgendamento" => ["required", "exists:agendamento,idAgendamento", "integer"],
         "idModalidade" => ["required", "exists:modalidade,idModalidade", "integer"],
         "idLocal" => ["required", "exists:local,idLocal", "integer"],
         "idPasseador" => ["exists:funcionario,idFuncionario,tipo,passeador", "integer"],
-        "idPasseioReagendado" => ["exists:passeio,idPasseio", "integer"],
-        "preco" => ["required", "numeric"],
+        "idPasseioOriginal" => ["exists:passeio,idPasseio", "integer"],
         "coletivo" => ["boolean", "required"],
         "inicio" => ["required", "date_format:H:i:s", "less_or_equal:fim"],
         "fim" => ["required", "date_format:H:i:s", "greater_or_equal:inicio"],
@@ -37,9 +33,8 @@ class Passeio extends \WGPC\Eloquent\Model {
         "status" => ["required", "string"],
         "porte" => ["string"],
     ];
-    protected $dates = ["data"];
     protected $casts = [
-        "preco" => "float",
+        "precoPorCaoPorHora" => "float",
         "coletivo" => "boolean",
     ];
     protected $attributes = [
@@ -53,12 +48,16 @@ class Passeio extends \WGPC\Eloquent\Model {
         static::$rules["status"][] = "in:" . implode(",", Status::getConstants());
     }
 
-    public function agendamento() {
-        return $this->belongsTo("\App\Models\Eloquent\Agendamento", "idAgendamento", "idAgendamento");
+    public function agendamentos() {
+        return $this->belongsToMany("\App\Models\Eloquent\Agendamento", "a_agendamento_passeio", "idPasseio", "idAgendamento");
     }
 
-    public function passeioReagendado() {
-        return $this->belongsTo("\App\Models\Eloquent\Passeio", "idPasseioReagendado", "idPasseio");
+    public function passeioOriginal() {
+        return $this->belongsTo("\App\Models\Eloquent\Passeio", "idPasseioOriginal", "idPasseio");
+    }
+
+    public function passeioRemarcado() {
+        return $this->hasOne("\App\Models\Eloquent\Passeio", "idPasseio", "idPasseioOriginal");
     }
 
     public function local() {
@@ -99,26 +98,46 @@ class Passeio extends \WGPC\Eloquent\Model {
         return array_values($clientes);
     }
 
+    public function getTipoAttribute() {
+        if ($this->coletivo) {
+            return "Passeio Coletivo";
+        }
+        return "Passeio Unitário";
+    }
+
+    public function scopeAgendamentoConfirmado($query, $idCliente = null) {
+        return $query->whereHas("agendamentos", function($q) use ($idCliente) {
+                    $q->where("status", AgendamentoStatus::FEITO);
+                    if (!is_null($idCliente)) {
+                        $q->where("idCliente", $idCliente);
+                    }
+                });
+    }
+
     public function scopePendente($query) {
-        return $query->where('status', "pendente");
+        return $query->where("status", Status::PENDENTE);
     }
 
     public function scopeCancelado($query) {
-        return $query->where('status', "cancelado");
+        return $query->where("status", Status::CANCELADO);
     }
 
     public function scopeEmAndamento($query) {
-        return $query->where('status', "em_andamento");
+        return $query->where("status", Status::EM_ANDAMENTO);
     }
 
     public function scopeFeito($query) {
-        return $query->where('status', "feito");
+        return $query->where("status", Status::FEITO);
+    }
+
+    public function scopeNaoCancelado($query) {
+        return $query->where("status", "!=", Status::CANCELADO);
     }
 
     public function scopeNaoFinalizado($query) {
         return $query->where(function($q) {
-                    $q->orWhere("status", "pendente");
-                    $q->orWhere("status", "em_andamento");
+                    $q->orWhere("status", Status::PENDENTE);
+                    $q->orWhere("status", Status::EM_ANDAMENTO);
                 });
     }
 

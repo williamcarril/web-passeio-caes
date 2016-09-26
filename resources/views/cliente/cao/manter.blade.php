@@ -33,19 +33,7 @@
                     </td>
                     <td class="editable-label" data-action="editable-label" data-name="porte">
                         <?php
-                        switch ($cao->porte) {
-                            case "pequeno":
-                                $porte = "Pequeno";
-                                break;
-                            case "medio":
-                                $porte = "Médio";
-                                break;
-                            case "grande":
-                                $porte = "Grande";
-                                break;
-                            default:
-                                $porte = $cao->porte;
-                        }
+                        $porte = $cao->porteFormatado;
                         ?>
                         <span data-role="label">{{$porte}}</span>
                         <select data-role="input" name="porte" class="form-control" autocomplete="off">
@@ -56,16 +44,7 @@
                     </td>
                     <td class="editable-label" data-action="editable-label" data-name="genero">
                         <?php
-                        switch ($cao->genero) {
-                            case "macho":
-                                $genero = "Macho";
-                                break;
-                            case "femea":
-                                $genero = "Fêmea";
-                                break;
-                            default:
-                                $porte = $cao->genero;
-                        }
+                        $genero = $cao->generoFormatado;
                         ?>
                         <span data-role="label">{{$genero}}</span>
                         <select data-role="input" name="genero" class="form-control" autocomplete="off">
@@ -231,7 +210,7 @@
             var $dog = $this.parents("[data-role='cao']");
             $dog.find("[data-action='save-dog']").removeClass("hidden");
         });
-        $dogTable.on("change", "input[name='imagem']", function(ev) {
+        $dogTable.on("change", "input[name='imagem']", function (ev) {
             var $this = $(this);
             var $dog = $this.parents("[data-role='cao']");
             $dog.find("[data-action='save-dog']").removeClass("hidden");

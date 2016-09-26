@@ -4,8 +4,9 @@ switch ($type) {
     default:
         $classes = "";
 }
+$id = isset($id) ? $id : uniqid("calendar");
 ?>
-<div class="responsive-calendar {{$classes}}">
+<div id="{{$id}}" class="responsive-calendar {{$classes}}">
     <div class="controls">
         <a class="pull-left" data-go="prev">
             <div class="btn">
@@ -35,3 +36,14 @@ switch ($type) {
         <!-- the place where days will be generated -->
     </div>
 </div>
+@section("scripts")
+@parent
+@if(!empty($events))
+<script type="text/javascript">
+    (function () {
+        var events = $.parseJSON('{!!json_encode($events)!!}');
+        $("#{!!$id!!}").responsiveCalendar("edit", events);
+    })();
+</script>
+@endif
+@endsection
