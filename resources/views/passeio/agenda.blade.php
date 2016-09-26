@@ -217,7 +217,9 @@ foreach ($passeios as $passeio) {
                 </div>
             </fieldset>
             <hr/>
+            <p><b>Duração do passeio:</b> <span data-role="duracao">Não definido</span></p>
             <p><b>Preço por passeio:</b> <span data-role="precoPorPasseio">Não definido</span></p>
+            <p><b>Quantidade de passeios:</b> <span data-role="quantidadePasseio">Não definido</span></p>
             <p><b>Preço total:</b> <span data-role="precoTotal">Não definido</span></p>
             <hr/>
             <p>
@@ -255,6 +257,8 @@ foreach ($passeios as $passeio) {
 
         var $precoPorPasseio = $form.find("[data-role='precoPorPasseio']");
         var $precoTotal = $form.find("[data-role='precoTotal']");
+        var $quantidadePasseio = $form.find("[data-role='quantidadePasseio']");
+        var $duracao = $form.find("[data-role='duracao']");
 
         var $startingTime = $form.find("input[name='inicio']");
         var $endingTime = $form.find("input[name='fim']");
@@ -363,6 +367,7 @@ foreach ($passeios as $passeio) {
 
         $form.on("change", "input[name='inicio'],input[name='fim']", function () {
             $timetable.find(".time-label.-starting-time,.time-label.-ending-time").removeClass("-starting-time").removeClass("-ending-time");
+            calcularTotais();
         });
 
         $timetable.on("click", ".time-label", function () {
@@ -370,11 +375,13 @@ foreach ($passeios as $passeio) {
             if ($this.hasClass("-starting-time")) {
                 $this.removeClass("-starting-time");
                 $startingTime.val("");
+                calcularTotais();
                 return;
             }
             if ($this.hasClass("-ending-time")) {
                 $this.removeClass("-ending-time");
                 $endingTime.val("");
+                calcularTotais();
                 return;
             }
             var $startingLabel = $timetable.find(".-starting-time");
@@ -383,6 +390,7 @@ foreach ($passeios as $passeio) {
             if ($startingLabel.length === 0 && $endingLabel.length === 0) {
                 $this.addClass("-starting-time");
                 $startingTime.val($this.text());
+                calcularTotais();
                 return;
             }
 
@@ -396,6 +404,7 @@ foreach ($passeios as $passeio) {
                     $this.addClass("-ending-time");
                     $endingTime.val($this.text());
                 }
+                calcularTotais();
                 return;
             }
 
@@ -409,6 +418,7 @@ foreach ($passeios as $passeio) {
                     $this.addClass("-starting-time");
                     $startingTime.val($this.text());
                 }
+                calcularTotais();
                 return;
             }
 
@@ -421,8 +431,10 @@ foreach ($passeios as $passeio) {
                 $this.addClass("-ending-time");
                 $endingTime.val($this.text());
             }
+            calcularTotais();
         });
 
+        calcularTotais();
         $timetable.on("click", ".time-entry", function () {
             askConfirmation("Inclusão em passeio coletivo", "Deseja iniciar uma solicitação de agendamento para o passeio coletivo selecionado?", function () {
                 console.log("yes!");
@@ -453,21 +465,21 @@ foreach ($passeios as $passeio) {
 
                     $modalidadeInformation.find("[data-name='descricao']").text(modalidade.descricao);
                     $modalidadeInformation.find("[data-name='tipo']").text(modalidade.tipo);
-                    
+
                     var $coletivo = $modalidadeInformation.find("[data-name='coletivo']");
                     $coletivo.text(modalidade.coletivo ? "Sim" : "Não");
                     $coletivo.attr("data-value", modalidade.coletivo ? "1" : "0");
-                    
+
                     var $preco = $modalidadeInformation.find("[data-name='precoPorCaoPorHora']");
                     $preco.text(formatMoney(modalidade.precoPorCaoPorHora));
                     $preco.attr("data-value", modalidade.precoPorCaoPorHora);
-                    
+
                     $modalidadeInformation.find("[data-name='periodo']").text(modalidade.periodo);
-                    
+
                     var $frequencia = $modalidadeInformation.find("[data-name='frequencia']");
                     $frequencia.text(modalidade.frequencia);
                     $frequencia.attr("data-value", modalidade.frequenciaNumericaPorSemana);
-                    
+
                     var $periodo = $modalidadeInformation.find("[data-name='periodo']");
                     $periodo.text(modalidade.periodo);
                     $periodo.attr("data-value", modalidade.periodoNumericoPorMes);
@@ -602,46 +614,67 @@ foreach ($passeios as $passeio) {
                 $btnIncluir.removeClass("hidden");
                 $cao.addClass("_error-color").removeClass("_success-color");
             }
-            calcularPrecos();
+            calcularTotais();
         }
 
-        function calcularPrecos() {
+        function resetarTotais(resetarPrecoPasseio, resetarPrecoTotal, resetarQuantidadePasseio, resetarDuracao) {
+            resetarPrecoPasseio = resetarPrecoPasseio || true;
+            resetarPrecoTotal = resetarPrecoTotal || true;
+            resetarQuantidadePasseio = resetarQuantidadePasseio || true;
+            resetarDuracao = resetarDuracao || true;
+            if (resetarPrecoPasseio) {
+                $precoPorPasseio.text("Não definido");
+            }
+            if (resetarPrecoTotal) {
+                $precoTotal.text("Não definido");
+            }
+            if (resetarQuantidadePasseio) {
+                $quantidadePasseio.text("Não definido");
+            }
+            if (resetarDuracao) {
+                $duracao.text("Não definido");
+            }
+        }
+
+        function calcularTotais() {
             var $caesQueParticiparao = $caes.find("[data-role='cao']").filter(function () {
                 return $(this).find("input[name='caes[]']:checked").length > 0;
             });
-            if($caesQueParticiparao.length <= 0) {
-                $precoPorPasseio.text("Não definido");
-                $precoTotal.text("Não definido");
+            if ($caesQueParticiparao.length <= 0) {
+                resetarTotais(true, true, false, false);
                 return;
             }
             var precoPorCaoPorHora = $modalidade.find("[data-name='precoPorCaoPorHora']").attr("data-value");
-            if(!precoPorCaoPorHora) {
-                $precoPorPasseio.text("Não definido");
-                $precoTotal.text("Não definido");
+            if (!precoPorCaoPorHora) {
+                resetarTotais(true, true, true, false);
                 return;
             }
             precoPorCaoPorHora = parseFloat(precoPorCaoPorHora);
-            
+
             var pacote = $modalidade.attr("data-package") == "1" ? true : false;
             var starting = $startingTime.val();
             var ending = $endingTime.val();
-            
-            if(!starting || !ending) {
-                $precoPorPasseio.text("Não definido");
-                $precoTotal.text("Não definido");
+
+            if (!starting || !ending) {
+                resetarTotais(true, true, false, true);
                 return;
             }
             var interval = diffTime(ending, starting);
-            
+
+            $duracao.text(interval + " hora" + (interval > 1 ? "s" : ""));
+
             var precoPorPasseio = $caesQueParticiparao.length * interval * precoPorCaoPorHora;
             $precoPorPasseio.text(formatMoney(precoPorPasseio));
-            
-            if(!pacote) {
+
+            if (!pacote) {
                 $precoTotal.text($precoPorPasseio.text());
+                $quantidadePasseio.text(1);
             } else {
                 var frequencia = $modalidade.find("[data-name='frequencia']").attr("data-value");
                 var periodo = $modalidade.find("[data-name='periodo']").attr("data-value");
-                var precoTotal = precoPorPasseio * (frequencia * 4) * periodo;
+                var quantidadePasseios = frequencia * 4 * periodo;
+                var precoTotal = precoPorPasseio * quantidadePasseios;
+                $quantidadePasseio.text(quantidadePasseios);
                 $precoTotal.text(formatMoney(precoTotal));
             }
         }
