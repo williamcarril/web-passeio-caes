@@ -438,5 +438,39 @@
             case "ms":
                 return diff;
         }
-    }
+    };
+
+    //Simple time formatter
+    window.formatTime = function (hours, precision) {
+        precision = precision || "m";
+        var minutes = (hours % 1) * 60;
+        var seconds = (minutes % 1) * 60;
+
+        var strSeconds = "";
+        var strMinutes = "";
+        var strHours = "";
+        switch (precision) {
+            case "s":
+                if (seconds > 0) {
+                    strSeconds = parseInt(seconds) + " segundo" + (seconds > 1 ? "s" : "");
+                }
+            case "m":
+                if (minutes > 0) {
+                    strMinutes = parseInt(minutes) + " minuto" + (minutes > 1 ? "s" : "");
+                }
+            case "h":
+            default:
+                strHours = parseInt(hours) + " hora" + (hours > 1 || hours === 0 ? "s" : "");
+        }
+        if (strSeconds && strMinutes) {
+            return strHours + ", " + strMinutes + " e " + strSeconds;
+        }
+        if (strSeconds) {
+            return strHours + " e " + strSeconds;
+        }
+        if (strMinutes) {
+            return strHours + " e " + strMinutes;
+        }
+        return strHours;
+    };
 })();

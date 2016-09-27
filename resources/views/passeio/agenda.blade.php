@@ -19,7 +19,7 @@ foreach ($passeios as $passeio) {
     <h1>Agendamento de passeios</h1>
     @include("includes.calendar", ["id" => "calendario", "events" => $events])
     <div id="agendamento-wrapper" class="hidden">
-        <h2>Horários do Dia</h2>
+        <h2>Horários do Dia - <span data-role="date"></span></h2>
         <div class="timetable-wrapper">
             <div id="timetable" class="timetable"></div>
         </div>
@@ -60,7 +60,7 @@ foreach ($passeios as $passeio) {
                     <div class="form-group">
                         <label class="control-label col-sm-2" for='agendamento-modalidade'>Nome</label>
                         <div class='col-sm-3'>
-                            <select class="form-control" id="agendamento-modalidade" name="modalidade">
+                            <select required class="form-control" id="agendamento-modalidade" name="modalidade">
                                 <option value="" selected>Selecione uma modalidade</option>
                                 @foreach($modalidades as $modalidade)
                                 <option value="{{$modalidade->idModalidade}}">{{$modalidade->nome}}</option>
@@ -136,7 +136,7 @@ foreach ($passeios as $passeio) {
                     <div class="form-group">
                         <label class="control-label col-sm-2" for='agendamento-local'>Nome</label>
                         <div class='col-sm-3'>
-                            <select class="form-control" id="agendamento-local" name="local">
+                            <select required class="form-control" id="agendamento-local" name="local">
                                 <option value="" selected>Selecione um local de passeio</option>
                                 @foreach($locais as $local)
                                 <option value="{{$local->idLocal}}">{{$local->nome}}</option>
@@ -229,9 +229,9 @@ foreach ($passeios as $passeio) {
                 ** - Para solicitar inclusão em algum dos passeios coletivos, clique um dos que estão disponíveis na lista de horários do dia..
             </p>
             <hr/>
-            <a class="btn btn-success pull-right" href="#">
+            <button class="btn btn-success pull-right" type="submit">
                 Confirmar solicitação de agendamento
-            </a>
+            </button>
         </form>
     </div>
 </section>
@@ -326,7 +326,7 @@ foreach ($passeios as $passeio) {
                         "coletivo": true
                     },
                     "beforeSend": function () {
-                        $form.find("[data-role='date']").text(simpleDateFormatter(day, month, year));
+                        $wrapper.find("[data-role='date']").text(simpleDateFormatter(day, month, year));
                         $form.find("input[name='data']").val(simpleDateFormatter(day, month, year, "Y-m-d"));
                         $wrapper.removeClass("hidden");
                         $timetable.fadeOut(400);
@@ -367,21 +367,21 @@ foreach ($passeios as $passeio) {
 
         $form.on("change", "input[name='inicio'],input[name='fim']", function () {
             $timetable.find(".time-label.-starting-time,.time-label.-ending-time").removeClass("-starting-time").removeClass("-ending-time");
-            calcularTotais();
+            obterEDefinirTotais();
         });
+
+
 
         $timetable.on("click", ".time-label", function () {
             var $this = $(this);
             if ($this.hasClass("-starting-time")) {
                 $this.removeClass("-starting-time");
-                $startingTime.val("");
-                calcularTotais();
+                definirHorarios("starting", null);
                 return;
             }
             if ($this.hasClass("-ending-time")) {
                 $this.removeClass("-ending-time");
-                $endingTime.val("");
-                calcularTotais();
+                definirHorarios("ending", null);
                 return;
             }
             var $startingLabel = $timetable.find(".-starting-time");
@@ -389,52 +389,47 @@ foreach ($passeios as $passeio) {
 
             if ($startingLabel.length === 0 && $endingLabel.length === 0) {
                 $this.addClass("-starting-time");
-                $startingTime.val($this.text());
-                calcularTotais();
+                definirHorarios("starting", $this.text());
                 return;
             }
 
             if ($startingLabel.length === 0) {
                 if ($this.text() < $endingLabel.text()) {
                     $this.addClass("-starting-time");
-                    $startingTime.val($this.text());
+                    definirHorarios("starting", $this.text());
                 } else {
                     $endingLabel.removeClass("-ending-time").addClass("-starting-time");
-                    $startingTime.val($endingLabel.text());
+                    definirHorarios("starting", $endingLabel.text(), false);
                     $this.addClass("-ending-time");
-                    $endingTime.val($this.text());
+                    definirHorarios("ending", $this.text());
                 }
-                calcularTotais();
                 return;
             }
 
             if ($endingLabel.length === 0) {
                 if ($this.text() > $startingLabel.text()) {
                     $this.addClass("-ending-time");
-                    $endingTime.val($this.text());
+                    definirHorarios("ending", $this.text());
                 } else {
                     $startingLabel.removeClass("-starting-time").addClass("-ending-time");
-                    $endingTime.val($startingLabel.text());
+                    definirHorarios("ending", $startingLabel.text(), false);
                     $this.addClass("-starting-time");
-                    $startingTime.val($this.text());
+                    definirHorarios("starting", $this.text());
                 }
-                calcularTotais();
                 return;
             }
 
             if ($this.text() < $startingLabel.text()) {
                 $startingLabel.removeClass("-starting-time");
                 $this.addClass("-starting-time");
-                $startingTime.val($this.text());
+                definirHorarios("starting", $this.text());
             } else {
                 $endingLabel.removeClass("-ending-time");
                 $this.addClass("-ending-time");
-                $endingTime.val($this.text());
+                definirHorarios("ending", $this.text());
             }
-            calcularTotais();
         });
 
-        calcularTotais();
         $timetable.on("click", ".time-entry", function () {
             askConfirmation("Inclusão em passeio coletivo", "Deseja iniciar uma solicitação de agendamento para o passeio coletivo selecionado?", function () {
                 console.log("yes!");
@@ -578,6 +573,37 @@ foreach ($passeios as $passeio) {
             alterarParticipacao($cao, false);
         });
 
+
+
+        $form.find("input[name='inicio']").validate("empty", null, "blur");
+        $form.find("input[name='fim']").validate("empty", null, "blur");
+        $form.find("select[name='local']").validate("empty", null, "blur");
+        $form.find("select[name='modalidade']").validate("empty", null, "blur");
+
+        $form.on("submit", function (ev) {
+            ev.preventDefault();
+            ev.stopPropagation();
+            console.log(new FormData($form[0]));
+        });
+
+        function definirHorarios(type, time, definirTotais) {
+            time = time || "";
+            definirTotais = definirTotais || true;
+            switch (type) {
+                case "starting":
+                    $startingTime.val(time);
+                    $startingTime.validate("empty", null);
+                    break;
+                case "ending":
+                    $endingTime.val(time);
+                    $endingTime.validate("empty", null);
+                    break;
+            }
+            if (definirTotais) {
+                obterEDefinirTotais();
+            }
+        }
+
         function alterarParticipacao($cao, participacao) {
             var $participacao = $cao.find("[data-name='participacao']");
             var $btnIncluir = $cao.find("[data-action='incluir-cao']");
@@ -614,69 +640,88 @@ foreach ($passeios as $passeio) {
                 $btnIncluir.removeClass("hidden");
                 $cao.addClass("_error-color").removeClass("_success-color");
             }
-            calcularTotais();
+            obterEDefinirTotais();
         }
 
-        function resetarTotais(resetarPrecoPasseio, resetarPrecoTotal, resetarQuantidadePasseio, resetarDuracao) {
-            resetarPrecoPasseio = resetarPrecoPasseio || true;
-            resetarPrecoTotal = resetarPrecoTotal || true;
-            resetarQuantidadePasseio = resetarQuantidadePasseio || true;
-            resetarDuracao = resetarDuracao || true;
-            if (resetarPrecoPasseio) {
-                $precoPorPasseio.text("Não definido");
-            }
-            if (resetarPrecoTotal) {
-                $precoTotal.text("Não definido");
-            }
-            if (resetarQuantidadePasseio) {
-                $quantidadePasseio.text("Não definido");
-            }
-            if (resetarDuracao) {
-                $duracao.text("Não definido");
-            }
-        }
-
-        function calcularTotais() {
-            var $caesQueParticiparao = $caes.find("[data-role='cao']").filter(function () {
-                return $(this).find("input[name='caes[]']:checked").length > 0;
-            });
-            if ($caesQueParticiparao.length <= 0) {
-                resetarTotais(true, true, false, false);
-                return;
-            }
-            var precoPorCaoPorHora = $modalidade.find("[data-name='precoPorCaoPorHora']").attr("data-value");
-            if (!precoPorCaoPorHora) {
-                resetarTotais(true, true, true, false);
-                return;
-            }
-            precoPorCaoPorHora = parseFloat(precoPorCaoPorHora);
-
-            var pacote = $modalidade.attr("data-package") == "1" ? true : false;
+        function obterEDefinirDuracao() {
             var starting = $startingTime.val();
             var ending = $endingTime.val();
 
             if (!starting || !ending) {
-                resetarTotais(true, true, false, true);
-                return;
+                $duracao.text("Não definido");
+                return null;
             }
             var interval = diffTime(ending, starting);
 
-            $duracao.text(interval + " hora" + (interval > 1 ? "s" : ""));
+            $duracao.text(formatTime(interval));
+            return interval;
+        }
 
-            var precoPorPasseio = $caesQueParticiparao.length * interval * precoPorCaoPorHora;
-            $precoPorPasseio.text(formatMoney(precoPorPasseio));
+        function obterEDefinirQuantidadeDePasseios() {
+            var idModalidade = $modalidade.find("select[name='modalidade']").val();
 
+            if (!idModalidade) {
+                $quantidadePasseio.text("Não definido");
+                return null;
+            }
+            var pacote = $modalidade.attr("data-package") == "1" ? true : false;
             if (!pacote) {
-                $precoTotal.text($precoPorPasseio.text());
                 $quantidadePasseio.text(1);
+                return 1;
             } else {
                 var frequencia = $modalidade.find("[data-name='frequencia']").attr("data-value");
                 var periodo = $modalidade.find("[data-name='periodo']").attr("data-value");
                 var quantidadePasseios = frequencia * 4 * periodo;
-                var precoTotal = precoPorPasseio * quantidadePasseios;
                 $quantidadePasseio.text(quantidadePasseios);
+                return quantidadePasseios;
+            }
+        }
+
+        function obterEDefinirTotais() {
+            var interval = obterEDefinirDuracao();
+            var quantidadePasseios = obterEDefinirQuantidadeDePasseios();
+
+            if (interval === null) {
+                $precoPorPasseio.text("Não definido");
+                $precoTotal.text("Não definido");
+                return null;
+            }
+
+            if (quantidadePasseios === null) {
+                $precoPorPasseio.text("Não definido");
+                $precoTotal.text("Não definido");
+                return null;
+            }
+
+            var $caesQueParticiparao = $caes.find("[data-role='cao']").filter(function () {
+                return $(this).find("input[name='caes[]']:checked").length > 0;
+            });
+            if ($caesQueParticiparao.length <= 0) {
+                $precoPorPasseio.text("Não definido");
+                $precoTotal.text("Não definido");
+                return null;
+            }
+            var precoPorCaoPorHora = $modalidade.find("[data-name='precoPorCaoPorHora']").attr("data-value");
+            if (!precoPorCaoPorHora) {
+                $precoPorPasseio.text("Não definido");
+                $precoTotal.text("Não definido");
+                return null;
+            }
+            precoPorCaoPorHora = parseFloat(precoPorCaoPorHora);
+
+            var precoPorPasseio = $caesQueParticiparao.length * interval * precoPorCaoPorHora;
+            $precoPorPasseio.text(formatMoney(precoPorPasseio));
+
+            if (quantidadePasseios === 1) {
+                $precoTotal.text($precoPorPasseio.text());
+            } else {
+                var precoTotal = precoPorPasseio * quantidadePasseios;
                 $precoTotal.text(formatMoney(precoTotal));
             }
+            return {
+                "porPasseio": precoPorPasseio,
+                "geral": precoTotal
+            };
         }
     })();
 </script>
