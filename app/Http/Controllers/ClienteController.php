@@ -7,6 +7,8 @@ use App\Models\Eloquent\Cliente;
 use App\Models\Eloquent\Cao;
 use Illuminate\Contracts\Auth\Factory as AuthFactory;
 use App\Models\File\Repositorio;
+use App\Models\Eloquent\Enums\AgendamentoStatus;
+use App\Models\Eloquent\Enums\PasseioStatus;
 
 class ClienteController extends Controller {
 
@@ -20,6 +22,7 @@ class ClienteController extends Controller {
         $this->imageController = $imageController;
     }
 
+    // <editor-fold defaultstate="collapsed" desc="Rotas do site">
     // <editor-fold defaultstate="collapsed" desc="Rotas que retornam Views">
     public function route_getCadastroView(Request $req) {
         $data = [];
@@ -32,6 +35,30 @@ class ClienteController extends Controller {
             "caes" => $cliente->caes()->get()
         ];
         return response()->view("cliente.cao.manter", $data);
+    }
+
+    public function route_getAgendamentos(Request $req) {
+        $cliente = $this->auth->guard("web")->user();
+        $data = [
+            "agendamentos" => $cliente->agendamentos()->orderBy("data", "desc")->priorizarPorStatus()->get(),
+            "statusAgendamento" => AgendamentoStatus::getConstants(false)
+        ];
+        return response()->view("cliente.agendamento.listagem", $data);
+    }
+
+    public function route_getAgendamento(Request $req, $id) {
+        $cliente = $this->auth->guard("web")->user();
+        $agendamento = $cliente->agendamentos()->where("idAgendamento", $id)->firstOrFail();
+        $data = [
+            "agendamento" => $agendamento,
+            "statusAgendamento" => AgendamentoStatus::getConstants(false),
+            "statusPasseio" => PasseioStatus::getConstants(false),
+            "local" => $agendamento->passeios()->first()->local,
+            "caes" => $agendamento->caes,
+            "modalidade" => $agendamento->modalidade,
+            "passeios" => $agendamento->passeios
+        ];
+        return response()->view("cliente.agendamento.detalhes", $data);
     }
 
     /**
@@ -65,7 +92,7 @@ class ClienteController extends Controller {
 
     public function route_getCheckCpf(Request $req) {
         $cpf = preg_replace('/[^0-9]/', '', $req->input("cpf"));
-        
+
         $cliente = $this->auth->guard("web")->user();
 
         $check = Cliente::where("cpf", $cpf);
@@ -269,5 +296,6 @@ class ClienteController extends Controller {
         return redirect()->route("home");
     }
 
+    // </editor-fold>
     // </editor-fold>
 }

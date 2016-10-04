@@ -23,8 +23,9 @@ foreach ($passeios as $passeio) {
         <div class="timetable-wrapper">
             <div id="timetable" class="timetable"></div>
         </div>
-        <form id="agendamento-form" class="form-horizontal">
-            <fieldset>
+        <form id="agendamento-form" class="form-horizontal" action="{!! route('passeio.agendamento.post') !!}" method="POST">
+            <input type="hidden" name="idPasseioColetivo" value=""/>
+            <fieldset data-name="dataEHorarios">
                 <legend class="_cursor-pointer" data-toggle="collapse" data-target="#data-horario-collapsable">
                     Data e Horários
                     <i class="indicator glyphicon glyphicon-chevron-down"></i>
@@ -137,10 +138,14 @@ foreach ($passeios as $passeio) {
                         <label class="control-label col-sm-2" for='agendamento-local'>Nome</label>
                         <div class='col-sm-3'>
                             <select required class="form-control" id="agendamento-local" name="local">
-                                <option value="" selected>Selecione um local de passeio</option>
-                                @foreach($locais as $local)
-                                <option value="{{$local->idLocal}}">{{$local->nome}}</option>
-                                @endforeach
+                                @if(!empty($localPreSelecionado))
+                                <option value="{{$localPreSelecionado->idLocal}}">{{$localPreSelecionado->nome}}</option>
+                                @else
+                                    <option value="" selected>Selecione um local de passeio</option>
+                                    @foreach($locais as $local)
+                                    <option value="{{$local->idLocal}}">{{$local->nome}}</option>
+                                    @endforeach
+                                @endif
                             </select>
                         </div>
                     </div>
@@ -169,6 +174,7 @@ foreach ($passeios as $passeio) {
                     <i class="indicator glyphicon glyphicon-chevron-down"></i>
                 </legend>
                 <div id="cao-collapsable" class="collapse in table-responsive">
+                    <p class="hidden" data-role="porteDoPasseioWrapper"><b>Porte do passeio: </b><span data-role="porteDoPasseio"></span></p>
                     <p>Selecione quais de seus cachorros participarão do(s) passeio(s) agendado(s):</p>
                     <table class="table table-striped table-hover">
                         <thead>
@@ -226,12 +232,20 @@ foreach ($passeios as $passeio) {
                 * - Para selecionar os horários de início e fim, insira manualmente ou clique em alguma das horas na lista de horários do dia.
             </p>
             <p>
-                ** - Para solicitar inclusão em algum dos passeios coletivos, clique um dos que estão disponíveis na lista de horários do dia..
+                ** - Para solicitar inclusão em algum dos passeios coletivos, clique um dos que estão disponíveis na lista de horários do dia.
+            </p>
+            <p>
+                *** - Para agendamentos de pacotes de passeio, a data do primeiro passeio agendado é o próximo dia da semana dos selecionados a partir da data escolhida no calendário.
             </p>
             <hr/>
-            <button class="btn btn-success pull-right" type="submit">
-                Confirmar solicitação de agendamento
-            </button>
+            <div class="button-group">
+                <button class="btn btn-warning hidden" type="button" data-action="cancelar-passeio-coletivo">
+                    Cancelar passeio coletivo
+                </button>
+                <button class="btn btn-success" type="submit">
+                    Solicitar agendamento
+                </button>
+            </div>
         </form>
     </div>
 </section>
@@ -245,20 +259,29 @@ foreach ($passeios as $passeio) {
         var $form = $wrapper.find("#agendamento-form");
         var $timetable = $wrapper.find("#timetable");
 
+        var $dataEHorarios = $wrapper.find("fieldset[data-name='dataEHorarios']");
+
         var $modalidade = $form.find("[data-role='modalidade']");
         var $modalidadeInformation = $modalidade.find("[data-role='modalidade-information']");
         var $packageOnlyFields = $modalidadeInformation.find("[data-role='package-only-fields']");
         var $modalidadeDias = $packageOnlyFields.find("[data-role='dia']");
+        var $modalidadeSelect = $modalidade.find("select[name='modalidade']");
 
         var $local = $form.find("[data-role='local']");
         var $localInformation = $local.find("[data-role='local-information']");
+        var $localSelect = $local.find("select[name='local']");
 
         var $caes = $form.find("[data-role='caes']");
+        var $porteDoPasseioWrapper = $caes.find("[data-role='porteDoPasseioWrapper']");
+        var $porteDoPasseio = $porteDoPasseioWrapper.find("[data-role='porteDoPasseio']");
+
 
         var $precoPorPasseio = $form.find("[data-role='precoPorPasseio']");
         var $precoTotal = $form.find("[data-role='precoTotal']");
         var $quantidadePasseio = $form.find("[data-role='quantidadePasseio']");
         var $duracao = $form.find("[data-role='duracao']");
+
+        var $btnCancelarPasseioColetivo = $form.find("[data-action='cancelar-passeio-coletivo']");
 
         var $startingTime = $form.find("input[name='inicio']");
         var $endingTime = $form.find("input[name='fim']");
@@ -266,6 +289,10 @@ foreach ($passeios as $passeio) {
         var url = "{!! route('passeio.porData.json.get', ['dia' => '!dia', 'mes' => '!mes', 'ano' => '!ano']) !!}";
         var urlSemDia = "{!! route('passeio.porData.json.get', ['mes' => '!mes', 'ano' => '!ano']) !!}";
         var dayClickAjax = null;
+        
+        @if(isset($localPreSelecionado))
+            carregarDetalhesDoLocal("{!!$localPreSelecionado->idLocal!!}", false);
+        @endif
 
         $calendario.responsiveCalendar({
             "translateMonths": globals.months,
@@ -326,8 +353,19 @@ foreach ($passeios as $passeio) {
                         "coletivo": true
                     },
                     "beforeSend": function () {
+                        restaurarEstadoBaseDaTela();
+                        var clickedDate = simpleDateFormatter(day, month, year, "Y-m-d");
                         $wrapper.find("[data-role='date']").text(simpleDateFormatter(day, month, year));
-                        $form.find("input[name='data']").val(simpleDateFormatter(day, month, year, "Y-m-d"));
+                        $form.find("input[name='data']").val(clickedDate);
+                        $form.find("input[name='idPasseioColetivo']").val("");
+
+                        //Verificar se a data é anterior à atual e não exibir formulário de agendamento caso positivo.
+                        if (clickedDate <= simpleDateFormatter(null, null, null, "Y-m-d")) {
+                            $form.addClass("hidden");
+                        } else {
+                            $form.removeClass("hidden");
+                        }
+
                         $wrapper.removeClass("hidden");
                         $timetable.fadeOut(400);
                     },
@@ -346,7 +384,15 @@ foreach ($passeios as $passeio) {
                             inicio = new Date(passeio.data + " " + passeio.inicio);
                             fim = new Date(passeio.data + " " + passeio.fim);
 
-                            timetable.addEvent(passeio.tipo, passeio.local, inicio, fim);
+                            timetable.addEvent(passeio.tipo, passeio.local, inicio, fim, {
+                                "data": {
+                                    "id": passeio.idPasseio,
+                                    "inicio": passeio.inicio,
+                                    "fim": passeio.fim,
+                                    "idLocal": passeio.idLocal,
+                                    "porte": passeio.porte
+                                }
+                            });
                         }
                         renderer.draw('#timetable'); // any css selector
                         $timetable.fadeIn(400);
@@ -366,11 +412,9 @@ foreach ($passeios as $passeio) {
         });
 
         $form.on("change", "input[name='inicio'],input[name='fim']", function () {
-            $timetable.find(".time-label.-starting-time,.time-label.-ending-time").removeClass("-starting-time").removeClass("-ending-time");
+            limparEstadoDaTimetable();
             obterEDefinirTotais();
         });
-
-
 
         $timetable.on("click", ".time-label", function () {
             var $this = $(this);
@@ -431,14 +475,180 @@ foreach ($passeios as $passeio) {
         });
 
         $timetable.on("click", ".time-entry", function () {
+            var $this = $(this);
             askConfirmation("Inclusão em passeio coletivo", "Deseja iniciar uma solicitação de agendamento para o passeio coletivo selecionado?", function () {
-                console.log("yes!");
+                var idPasseio = $this.attr("data-id");
+                var inicio = $this.attr("data-inicio");
+                var fim = $this.attr("data-fim");
+                var idLocal = $this.attr("data-idLocal");
+                var porte = $this.attr("data-porte");
+                prepararInclusaoParaPasseioColetivo(idPasseio, inicio, fim, idLocal, porte);
             });
         });
 
-        $modalidade.find("select[name='modalidade']").change(function (ev) {
+        $modalidadeSelect.change(function (ev) {
             var $this = $(this);
             var idModalidade = $this.val();
+            carregarDetalhesDaModalidade(idModalidade, true);
+        });
+
+        $localSelect.change(function (ev) {
+            var $this = $(this);
+            var idLocal = $this.val();
+            carregarDetalhesDoLocal(idLocal, true);
+        });
+
+        $modalidadeDias.on("change", function (ev) {
+            var $this = $(this);
+            var maxDias = $packageOnlyFields.find("[data-name='frequencia']").attr("data-value");
+            var $diasChecados = $modalidadeDias.filter(":checked");
+            if ($diasChecados.length > maxDias) {
+                ev.preventDefault();
+                ev.stopPropagation();
+                $this.prop("checked", false);
+            }
+        });
+
+        $caes.on("click", "[data-action='incluir-cao']", function (ev) {
+            var $this = $(this);
+            var $cao = $this.parents("[data-role='cao']");
+            alterarParticipacao($cao, true);
+        });
+        $caes.on("click", "[data-action='remover-cao']", function (ev) {
+            var $this = $(this);
+            var $cao = $this.parents("[data-role='cao']");
+            alterarParticipacao($cao, false);
+        });
+
+        $form.find("input[name='inicio']").validate("empty", null, "blur");
+        $form.find("input[name='fim']").validate("empty", null, "blur");
+        $form.find("select[name='local']").validate("empty", null, "blur");
+        $form.find("select[name='modalidade']").validate("empty", null, "blur");
+
+        $btnCancelarPasseioColetivo.on("click", function (ev) {
+            restaurarEstadoBaseDaTela();
+            $wrapper.scrollView();
+        });
+
+        $form.defaultAjaxSubmit("{!! route('cliente.agendamento.get') !!}", function () {
+            var $caesQueParticiparao = $caes.find("[data-role='cao']").filter(function () {
+                return $(this).find("input[name='caes[]']:checked").length > 0;
+            });
+
+            if ($caesQueParticiparao.length === 0) {
+                showAlert("Por favor, selecione um de seus cães para participar do passeio.");
+                $caes.scrollView();
+                return false;
+            }
+
+            var pacote = $modalidade.attr("data-package") == "1" ? true : false;
+
+            var maxDias = $packageOnlyFields.find("[data-name='frequencia']").attr("data-value");
+            var $diasChecados = $modalidadeDias.filter(":checked");
+            if ($diasChecados.length < maxDias) {
+                showAlert("Por favor, selecione " + maxDias + " dias da semana para seu pacote de passeios.");
+                $modalidade.scrollView();
+                return false;
+            }
+
+            return true;
+        });
+
+        function definirHorarios(type, time, definirTotais) {
+            time = time || "";
+            definirTotais = definirTotais || true;
+            switch (type) {
+                case "starting":
+                    $startingTime.val(time);
+                    $startingTime.validate("empty", null);
+                    break;
+                case "ending":
+                    $endingTime.val(time);
+                    $endingTime.validate("empty", null);
+                    break;
+            }
+            if (definirTotais) {
+                obterEDefinirTotais();
+            }
+        }
+
+        function alterarParticipacao($cao, participacao) {
+            var $participacao = $cao.find("[data-name='participacao']");
+            var $btnIncluir = $cao.find("[data-action='incluir-cao']");
+            var $btnRemover = $cao.find("[data-action='remover-cao']");
+            var $value = $participacao.find("[data-role='value']");
+            var $label = $participacao.find("[data-role='label']");
+
+            if (participacao) {
+                var coletivo = $modalidade.find("[data-name='coletivo']").attr("data-value");
+                if (coletivo == 1) {
+                    //Porte do passeio coletivo em questão
+                    var porteDoPasseio = $porteDoPasseio.attr("data-value");
+
+                    var $caesQueParticiparao = $caes.find("[data-role='cao']").filter(function () {
+                        return $(this).find("input[name='caes[]']:checked").length > 0;
+                    });
+                    var porte = $cao.find("[data-name='porte']").attr("data-value");
+
+                    if (porteDoPasseio && porte !== porteDoPasseio) {
+                        showAlert("Somente cães de porte '" + porteDoPasseio + "' podem fazer parte deste passeio coletivo.", "warning");
+                        return;
+                    }
+
+                    for (var i = 0; i < $caesQueParticiparao.length; i++) {
+                        var porteDoCaoQueParticipara = $caesQueParticiparao.eq(i).find("[data-name='porte']").attr("data-value");
+                        if (porte !== porteDoCaoQueParticipara) {
+                            showAlert("Somente cães de porte iguais podem fazer parte de um mesmo passeio coletivo.", "warning");
+                            return;
+                        }
+                    }
+                }
+
+                $value.prop("checked", true);
+                $label.text("Participará");
+                $btnIncluir.addClass("hidden");
+                $btnRemover.removeClass("hidden");
+                $cao.addClass("_success-color").removeClass("_error-color");
+            } else {
+                $value.prop("checked", false);
+                $label.text("Não participará");
+                $btnRemover.addClass("hidden");
+                $btnIncluir.removeClass("hidden");
+                $cao.addClass("_error-color").removeClass("_success-color");
+            }
+            obterEDefinirTotais();
+        }
+
+        function prepararInclusaoParaPasseioColetivo(idPasseio, inicio, fim, idLocal, porte) {
+            resetarCampos();
+            
+            $form.find("input[name='idPasseioColetivo']").val(idPasseio);
+
+            $startingTime.val(inicio);
+            $startingTime.prop("disabled", true);
+            $endingTime.val(fim);
+            $endingTime.prop("disabled", true);
+            var $localSelect = $local.find("select[name='local']");
+            $localSelect.find("option[value='" + idLocal + "']").prop("selected", true);
+            carregarDetalhesDoLocal(idLocal, false);
+            $localSelect.prop("disabled", true);
+
+            var $modalidadeSelect = $modalidade.find("select[name='modalidade']");
+            $modalidadeSelect.find("option[value='{!! $idModalidadeBaseColetiva !!}']").prop("selected", true);
+            carregarDetalhesDaModalidade("{!!$idModalidadeBaseColetiva!!}", false);
+            $modalidadeSelect.prop("disabled", true);
+
+            $porteDoPasseio.attr("data-value", porte).text(porte);
+            $porteDoPasseioWrapper.removeClass("hidden");
+            $btnCancelarPasseioColetivo.removeClass("hidden");
+
+            limparEstadoDaTimetable();
+
+            $caes.scrollView();
+        }
+
+        function carregarDetalhesDaModalidade(idModalidade, scrollView) {
+            scrollView = scrollView || false;
             $modalidadeDias.prop("checked", false);
             if (!idModalidade) {
                 $modalidadeInformation.addClass("hidden");
@@ -449,7 +659,7 @@ foreach ($passeios as $passeio) {
                 "url": "{!!route('modalidade.json.get', ['id' => '!id'])!!}".replace("!id", idModalidade),
                 "type": "GET",
                 "beforeSend": function () {
-                    $this.addClass("loading");
+                    $modalidadeSelect.addClass("loading");
                 },
                 "success": function (response) {
                     if (!response.status) {
@@ -488,11 +698,12 @@ foreach ($passeios as $passeio) {
                     }
 
                     $modalidadeInformation.removeClass("hidden");
-                    $modalidade.scrollView();
+                    if (scrollView) {
+                        $modalidade.scrollView();
+                    }
 
-                    $caes.find("[data-role='cao']").each(function (index, value) {
-                        alterarParticipacao($(value), false);
-                    });
+                    resetarParticipacaoDosCaes();
+
                     $caes.find(".collapse").collapse("show");
 
                     $precoPorPasseio.text("Não definido");
@@ -505,14 +716,13 @@ foreach ($passeios as $passeio) {
                     showAlert("{!!trans('alert.error.request')!!}", "error");
                 },
                 "complete": function () {
-                    $this.removeClass("loading");
+                    $modalidadeSelect.removeClass("loading");
                 }
             });
-        });
+        }
 
-        $local.find("select[name='local']").change(function (ev) {
-            var $this = $(this);
-            var idLocal = $this.val();
+        function carregarDetalhesDoLocal(idLocal, scrollView) {
+            scrollView = scrollView || false;
             if (!idLocal) {
                 $localInformation.addClass("hidden");
                 return;
@@ -524,7 +734,7 @@ foreach ($passeios as $passeio) {
                     "fields": "link,thumbnail,nome"
                 },
                 "beforeSend": function () {
-                    $this.addClass("loading");
+                    $localSelect.addClass("loading");
                 },
                 "success": function (response) {
                     if (!response.status) {
@@ -537,7 +747,9 @@ foreach ($passeios as $passeio) {
                     $localInformation.find("[data-name='link']").attr("href", local.link).text(local.link);
 
                     $localInformation.removeClass("hidden");
-                    $local.scrollView();
+                    if (scrollView) {
+                        $local.scrollView();
+                    }
                 },
                 "error": function (request) {
                     if (request.statusText === 'abort') {
@@ -546,101 +758,66 @@ foreach ($passeios as $passeio) {
                     showAlert("{!!trans('alert.error.request')!!}", "error");
                 },
                 "complete": function () {
-                    $this.removeClass("loading");
+                    $localSelect.removeClass("loading");
                 }
             });
-        });
+        }
 
-        $modalidadeDias.on("change", function (ev) {
-            var $this = $(this);
-            var maxDias = $packageOnlyFields.find("[data-name='frequencia']").attr("data-value");
-            var $diasChecados = $modalidadeDias.filter(":checked");
-            if ($diasChecados.length > maxDias) {
-                ev.preventDefault();
-                ev.stopPropagation();
-                $this.prop("checked", false);
-            }
-        });
+        function restaurarEstadoBaseDaTela() {
+            $btnCancelarPasseioColetivo.addClass("hidden");
+            
+            resetarCampos();
+            resetarParticipacaoDosCaes();
+            limparEstadoDaTimetable();
+            limparTotais();
 
-        $caes.on("click", "[data-action='incluir-cao']", function (ev) {
-            var $this = $(this);
-            var $cao = $this.parents("[data-role='cao']");
-            alterarParticipacao($cao, true);
-        });
-        $caes.on("click", "[data-action='remover-cao']", function (ev) {
-            var $this = $(this);
-            var $cao = $this.parents("[data-role='cao']");
-            alterarParticipacao($cao, false);
-        });
+            $dataEHorarios.find(".collapse").collapse("show");
+        }
 
+        function resetarCampos() {
+            $form.find("input[name='idPasseioColetivo']").val("");
+            
+            $startingTime.val("");
+            $startingTime.prop("disabled", false);
+            
+            $endingTime.val("");
+            $endingTime.prop("disabled", false);
+            
+            var $localSelect = $local.find("select[name='local']");
+            $localSelect.find("option[value='']").prop("selected", true);
+            $localSelect.trigger("change");
+            $localSelect.prop("disabled", false);
+            
+            var $modalidadeSelect = $modalidade.find("select[name='modalidade']");
+            $modalidadeSelect.find("option[value='']").prop("selected", true);
+            $modalidadeSelect.trigger("change");
+            $modalidadeSelect.prop("disabled", false);
 
+            $porteDoPasseio.attr("data-value", "").text("");
+            $porteDoPasseioWrapper.addClass("hidden");
+            
+            $form.find("input,select").filter(".-error,.-success").removeClass("-error").removeClass("-success");
+        }
 
-        $form.find("input[name='inicio']").validate("empty", null, "blur");
-        $form.find("input[name='fim']").validate("empty", null, "blur");
-        $form.find("select[name='local']").validate("empty", null, "blur");
-        $form.find("select[name='modalidade']").validate("empty", null, "blur");
-
-        $form.on("submit", function (ev) {
-            ev.preventDefault();
-            ev.stopPropagation();
-            console.log(new FormData($form[0]));
-        });
-
-        function definirHorarios(type, time, definirTotais) {
-            time = time || "";
-            definirTotais = definirTotais || true;
-            switch (type) {
-                case "starting":
-                    $startingTime.val(time);
-                    $startingTime.validate("empty", null);
-                    break;
-                case "ending":
-                    $endingTime.val(time);
-                    $endingTime.validate("empty", null);
-                    break;
-            }
-            if (definirTotais) {
-                obterEDefinirTotais();
+        function resetarParticipacaoDosCaes() {
+            var $caesQueParticiparao = $caes.find("[data-role='cao']").filter(function () {
+                return $(this).find("input[name='caes[]']:checked").length > 0;
+            });
+            for (var i = 0; i < $caesQueParticiparao.length; i++) {
+                var $cao = $caesQueParticiparao.eq(i);
+                alterarParticipacao($cao, false);
             }
         }
 
-        function alterarParticipacao($cao, participacao) {
-            var $participacao = $cao.find("[data-name='participacao']");
-            var $btnIncluir = $cao.find("[data-action='incluir-cao']");
-            var $btnRemover = $cao.find("[data-action='remover-cao']");
-            var $value = $participacao.find("[data-role='value']");
-            var $label = $participacao.find("[data-role='label']");
+        function limparTotais() {
+            $duracao.text("Não definido");
+            $quantidadePasseio.text("Não definido");
+            $precoPorPasseio.text("Não definido");
+            $precoTotal.text("Não definido");
+        }
 
-
-            if (participacao) {
-                var coletivo = $modalidade.find("[data-name='coletivo']").attr("data-value");
-                if (coletivo == 1) {
-                    var $caesQueParticiparao = $caes.find("[data-role='cao']").filter(function () {
-                        return $(this).find("input[name='caes[]']:checked").length > 0;
-                    });
-                    var porte = $cao.find("[data-name='porte']").attr("data-value");
-                    for (var i = 0; i < $caesQueParticiparao.length; i++) {
-                        var porteDoCaoQueParticipara = $caesQueParticiparao.eq(i).find("[data-name='porte']").attr("data-value");
-                        if (porte !== porteDoCaoQueParticipara) {
-                            showAlert("Somente cães de porte iguais podem fazer parte de um mesmo passeio coletivo.", "warning");
-                            return;
-                        }
-                    }
-                }
-
-                $value.prop("checked", true);
-                $label.text("Participará");
-                $btnIncluir.addClass("hidden");
-                $btnRemover.removeClass("hidden");
-                $cao.addClass("_success-color").removeClass("_error-color");
-            } else {
-                $value.prop("checked", false);
-                $label.text("Não participará");
-                $btnRemover.addClass("hidden");
-                $btnIncluir.removeClass("hidden");
-                $cao.addClass("_error-color").removeClass("_success-color");
-            }
-            obterEDefinirTotais();
+        function limparEstadoDaTimetable() {
+            $timetable.find(".time-label.-starting-time,.time-label.-ending-time").removeClass("-starting-time").removeClass("-ending-time");
         }
 
         function obterEDefinirDuracao() {

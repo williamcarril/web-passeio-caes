@@ -9,6 +9,7 @@ use App\Models\Eloquent\ImagemArquivo as Arquivo;
 
 class ImagemController extends Controller {
 
+    // <editor-fold defaultstate="collapsed" desc="Métodos públicos">
     public function salvar($id = null, $nome = null, array $arquivos = [], $renovarArquivos = true) {
         if (!empty($id)) {
             $imagem = Imagem::find($id);
@@ -17,7 +18,7 @@ class ImagemController extends Controller {
         }
         $imagem->nome = $nome;
         $imagem->save();
-        if($renovarArquivos) {
+        if ($renovarArquivos) {
             $imagem->arquivos()->delete();
         }
         $errosArquivos = [];
@@ -45,7 +46,7 @@ class ImagemController extends Controller {
 
     public function salvarArquivo($idImagem, $nomeDoArquivo, $tamanho = null) {
         $arquivo = Arquivo::where("idImagem", $idImagem)->where("tamanho", $tamanho)->first();
-        if(is_null($arquivo)) {
+        if (is_null($arquivo)) {
             $arquivo = new Arquivo();
         }
         $arquivo->arquivo = $nomeDoArquivo;
@@ -54,9 +55,10 @@ class ImagemController extends Controller {
         $arquivo->save();
         return $arquivo;
     }
-    
+
     public function atualizarArquivo($idImagem, $nomeDoArquivo, $tamanho) {
         
     }
 
+    // </editor-fold>
 }

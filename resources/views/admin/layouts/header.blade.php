@@ -19,7 +19,10 @@
             @if(!empty($administrator))
             <ul class="nav navbar-nav">
                 <li>
-                    <a href="#">Agendamentos</a>
+                    <a href="{{route("admin.agendamento.listagem.get")}}">Agendamentos</a>
+                </li>
+                <li>
+                    <a href="#">Passeios</a>
                 </li>
                 <li>
                     <a href="{{route("admin.funcionario.passeador.listagem.get")}}">

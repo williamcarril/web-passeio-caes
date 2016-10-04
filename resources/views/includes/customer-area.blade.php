@@ -37,6 +37,11 @@
             Manter cachorros
         </a>
         <br/>
+        <a href="{{route("cliente.agendamento.get")}}">
+            <i class="flaticon-calendar"></i>
+            Visualizar agendamentos
+        </a>
+        <br/>
         <a href="{{route("cliente.auth.logout.get")}}">
             <i class="glyphicon glyphicon-off"></i>
             Sair

@@ -12,15 +12,19 @@ class Cliente extends Pessoa {
     }
 
     public function passeios() {
-        return $this->hasMany("\App\Models\Eloquent\Passeio", "idCliente", "idCliente");
+        return $this->hasManyThrough("\App\Models\Eloquent\Passeio", "\App\Models\Eloquent\Agendamento", "idCliente", "idAgendamento", "idPasseio");
     }
-    
+
     public function caes() {
         return $this->hasMany("\App\Models\Eloquent\Cao", "idCliente", "idCliente");
     }
 
     public function horariosDeInteresse() {
         return $this->hasMany("\App\Models\Eloquent\Horario", "idCliente", "idCliente");
+    }
+
+    public function agendamentos() {
+        return $this->hasMany("\App\Models\Eloquent\Agendamento", "idCliente", "idCliente");
     }
 
     public function getAuthIdentifierName() {

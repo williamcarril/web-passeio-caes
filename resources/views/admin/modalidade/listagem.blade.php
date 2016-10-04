@@ -29,7 +29,8 @@ $activeText = trans("action.active");
             </thead>
             <tbody>
                 @foreach($modalidades as $modalidade)
-                <tr data-id="{{$modalidade->idModalidade}}" class="{{!$modalidade->ativo ? "_error-color" : ""}}">
+                <tr data-id="{{$modalidade->idModalidade}}" class="{{!$modalidade->ativo ? "_error-color" : ""}} {{$modalidade->eModalidadeBase() ? "_information-color" : ""}}"
+                    {!! $modalidade->eModalidadeBase() ? "data-toggle='tooltip' title='Modalidade base'" : ""!!}>
                     <td>{{$modalidade->nome}}</td>
                     <td>{{$modalidade->tipoFormatado}}</td>
                     <td>{{$modalidade->coletivoFormatado}}</td>
@@ -42,6 +43,7 @@ $activeText = trans("action.active");
                             <a href="{{route("admin.modalidade.alterar.get", ["id" => $modalidade->idModalidade])}}" class="btn btn-default">
                                 <i class="glyphicon glyphicon-edit"></i>
                             </a>
+                            @if(!$modalidade->eModalidadeBase())
                             <button type="button" class="btn {{$modalidade->ativo ? "btn-danger" : "btn-success"}} btn-sm" data-action="change-status" data-value="{{$modalidade->ativo ? 1 : 0}}">
                                 @if($modalidade->ativo)
                                 {{$inactiveText}}
@@ -49,12 +51,16 @@ $activeText = trans("action.active");
                                 {{$activeText}}
                                 @endif
                             </button>
+                            @endif
                         </div>
                     </td>
                 </tr>
                 @endforeach
             </tbody>
         </table>
+        <hr/>
+        <p class='_information-color'>* Modalidades Base não podem ser inativadas, nem ter algumas de suas informações alteradas.</p>
+
     </div>
 </section>
 @endsection

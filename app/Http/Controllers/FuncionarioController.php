@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Models\Eloquent\Funcionario;
 use Illuminate\Contracts\Auth\Factory as AuthFactory;
@@ -22,8 +21,9 @@ class FuncionarioController extends Controller {
         $this->imageController = $imageController;
     }
 
+    // <editor-fold defaultstate="collapsed" desc="Rotas da área administrativa">
     // <editor-fold defaultstate="collapsed" desc="Rotas que retornam Views">
-    public function route_getLogin(Request $req) {
+    public function route_getAdminLogin(Request $req) {
         if ($this->auth->guard("admin")->check()) {
             return redirect()->route("admin.home");
         }
@@ -31,7 +31,7 @@ class FuncionarioController extends Controller {
         return response()->view("admin.login", $data);
     }
 
-    public function route_getPasseadores() {
+    public function route_getAdminPasseadores() {
         $data = [
             "title" => "Passeadores",
             "funcionarios" => Funcionario::withoutGlobalScopes()->passeador()->get()
@@ -39,7 +39,7 @@ class FuncionarioController extends Controller {
         return response()->view("admin.funcionario.listagem", $data);
     }
 
-    public function route_getFuncionario(Request $req) {
+    public function route_getAdminFuncionario(Request $req) {
         $funcionario = $this->auth->guard("admin")->user();
         $data = [
             "funcionario" => $funcionario,
@@ -53,7 +53,7 @@ class FuncionarioController extends Controller {
         return response()->view("admin.funcionario.salvar", $data);
     }
 
-    public function route_getPasseador(Request $req, $id = null) {
+    public function route_getAdminPasseador(Request $req, $id = null) {
         if (!is_null($id)) {
             $passeador = Funcionario::withoutGlobalScopes()
                     ->passeador()
@@ -81,7 +81,7 @@ class FuncionarioController extends Controller {
 
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Rotas GET que retornam JSON">
-    public function route_getCheckEmail(Request $req) {
+    public function route_getAdminCheckEmail(Request $req) {
         $email = $req->input("email");
         $ignore = $req->input("ignore", null);
         $check = Funcionario::where("email", $email);
@@ -92,7 +92,7 @@ class FuncionarioController extends Controller {
         return $this->defaultJsonResponse($check->exists());
     }
 
-    public function route_getCheckCpf(Request $req) {
+    public function route_getAdminCheckCpf(Request $req) {
         $cpf = preg_replace('/[^0-9]/', '', $req->input("cpf"));
         $ignore = $req->input("ignore", null);
         $check = Funcionario::where("cpf", $cpf);
@@ -102,7 +102,7 @@ class FuncionarioController extends Controller {
         return $this->defaultJsonResponse($check->exists());
     }
 
-    public function route_getCheckRg(Request $req) {
+    public function route_getAdminCheckRg(Request $req) {
         $rg = preg_replace('/[^0-9a-zA-Z]/', '', $req->input("rg"));
         $ignore = $req->input("ignore", null);
         $check = Funcionario::where("rg", $rg);
@@ -114,7 +114,7 @@ class FuncionarioController extends Controller {
 
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Rotas POST que retornam JSON">
-    public function route_postFuncionario(Request $req) {
+    public function route_postAdminFuncionario(Request $req) {
 
         $id = $req->input("id");
         if (!is_null($id)) {
@@ -204,7 +204,7 @@ class FuncionarioController extends Controller {
         }
     }
 
-    public function route_postAlterarStatus(Request $req) {
+    public function route_postAdminAlterarStatus(Request $req) {
         $id = $req->input("id");
         $passeador = Funcionario::withoutGlobalScopes()->passeador()->where("idFuncionario", $id)->first();
         if (is_null($passeador)) {
@@ -221,7 +221,7 @@ class FuncionarioController extends Controller {
 
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Rotas que causam redirects">
-    public function route_postLogin(Request $req) {
+    public function route_postAdminLogin(Request $req) {
         $email = $req->input("email");
         $senha = $req->input("senha");
         $funcionario = Funcionario::administrador()->where(["email" => $email])->first();
@@ -232,10 +232,11 @@ class FuncionarioController extends Controller {
         return redirect()->back()->withErrors(["As credenciais fornecidas estão incorretas."]);
     }
 
-    public function route_getLogout(Request $req) {
+    public function route_getAdminLogout(Request $req) {
         $this->auth->guard("admin")->logout();
         return redirect()->route("admin.login.get");
     }
 
 // </editor-fold>
+    // </editor-fold>
 }

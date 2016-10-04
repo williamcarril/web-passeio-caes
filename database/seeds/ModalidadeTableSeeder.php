@@ -20,7 +20,7 @@ class ModalidadeTableSeeder extends Seeder {
                 "frequencia" => null,
                 "ativo" => true,
                 "coletivo" => false,
-                "precoPorCaoPorHora" => 25
+                "precoPorCaoPorHora" => 12
             ],
             [
                 "idModalidade" => 2,
@@ -29,20 +29,31 @@ class ModalidadeTableSeeder extends Seeder {
                 "tipo" => "unitario",
                 "periodo" => null,
                 "frequencia" => null,
-                "ativo" => false,
+                "ativo" => true,
                 "coletivo" => true,
-                "precoPorCaoPorHora" => 18
+                "precoPorCaoPorHora" => 8.75
             ],
             [
                 "idModalidade" => 3,
-                "nome" => "Passeio Coletivo (pacote)",
+                "nome" => "Passeio Coletivo (pacote bisemanal)",
                 "descricao" => "Trata-se de um pacote de passeios coletivos, duas vezes por semana, durante um período de um mês, pelo intervalo de horas determinado pelo cliente.",
                 "tipo" => "pacote",
                 "periodo" => "mensal",
                 "frequencia" => "bisemanal",
                 "ativo" => true,
                 "coletivo" => true,
-                "precoPorCaoPorHora" => 15
+                "precoPorCaoPorHora" => 6.5
+            ],
+            [
+                "idModalidade" => 4,
+                "nome" => "Passeio Coletivo (pacote semanal)",
+                "descricao" => "Trata-se de um pacote de passeios coletivos, duas vezes por semana, durante um período de um mês, pelo intervalo de horas determinado pelo cliente.",
+                "tipo" => "pacote",
+                "periodo" => "mensal",
+                "frequencia" => "semanal",
+                "ativo" => true,
+                "coletivo" => true,
+                "precoPorCaoPorHora" => 7.5
             ],
         ]);
     }

@@ -46,7 +46,7 @@ class PasseioTableSeeder extends Seeder {
                 "inicio" => "14:00:00",
                 "fim" => "15:00:00",
                 "data" => "2016-09-19",
-                "status" => "feito",
+                "status" => "2016-09-19" < date("Y-m-d") ? "feito" : "pendente",
                 "coletivo" => true,
                 "porte" => "pequeno"
             ]
@@ -82,7 +82,7 @@ class PasseioTableSeeder extends Seeder {
                 "inicio" => "14:00:00",
                 "fim" => "15:00:00",
                 "data" => "2016-09-21",
-                "status" => "feito",
+                "status" => "2016-09-21" < date("Y-m-d") ? "feito" : "pendente",
                 "coletivo" => true,
                 "porte" => "pequeno"
             ]
@@ -109,7 +109,7 @@ class PasseioTableSeeder extends Seeder {
                 "inicio" => "14:00:00",
                 "fim" => "15:00:00",
                 "data" => "2016-09-26",
-                "status" => "pendente",
+                "status" => "2016-09-26" < date("Y-m-d") ? "feito" : "pendente",
                 "coletivo" => true,
                 "porte" => "pequeno"
             ]
@@ -136,7 +136,7 @@ class PasseioTableSeeder extends Seeder {
                 "inicio" => "14:00:00",
                 "fim" => "15:00:00",
                 "data" => "2016-09-28",
-                "status" => "pendente",
+                "status" => "2016-09-28" < date("Y-m-d") ? "feito" : "pendente",
                 "coletivo" => true,
                 "porte" => "pequeno"
             ]
@@ -171,7 +171,7 @@ class PasseioTableSeeder extends Seeder {
                 "inicio" => "14:00:00",
                 "fim" => "15:00:00",
                 "data" => "2016-10-03",
-                "status" => "pendente",
+                "status" => "2016-10-03" < date("Y-m-d") ? "feito" : "pendente",
                 "coletivo" => true,
                 "porte" => "pequeno"
             ]
@@ -197,7 +197,7 @@ class PasseioTableSeeder extends Seeder {
                 "inicio" => "14:00:00",
                 "fim" => "15:00:00",
                 "data" => "2016-10-05",
-                "status" => "pendente",
+                "status" => "2016-10-05" < date("Y-m-d") ? "feito" : "pendente",
                 "coletivo" => true,
                 "porte" => "pequeno"
             ]
@@ -223,7 +223,7 @@ class PasseioTableSeeder extends Seeder {
                 "inicio" => "14:00:00",
                 "fim" => "15:00:00",
                 "data" => "2016-10-10",
-                "status" => "pendente",
+                "status" => "2016-10-10" < date("Y-m-d") ? "feito" : "pendente",
                 "coletivo" => true,
                 "porte" => "pequeno"
             ]
@@ -249,7 +249,7 @@ class PasseioTableSeeder extends Seeder {
                 "inicio" => "14:00:00",
                 "fim" => "15:00:00",
                 "data" => "2016-10-12",
-                "status" => "pendente",
+                "status" => "2016-10-12" < date("Y-m-d") ? "feito" : "pendente",
                 "coletivo" => true,
                 "porte" => "pequeno"
             ]

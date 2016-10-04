@@ -57,6 +57,7 @@ class CreateModelTables extends Migration {
         \Schema::create("dia", function($table) {
             $table->increments("idDia");
             $table->string("nome", 13)->unique();
+            $table->tinyInteger("ordem")->unsigned()->unique();
         });
 
         \Schema::create("vacina", function($table) {
@@ -160,7 +161,7 @@ class CreateModelTables extends Migration {
             $table->time("fim");
             $table->date("data");
             $table->enum("porte", ["pequeno", "medio", "grande"])->nullable();
-            $table->enum("status", ["pendente", "cancelado", "em_progresso", "feito"])->default("pendente");
+            $table->enum("status", ["pendente", "cancelado", "em_progresso", "feito", "em_analise"])->default("pendente");
         });
 
         \Schema::create("cancelamento", function($table) {
@@ -170,7 +171,7 @@ class CreateModelTables extends Migration {
             $table->foreign("idPasseio")->references("idPasseio")->on("passeio");
             $table->text("justificativa");
             $table->enum("status", ["verificado", "pendente"])->default("pendente");
-            $table->date("data");
+            $table->timestamp("data")->default(\DB::raw("CURRENT_TIMESTAMP"));
             $table->enum("tipoPessoa", ["funcionario", "cliente"]);
         });
 
@@ -228,6 +229,8 @@ class CreateModelTables extends Migration {
      * @return void
      */
     public function down() {
+        \Schema::drop("a_agendamento_cao");
+        \Schema::drop("a_agendamento_passeio");
         \Schema::drop("a_agendamento_dia");
         \Schema::drop("a_local_imagem");
         \Schema::drop("a_horario_dia");

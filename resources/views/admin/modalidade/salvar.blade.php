@@ -18,7 +18,7 @@ $title = isset($title) ? $title : "Modalidade";
             <legend>Informações gerais</legend>
             <div class="form-group">
                 <label class="control-label" for="modalidade-nome">Nome *</label>
-                <input tabindex='1' value="{{!empty($modalidade->nome) ? $modalidade->nome : ""}}" required name="nome" id="modalidade-nome" type="text" class="form-control" placeholder="Informe o nome do modalidade">
+                <input {!! (!empty($modalidade) && $modalidade->eModalidadeBase() ? "disabled": "") !!} tabindex='1' value="{{!empty($modalidade->nome) ? $modalidade->nome : ""}}" required name="nome" id="modalidade-nome" type="text" class="form-control" placeholder="Informe o nome do modalidade">
             </div>
             <div class="form-group">
                 <label class="control-label" for="modalidade-descricao">Descrição *</label>
@@ -26,7 +26,7 @@ $title = isset($title) ? $title : "Modalidade";
             </div>
             <div class="form-group">
                 <label class="control-label" for="modalidade-tipo">Tipo *</label>
-                <select tabindex="3" id="modalidade-tipo" class="form-control" name="tipo">
+                <select {!! (!empty($modalidade) && $modalidade->eModalidadeBase() ? "disabled": "") !!} tabindex="3" id="modalidade-tipo" class="form-control" name="tipo">
                     @if(empty($modalidade))
                     <option value="">Selecione um tipo</option>
                     @endif
@@ -41,7 +41,7 @@ $title = isset($title) ? $title : "Modalidade";
             <div class="{{$hasPackageFields ? "" : "hidden"}}" data-role="package-related-fields">
                 <div class="form-group">
                     <label class="control-label" for="modalidade-periodo">Período *</label>
-                    <select {{$hasPackageFields ? "" : "disabled"}} tabindex="4" id="modalidade-periodo" class="form-control" name="periodo">
+                    <select {!! (!empty($modalidade) && $modalidade->eModalidadeBase() ? "disabled": "") !!} {{$hasPackageFields ? "" : "disabled"}} tabindex="4" id="modalidade-periodo" class="form-control" name="periodo">
                         @if(!$hasPackageFields)
                         <option value="">Selecione um período</option>
                         @endif
@@ -52,7 +52,7 @@ $title = isset($title) ? $title : "Modalidade";
                 </div>
                 <div class="form-group">
                     <label class="control-label" for="modalidade-frequencia">Frequência *</label>
-                    <select {{$hasPackageFields ? "" : "disabled"}} tabindex="5" id="modalidade-frequencia" class="form-control" name="frequencia">
+                    <select {!! (!empty($modalidade) && $modalidade->eModalidadeBase() ? "disabled": "") !!} {{$hasPackageFields ? "" : "disabled"}} tabindex="5" id="modalidade-frequencia" class="form-control" name="frequencia">
                         @if(!$hasPackageFields)
                         <option value="">Selecione uma frequência</option>
                         @endif
@@ -69,7 +69,7 @@ $title = isset($title) ? $title : "Modalidade";
             <div class="form-group">
                 <label class="control-label" for="modalidade-coletivo">
                     Coletivo
-                    <input value="1" tabindex="7" id="modalidade-coletivo" class="form-control" type="checkbox" name="coletivo" {{!empty($modalidade) ? "checked" : ""}}/>
+                    <input {!! (!empty($modalidade) && $modalidade->eModalidadeBase() ? "disabled": "") !!} value="1" tabindex="7" id="modalidade-coletivo" class="form-control" type="checkbox" name="coletivo" {{!empty($modalidade) ? "checked" : ""}}/>
                 </label>
             </div>   
         </fieldset>

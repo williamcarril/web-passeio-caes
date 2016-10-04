@@ -1,5 +1,8 @@
 @extends('admin.layouts.default')
 
 @section("main")
-<p>Área para notificações (além do manu lateral)</p>
+<section>
+    <h1>Dashboard</h1>
+    @include("admin.includes.dashboard")
+</section>
 @endsection

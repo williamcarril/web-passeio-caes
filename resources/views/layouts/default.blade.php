@@ -36,7 +36,7 @@ $hasMap = isset($hasMap) ? $hasMap : false;
                     @include("layouts.sidebar")
                     @show
                 </aside>
-                <main id="main">
+                <main id="main" class="_text-justify">
                     @include("layouts.alerts")
                     <div class="container">
                         @section("main")

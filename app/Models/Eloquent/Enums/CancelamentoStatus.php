@@ -13,4 +13,7 @@ abstract class CancelamentoStatus extends Enum {
     const PENDETE = "pendente";
     const VERIFICADO = "verificado";
 
+    public static function format($const) {
+        return ucfirst($const);
+    }
 }
