@@ -26,6 +26,9 @@
             {{$agendamento->statusFormatado}}
         </span>
     </p>
+    @if($agendamento->foiReagendado())
+    <p>Para ver o agendamento novo, clique <a href="{{route("cliente.agendamento.detalhes.get", ["id" => $agendamento->idAgendamentoNovo])}}">aqui</a>.</p>
+    @endif
     <section>
         <h2>Modalidade</h2>
         <p><b>Nome: </b>{{$modalidade->nome}}</p>
@@ -39,6 +42,7 @@
             <b>Dias: </b> {{$agendamento->diasFormatados}}            
         </p>
         @endif
+        <p><b>Valor (cão/hora): </b>{{$agendamento->precoPorCaoPorHoraFormatado}}</p>
     </section>
     <section>
         <h2>Local de passeio</h2>
@@ -123,7 +127,7 @@
                         <td>{{$passeio->inicioFormatado}}</td>
                         <td>{{$passeio->fimFormatado}}</td>
                         <td>{{$passeio->porteFormatado}}</td>
-                        <td>{{$passeio->getValorParaCliente($customer->idCliente, true)}}</td>
+                        <td>{{$passeio->getValor($customer->idCliente, true)}}</td>
                         <td>{{$passeio->statusFormatado}}</td>
                         <td>
                             <div class="button-group">
@@ -142,10 +146,16 @@
     <hr/>
     <div class="button-group">
         @if($agendamento->status !== $statusAgendamento["CANCELADO"])
-        <a class="btn btn-danger" data-toggle="modal" data-target="#cancelamento-modal">Cancelar agendamento</a>
+        <a class="btn btn-danger" data-toggle="modal" data-target="#cancelamento-modal">
+            <i class="glyphicon glyphicon-remove"></i>
+            Cancelar
+        </a>
         @endif
         @if($agendamento->status === $statusAgendamento["CLIENTE"])
-        <button class="btn btn-success" data-action="aceitar-agendamento">Aceitar agendamento</button>
+        <button class="btn btn-success" data-action="aceitar-agendamento">
+            <i class="glyphicon glyphicon-ok"></i>
+            Aceitar
+        </button>
         @endif
     </div>
     <div id="cancelamento-modal" class="modal fade" tabindex="-1" role="dialog">

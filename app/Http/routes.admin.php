@@ -44,6 +44,10 @@ Route::group(["middleware" => "auth.admin"], function() {
         Route::get("/", ["as" => "admin.agendamento.listagem.get", "uses" => "AgendamentoController@route_getAdminAgendamentos"]);
         Route::get("/{id}", ["as" => "admin.agendamento.detalhes.get", "uses" => "AgendamentoController@route_getAdminAgendamento"])
                 ->where('id', '[0-9]+');
+        Route::get("/{id}/reagendar", ["as" => "admin.agendamento.reagendar.get", "uses" => "AgendamentoController@route_getAdminReagendamento"])
+                ->where('id', '[0-9]+');
+        Route::post("/{id}/reagendar", ["as" => "admin.agendamento.reagendar.post", "uses" => "AgendamentoController@route_postAdminReagendamento"])
+                ->where('id', '[0-9]+');
         Route::post("/{id}/cancelar", ["as" => "admin.agendamento.cancelar.post", "uses" => "AgendamentoController@route_postAdminCancelarAgendamento"])
                 ->where('id', '[0-9]+');
         Route::post("/{id}/aceitar", ["as" => "admin.agendamento.aceitar.post", "uses" => "AgendamentoController@route_postAdminAceitarAgendamento"])
@@ -54,8 +58,19 @@ Route::group(["middleware" => "auth.admin"], function() {
         Route::get("/", ["as" => "admin.passeio.marcados.listagem.get", "uses" => "PasseioController@route_getAdminPasseiosMarcados"]);
         Route::get("/{id}", ["as" => "admin.passeio.detalhes.get", "uses" => "PasseioController@route_getAdminPasseio"])
                 ->where('id', '[0-9]+');
-
+        Route::post("/{id}/alocarPasseador", ["as" => "admin.passeio.alocar.passeador.post", "uses" => "PasseioController@route_postAdminAlocarPasseador"])
+                ->where('id', '[0-9]+');
         Route::post("/{id}/status/feito", ["as" => "admin.passeio.status.feito.post", "uses" => "PasseioController@route_postAdminMarcarComoFeito"])
                 ->where('id', '[0-9]+');
+        Route::post("/{id}/cancelar", ["as" => "admin.passeio.cancelar.post", "uses" => "PasseioController@route_postAdminCancelarPasseio"])
+                ->where('id', '[0-9]+');
     });
+    
+    Route::group(["prefix" => "cancelamento"], function() {
+        Route::get("/", ["as" => "admin.cancelamento.listagem.get", "uses" => "CancelamentoController@route_getAdminCancelamentos"]);
+        Route::get("/{id}", ["as" => "admin.cancelamento.detalhes.get", "uses" => "CancelamentoController@route_getAdminCancelamento"])
+                ->where("id", "[0-9]+");
+        Route::post("/{id}/visto", ["as" => "admin.cancelamento.visto.post", "uses" => "CancelamentoController@route_postAdminMarcarVisto"]);
+    });
+    
 });

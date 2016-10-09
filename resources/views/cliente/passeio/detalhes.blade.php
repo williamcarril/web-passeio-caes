@@ -1,57 +1,37 @@
-@extends("admin.layouts.default", ["hasMap" => true])
-@section("title") Agendamento - {{$agendamento->idAgendamento}} | {{config("app.name")}} @endsection
+@extends("layouts.default", ["hasMap" => true])
+@section("title") Passeio - {{$passeio->idPasseio}} | {{config("app.name")}} @endsection
 
 @section("main")
 <section>
-    <h1>Agendamento - {{$agendamento->idAgendamento}}</h1>
-    <p><b>Data da solicitação:</b> {{$agendamento->dataFormatada}}</p>
-    <p><b>Hora da solicitação:</b> {{$agendamento->horaFormatada}}</p>
+    <h1>Passeio - {{$passeio->idPasseio}}</h1>
+    <p><b>Data:</b> {{$passeio->dataFormatada}}</p>
+    <p><b>Início:</b> {{$passeio->inicioFormatado}}</p>
+    <p><b>Término:</b> {{$passeio->fimFormatado}}</p>
+    <p><b>Tipo:</b> {{$passeio->tipo}}</p>
+    <p><b>Porte:</b> {{$passeio->porteFormatado}}</p>
+    <p><b>Preço:</b> {{$passeio->getValor($customer, true)}}</p>
     <?php
     $statusClass = "";
-    switch ($agendamento->status) {
-        case $statusAgendamento["CANCELADO"]:
+    switch ($passeio->status) {
+        case $statusPasseio["CANCELADO"]:
             $statusClass = "_error-color";
             break;
-        case $statusAgendamento["FEITO"]:
-            $statusClass = "";
+        case $statusPasseio["FEITO"]:
+            $statusClass = "_success-color";
             break;
-        case $statusAgendamento["CLIENTE"]:
-        case $statusAgendamento["FUNCIONARIO"]:
+        case $statusPasseio["PENDENTE"]:
+            break;
+        case $statusPasseio["EM_ANDAMENTO"]:
+        case $statusPasseio["EM_ANALISE"]:
             $statusClass = "_warning-color";
             break;
+        default:
+            if ($passeio->foiRemarcado()) {
+                $statusClass = "_warning-color";
+            }
     }
     ?>
-    <p><b>Status:</b> 
-        <span class="{{$statusClass}}">
-            {{$agendamento->statusFormatado}}
-        </span>
-    </p>
-    @if($agendamento->foiReagendado())
-    <p>Link para agendamento novo: <a href="{{route("admin.agendamento.detalhes.get", ["id" => $agendamento->idAgendamentoNovo])}}">{{route("admin.agendamento.detalhes.get", ["id" => $agendamento->idAgendamentoNovo])}}</a></p>
-    @endif
-    <section>
-        <h2>Cliente</h2>
-        <p><b>Nome: </b>{{$customer->nome}}</p>
-        <p><b>CPF: </b>{{$customer->cpfFormatado}}</p>
-        <p><b>Telefone: </b>{{$customer->telefoneFormatado}}</p>
-        <p><b>E-mail: </b>{{$customer->email}}</p>
-        <p><b>Endereço: </b>{{$customer->getEndereco()}}</p>
-    </section>
-    <section>
-        <h2>Modalidade</h2>
-        <p><b>Nome: </b>{{$modalidade->nome}}</p>
-        <p class=""><b>Descrição: </b>{{$modalidade->descricao}}</p>
-        <p><b>Tipo: </b>{{$modalidade->tipoFormatado}}</p>
-        <p><b>Coletivo: </b>{{$modalidade->coletivoFormatado}}</p>
-        @if($modalidade->tipo === "pacote")
-        <p><b>Período: </b>{{$modalidade->periodoFormatado}}</p>
-        <p><b>Frequência: </b>{{$modalidade->frequenciaFormatada}}</p>
-        <p>
-            <b>Dias: </b> {{$agendamento->diasFormatados}}            
-        </p>
-        @endif
-        <p><b>Valor na época do agendamento (cão/hora): </b>{{$agendamento->precoPorCaoPorHoraFormatado}}</p>
-    </section>
+    <p><b>Status:</b> <span class="{{$statusClass}}">{{$passeio->statusFormatado}}</span></p>
     <section>
         <h2>Local de passeio</h2>
         <p><b>Nome: </b>{{$local->nome}}</p>
@@ -68,7 +48,26 @@
         @include("includes.map", $mapData)
     </section>
     <section>
-        <h2>Cachorros do cliente</h2>
+        <h2>Passeador</h2>
+        @if(is_null($passeador))
+        <p>Não alocado</p>
+        @else
+        <div class="row">
+            <div class="col-lg-2 ">
+                <img data-name="thumbnail" alt="" src="{!! $passeador->thumbnail !!}"/>
+            </div>
+            <div class="col-lg-6">
+                <p><b>Nome: </b> <span data-name="nome">{{$passeador->nome}}</span></p>
+                <p><b>Telefone: </b> <span data-name="telefone">{{$passeador->telefoneFormatado}}</span></p>
+            </div>
+        </div>
+        @endif
+    </section>
+    <section>
+        <h2>Cachorros</h2>
+        @if($caes->count() === 0)
+        <p>Não há cães confirmados para participar deste passeio.</p>
+        @else
         <div class="table-responsive">
             <table class="table table-striped table-hover">
                 <thead>
@@ -80,7 +79,7 @@
                 </thead>
                 <tbody>
                     @foreach($caes as $cao)
-                    <tr>
+                    <tr class="{{$cao->idCliente === $customer->idCliente ? "_success-color" : ""}}">
                         <td>
                             <img width="100px" height="100px" src='{{$cao->thumbnail}}' />
                         </td>
@@ -95,29 +94,23 @@
                 </tbody>
             </table>
         </div>
-    </section>
-    <section>
-        <h2>Passeios agendados</h2>
-        <div class="table-responsive">
-            @include("admin.includes.passeios-tabela", ["passeios" => $passeios, "cliente" => $agendamento->cliente])
-        </div>
+        @endif
     </section>
     <hr/>
     <div class="button-group pull-right">
-        @if($agendamento->status !== $statusAgendamento["CANCELADO"])
+        <?php
+        $podeSerCancelado = $passeio->status !== $statusPasseio["CANCELADO"] && $passeio->status !== $statusPasseio["FEITO"] && $passeio->getCaesConfirmadosDoCliente($customer)->count() > 0
+        ?>
+        @if($podeSerCancelado)
         <a class="btn btn-danger btn-sm" data-toggle="modal" data-target="#cancelamento-modal">
             <i class="glyphicon glyphicon-remove"></i>
             Cancelar
         </a>
         @endif
-        @if($agendamento->status === $statusAgendamento["FUNCIONARIO"])
-        <button class="btn btn-success" data-action="aceitar-agendamento">
-            <i class="glyphicon glyphicon-ok"></i>
-            Aceitar
-        </button>
-        <a href="{{route("admin.agendamento.reagendar.get", ["id" => $agendamento->idAgendamento])}}" class="btn btn-warning">
-            <i class="glyphicon glyphicon-calendar"></i>
-            Sugerir reagendamento
+        @if($passeio->status === $statusPasseio["EM_ANDAMENTO"])
+        <a class="btn btn-default" href="#">
+            <i class="flaticon-walker"></i>
+            Localizar passeador
         </a>
         @endif
     </div>
@@ -131,11 +124,11 @@
                     <h1 class="modal-title" data-role="title">Cancelar agendamento</h1>
                 </header>
                 <div class="modal-body">
-                    <p>Caso tenha certeza do cancelamento do agendamento, por favor, informe-nos o motivo para tal:</p>
+                    <p>Caso tenha certeza do cancelamento do passeio, por favor, informe-nos o motivo para tal:</p>
                     <textarea class="form-control" name="motivo"></textarea>
                 </div>
                 <footer class="modal-footer">
-                    <button data-role="confirm-cancel-button" type="button" class="btn btn-success">Confirmar</button>
+                    <button data-role="confirm-button" type="button" class="btn btn-success">Confirmar</button>
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
                 </footer>
             </section>
@@ -148,41 +141,31 @@
 @parent
 <script type="text/javascript">
     (function () {
-        var $modal = $("#cancelamento-modal");
+        var $modalCancelamento = $("#cancelamento-modal");
 
-        $modal.find("[data-role='confirm-cancel-button']").click(function (ev) {
+        $modalCancelamento.on("modal.bs.hidden", function () {
+            $modalCancelamento.find("textarea").val("");
+        });
+
+        $modalCancelamento.find("[data-role='confirm-button']").click(function (ev) {
             ev.preventDefault();
             ev.stopPropagation();
-
-            var motivo = $modal.find("textarea[name='motivo']").val();
+            var motivo = $modalCancelamento.find("textarea[name='motivo']").val();
 
             if (!motivo.trim()) {
                 showAlert("Por favor, informe o motivo do cancelamento.");
                 return;
             }
             $(this).defaultAjaxCall(
-                    "{!! route('admin.agendamento.cancelar.post', ['id' => $agendamento->idAgendamento]) !!}",
+                    "{!! route('cliente.passeio.cancelar.post', ['id' => $passeio->idPasseio]) !!}",
                     "POST",
-                    "{!! route('admin.agendamento.detalhes.get', ['id' => $agendamento->idAgendamento]) !!}",
+                    "{!! route('cliente.passeio.detalhes.get', ['id' => $passeio->idPasseio]) !!}",
                     {
                         "motivo": motivo
                     });
         });
 
-        $modal.on("modal.bs.hidden", function () {
-            $modal.find("textarea").val("");
-        });
-
-        $("[data-action='aceitar-agendamento']").on("click", function () {
-            askConfirmation("Aceitação de agendamento", "Tem certeza que deseja realizar esta operação?", function () {
-                $(this).defaultAjaxCall(
-                        "{!! route('admin.agendamento.aceitar.post', ['id' => $agendamento->idAgendamento]) !!}",
-                        "POST",
-                        "{!! route('admin.agendamento.detalhes.get', ['id' => $agendamento->idAgendamento]) !!}"
-                        );
-            });
-        });
-        window.decorateMap = function (map, searchBox) {
+        window.decorateMap = function (map) {
             var latLng = new google.maps.LatLng(parseFloat("{!! $local->lat !!}"), parseFloat("{!! $local->lng !!}"));
             var bounds = new google.maps.LatLngBounds();
             map.markers = [];
@@ -192,7 +175,6 @@
                 map: map,
                 icon: "{!!asset('img/markers/place.png')!!}"
             }));
-
             map.circles.push(new google.maps.Circle({
                 strokeColor: '#367A38',
                 strokeOpacity: 0.8,
@@ -203,13 +185,24 @@
                 center: latLng,
                 radius: parseFloat("{!!$local->raioAtuacao!!}")
             }));
-
             var customerLatLng = new google.maps.LatLng(parseFloat("{!!$customer->lat!!}"), parseFloat("{!!$customer->lng!!}"));
-            map.markers.push(new google.maps.Marker({
+            var infowindow = new google.maps.InfoWindow({
+                content: ""
+            });
+            var marker = new google.maps.Marker({
                 position: customerLatLng,
                 map: map,
                 icon: "{!!asset('img/markers/user.png')!!}"
-            }));
+            });
+
+            marker.html = "<p>{!! $customer->nome !!}</p>";
+
+            marker.addListener('click', function () {
+                infowindow.setContent(this.html);
+                infowindow.open(map, this);
+            });
+
+            map.markers.push(marker);
             for (var i = 0; i < map.markers.length; i++) {
                 bounds.extend(map.markers[i].getPosition());
             }
@@ -217,7 +210,7 @@
                 bounds.union(map.circles[i].getBounds());
             }
             map.fitBounds(bounds);
-        }
+        };
     })();
 </script>
 @endsection

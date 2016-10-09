@@ -87,24 +87,37 @@ class Passeio extends \WGPC\Eloquent\Model {
         }
     }
 
-    public function getValorParaCliente($idCliente, $formatado = false) {
-        $agendamento = $this->agendamentos()->whereHas("cliente", function($q) use ($idCliente) {
-                    $q->where("idCliente", $idCliente);
-                })->first();
-        if (is_null($agendamento)) {
-            return 0;
-        }
+    public function getValor($cliente = null, $formatado = false) {
         $duracaoEmHoras = $this->getDuracao();
-        $valor = $agendamento->precoPorCaoPorHora * $duracaoEmHoras * $this->getCaesDoCliente($idCliente)->count();
+        if (!is_null($cliente)) {
+            if (is_numeric($cliente)) {
+                $cliente = Cliente::find($cliente);
+            }
+            $agendamentos = $this->agendamentos()->whereHas("cliente", function($q) use ($cliente) {
+                        $q->where("idCliente", $cliente->idCliente);
+                    })->get();
+            if ($agendamentos->count() === 0) {
+                return 0;
+            }
+        } else {
+            $agendamentos = $this->agendamentos;
+        }
+        $valor = 0;
+        foreach ($agendamentos as $agendamento) {
+            $valor += $agendamento->precoPorCaoPorHora * $duracaoEmHoras * $this->getCaesDoCliente($agendamento->idCliente)->count();
+        }
         if ($formatado) {
             return "R$ " . number_format($valor, 2, ",", ".");
         }
         return $valor;
     }
 
-    public function getCaesDoCliente($idCliente) {
-        $agendamento = $this->agendamentos()->whereHas("cliente", function($q) use ($idCliente) {
-                    $q->where('idCliente', $idCliente);
+    public function getCaesDoCliente($cliente) {
+        if (is_numeric($cliente)) {
+            $cliente = (object) ["idCliente" => $cliente];
+        }
+        $agendamento = $this->agendamentos()->whereHas("cliente", function($q) use ($cliente) {
+                    $q->where('idCliente', $cliente->idCliente);
                 })->first();
         if (is_null($agendamento)) {
             return null;
@@ -112,14 +125,21 @@ class Passeio extends \WGPC\Eloquent\Model {
         return $agendamento->caes;
     }
 
-    public function getCaesConfirmadosDoCliente($idCliente) {
-        return $this->caes()->whereHas("cliente", function($q) use ($idCliente) {
-                    $q->where("idCliente", $idCliente);
+    public function getCaesConfirmadosDoCliente($cliente) {
+        if (is_numeric($cliente)) {
+            $cliente = (object) ["idCliente" => $cliente];
+        }
+        return $this->caes()->whereHas("cliente", function($q) use ($cliente) {
+                    $q->where("idCliente", $cliente->idCliente);
                 })->get();
     }
 
     public function foiRemarcado() {
         return $this->passeioRemarcado()->count() > 0;
+    }
+
+    public function foiOriginado() {
+        return $this->passeioOriginal()->count() > 0;
     }
 
     public function checarStatus($status) {
@@ -134,8 +154,19 @@ class Passeio extends \WGPC\Eloquent\Model {
             return $cao->idCao;
         });
         return Cliente::whereHas("caes", function($q) use ($ids) {
-            $q->whereIn("idCao", $ids->all());
-        })->get();
+                    $q->whereIn("idCao", $ids->all());
+                })->get();
+    }
+    
+    public function getAgendamentoDoCliente($cliente) {
+        if(is_numeric($cliente)) {
+            $cliente = (object) [
+                "idCliente" => $cliente
+            ];
+        }
+        return $this->agendamentos()->whereHas("cliente", function($q) use ($cliente) {
+            $q->where("idCliente", $cliente->idCliente);
+        });
     }
 
     public function setDataAttribute($value) {
@@ -175,11 +206,26 @@ class Passeio extends \WGPC\Eloquent\Model {
         return "Passeio Unitário";
     }
 
-    public function scopeAgendamentoConfirmado($query, $idCliente = null) {
-        return $query->whereHas("agendamentos", function($q) use ($idCliente) {
+    public function temAgendamentoConfirmado($cliente = null) {
+        return $this->whereHas("agendamentos", function($q) use ($cliente) {
                     $q->where("status", AgendamentoStatus::FEITO);
-                    if (!is_null($idCliente)) {
-                        $q->where("idCliente", $idCliente);
+                    if (!is_null($cliente)) {
+                        if (is_numeric($cliente)) {
+                            $cliente = Cliente::find($cliente);
+                        }
+                        $q->where("idCliente", $cliente->idCliente);
+                    }
+                })->count() > 0;
+    }
+
+    public function scopeAgendamentoConfirmado($query, $cliente = null) {
+        return $query->whereHas("agendamentos", function($q) use ($cliente) {
+                    $q->where("status", AgendamentoStatus::FEITO);
+                    if (!is_null($cliente)) {
+                        if (is_numeric($cliente)) {
+                            $cliente = Cliente::find($cliente);
+                        }
+                        $q->where("idCliente", $cliente->idCliente);
                     }
                 });
     }
@@ -223,6 +269,23 @@ class Passeio extends \WGPC\Eloquent\Model {
         return $query->where("status", "=", Status::EM_ANALISE);
     }
 
+    public function scopePriorizarPorStatus($query, $customPriorities = []) {
+        $priorities = [Status::EM_ANALISE => 0, Status::EM_ANDAMENTO => 1, Status::PENDENTE => 2, Status::FEITO => 3, Status::CANCELADO => 4];
+        $priorities = array_merge($priorities, $customPriorities);
+        $strPriority = "";
+        foreach ($priorities as $priority => $value) {
+            if (is_null($value)) {
+                continue;
+            }
+            $strPriority .= "WHEN '$priority' THEN $value \n";
+        }
+        return $query->orderBy(
+                        \DB::raw("CASE coalesce(status, 'null')
+                            $strPriority
+                            WHEN 'null' THEN 4
+                    END"), "ASC");
+    }
+
     public function getDataFormatadaAttribute() {
         return date("d/m/Y", strtotime($this->data));
     }
@@ -247,6 +310,13 @@ class Passeio extends \WGPC\Eloquent\Model {
             return "Não aplicável";
         }
         return Porte::format($this->porte);
+    }
+
+    public function getPasseadorFormatadoAttribute() {
+        if (is_null($this->passeador)) {
+            return "Não alocado";
+        }
+        return $this->passeador->nome;
     }
 
 }

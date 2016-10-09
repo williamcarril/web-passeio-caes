@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Eloquent\Agendamento;
 use App\Models\Eloquent\Pessoa;
 use App\Models\Eloquent\Passeio;
+use App\Models\Eloquent\Cliente;
 use App\Models\Eloquent\Cao;
 use App\Models\Eloquent\Local;
 use App\Models\Eloquent\Modalidade;
@@ -80,6 +81,32 @@ class AgendamentoController extends Controller {
         return response()->view("admin.agendamento.detalhes", $data);
     }
 
+    public function route_getAdminReagendamento(Request $req, $id) {
+        $agendamento = Agendamento::findOrFail($id);
+        $cliente = $agendamento->cliente;
+        $passeios = $this->passeioController->getPasseiosByDataEColetividade(
+                date("Y"), date("m"), null, true);
+
+        $data = [
+            "agendamento" => $agendamento,
+            "statusAgendamento" => AgendamentoStatus::getConstants(false),
+            "statusPasseio" => PasseioStatus::getConstants(false),
+            "businessStartingTime" => config("general.businessTime.start"),
+            "businessEndingTime" => config("general.businessTime.end"),
+            "passeios" => $passeios,
+            "modalidades" => Modalidade::all(),
+            "locais" => $this->localController->getLocaisAtuantesParaCliente($cliente),
+            "dias" => Dia::orderBy("idDia", "asc")->get()->map(function($dia) {
+                        $arr = $dia->toArray();
+                        $arr["nome"] = $dia->nomeFormatado;
+                        return (object) $arr;
+                    }),
+            "caes" => $cliente->caes,
+            "idModalidadeBaseColetiva" => ModalidadeIds::COLETIVO_UNITARIO
+        ];
+        return response()->view("admin.agendamento.reagendamento", $data);
+    }
+
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Rotas POST que retornam JSON">
     public function route_postAdminAceitarAgendamento(Request $req, $id) {
@@ -144,11 +171,63 @@ class AgendamentoController extends Controller {
         }
     }
 
+    public function route_postAdminReagendamento(Request $req, $id) {
+        $administrador = $this->auth->guard("admin")->user();
+        $agendamento = Agendamento::find($id);
+        if (is_null($agendamento)) {
+            return $this->defaultJsonResponse(false, trans("alert.error.generic", ["message" => "realizar o reagendamento"]));
+        }
+
+        $idPasseioColetivo = $req->input("idPasseioColetivo", null);
+        $data = date("Y-m-d", strtotime(str_replace("/", "-", $req->input("data"))));
+        $inicio = $req->input("inicio");
+        $fim = $req->input("fim");
+
+        $modalidade = Modalidade::find($req->input("modalidade"));
+        $dias = Dia::whereIn("idDia", $req->input("modalidadeDias", []))->get();
+        $local = Local::find($req->input("local"));
+        $caes = Cao::whereIn("idCao", $req->input("caes", []))->get();
+        $cliente = $agendamento->cliente;
+
+        if (empty($caes)) {
+            return $this->defaultJsonResponse(false, "Por favor, selecione ao menos 1 cão para participar dos passeios agendados.");
+        }
+
+        \DB::beginTransaction();
+        try {
+            if (!empty($idPasseioColetivo)) {
+                $passeioColetivo = Passeio::find($idPasseioColetivo);
+                $agendamentoNovo = $this->realizarAgendamentoParaPasseioColetivo($passeioColetivo, $cliente, $caes, AgendamentoStatus::CLIENTE);
+            } else {
+                $agendamentoNovo = $this->realizarAgendamentoConvencional($cliente, $modalidade, $data, $inicio, $fim, $local, $caes, $dias, AgendamentoStatus::CLIENTE);
+            }
+            if ($agendamentoNovo->hasErrors()) {
+                \DB::rollBack();
+                return $this->defaultJsonResponse(false, $agendamentoNovo->getErrors());
+            }
+            $agendamento->idAgendamentoNovo = $agendamentoNovo->idAgendamento;
+           
+            if(!$agendamento->save()) {
+                \DB::rollBack();
+                return $this->defaultJsonResponse(false, $agendamento->getErrors());
+            }
+            if (!$this->cancelarAgendamento($agendamento, $administrador, "Um reagendamento foi efetuado.")) {
+                \DB::rollBack();
+                return $this->defaultJsonResponse(false, $agendamento->getErrors());
+            }
+            \DB::commit();
+            return $this->defaultJsonResponse(true);
+        } catch (\Exception $ex) {
+            \DB::rollBack();
+            return $this->defaultJsonResponse(false, $ex->getMessage());
+        }
+    }
+
     // </editor-fold>
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Rotas do site">
     // <editor-fold defaultstate="collapsed" desc="Rotas que retornam Views">
-    public function route_getAgendamento(Request $req) {
+    public function route_getCadastrarAgendamento(Request $req) {
         $idLocal = $req->input("idLocal", null);
         $cliente = $this->auth->guard("web")->user();
         $passeios = $this->passeioController->getPasseiosByDataEColetividade(
@@ -172,9 +251,33 @@ class AgendamentoController extends Controller {
         return response()->view("passeio.agendamento", $data);
     }
 
+    public function route_getAgendamentosDoCliente(Request $req) {
+        $cliente = $this->auth->guard("web")->user();
+        $data = [
+            "agendamentos" => $cliente->agendamentos()->orderBy("data", "desc")->priorizarPorStatus()->get(),
+            "statusAgendamento" => AgendamentoStatus::getConstants(false)
+        ];
+        return response()->view("cliente.agendamento.listagem", $data);
+    }
+
+    public function route_getAgendamentoDoCliente(Request $req, $id) {
+        $cliente = $this->auth->guard("web")->user();
+        $agendamento = $cliente->agendamentos()->where("idAgendamento", $id)->firstOrFail();
+        $data = [
+            "agendamento" => $agendamento,
+            "statusAgendamento" => AgendamentoStatus::getConstants(false),
+            "statusPasseio" => PasseioStatus::getConstants(false),
+            "local" => $agendamento->passeios()->first()->local,
+            "caes" => $agendamento->caes,
+            "modalidade" => $agendamento->modalidade,
+            "passeios" => $agendamento->passeios
+        ];
+        return response()->view("cliente.agendamento.detalhes", $data);
+    }
+
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Rotas POST que retornam JSON">
-    public function route_postAgendamento(Request $req) {
+    public function route_postCadastrarAgendamento(Request $req) {
         $idPasseioColetivo = $req->input("idPasseioColetivo", null);
 
         $data = date("Y-m-d", strtotime(str_replace("/", "-", $req->input("data"))));
@@ -192,11 +295,22 @@ class AgendamentoController extends Controller {
         if (empty($caes)) {
             return $this->defaultJsonResponse(false, "Por favor, selecione ao menos 1 cão para participar dos passeios agendados.");
         }
-
-        if (!empty($idPasseioColetivo)) {
-            return $this->realizarAgendamentoParaPasseioColetivo($idPasseioColetivo, $cliente, $caes);
-        } else {
-            return $this->realizarAgendamentoConvencional($cliente, $modalidade, $data, $inicio, $fim, $local, $caes, $dias);
+        \DB::beginTransaction();
+        try {
+            if (!empty($idPasseioColetivo)) {
+                $passeioColetivo = Passeio::find($idPasseioColetivo);
+                $agendamento = $this->realizarAgendamentoParaPasseioColetivo($passeioColetivo, $cliente, $caes, AgendamentoStatus::FUNCIONARIO);
+            } else {
+                $agendamento = $this->realizarAgendamentoConvencional($cliente, $modalidade, $data, $inicio, $fim, $local, $caes, $dias, AgendamentoStatus::FUNCIONARIO);
+            }
+            if ($agendamento->hasErrors()) {
+                return $this->defaultJsonResponse(false, $agendamento->getErrors());
+            }
+            \DB::commit();
+            return $this->defaultJsonResponse();
+        } catch (\Exception $ex) {
+            \DB::rollBack();
+            return $this->defaultJsonResponse(false, $ex->getMessage());
         }
     }
 
@@ -285,6 +399,9 @@ class AgendamentoController extends Controller {
         if (isset($dados["precoPorCaoPorHora"])) {
             $agendamento->precoPorCaoPorHora = $dados["precoPorCaoPorHora"];
         }
+        if (isset($dados["idAgendamentoNovo"])) {
+            $agendamento->idAgendamentoNovo = $dados["idAgendamentoNovo"];
+        }
         $agendamento->save();
         return $agendamento;
     }
@@ -318,7 +435,7 @@ class AgendamentoController extends Controller {
         foreach ($agendamento->passeios as $passeio) {
             $passeio->caes()->syncWithoutDetaching($agendamento->caes);
             $passeio->status = PasseioStatus::PENDENTE;
-            if(!$passeio->save()) {
+            if (!$passeio->save()) {
                 return false;
             }
         }
@@ -341,7 +458,7 @@ class AgendamentoController extends Controller {
         $passeios = $agendamento->passeios;
         foreach ($passeios as $passeio) {
             if ($passeio->checarStatus([PasseioStatus::PENDENTE, PasseioStatus::EM_ANALISE])) {
-                if (!$this->passeioController->cancelarPasseioParaAgendamento($passeio, $pessoa, $motivo, $agendamento)) {
+                if (!$this->passeioController->cancelarPasseio($passeio, $pessoa, $motivo, $agendamento)) {
                     $agendamento->putErrors([trans("alert.error.generic", ["message" => "cancelar o agendamento"])]);
                     return false;
                 }
@@ -350,130 +467,107 @@ class AgendamentoController extends Controller {
         return true;
     }
 
-    private function realizarAgendamentoParaPasseioColetivo($idPasseioColetivo, $cliente, $caes) {
-        $passeio = Passeio::find($idPasseioColetivo);
-        if (is_null($passeio)) {
-            return $this->defaultJsonResponse(false, "O passeio coletivo informado encontra-se indisponível. Por favor, atualize a página ou tente novamente mais tarde.");
-        }
-        if ($passeio->status !== PasseioStatus::PENDENTE) {
-            return $this->defaultJsonResponse(false, "Não é possível solicitar um agendamento para o passeio selecionado. Por favor, atualize a página ou tente novamente mais tarde.");
-        }
-        $agendamentoEmPendencia = $passeio->agendamentos()->whereHas("cliente", function($q) use ($cliente) {
+    public function realizarAgendamentoParaPasseioColetivo(Passeio $passeioColetivo, Cliente $cliente, $caes, $statusAgendamento) {
+        $agendamentoJaFeito = $passeioColetivo->agendamentos()->whereHas("cliente", function($q) use ($cliente) {
                     $q->where("idCliente", $cliente->idCliente);
-                })->pendente()->first();
-        if (!is_null($agendamentoEmPendencia)) {
-            switch ($agendamentoEmPendencia->status) {
-                case AgendamentoStatus::CLIENTE:
-                    return $this->defaultJsonResponse(false, "Você já possui uma solicitação de agendamento para o passeio em questão com pendências por parte do cliente. Verifique-a na sua lista de agendamentos.");
-                case AgendamentoStatus::FUNCIONARIO:
-                    return $this->defaultJsonResponse(false, "Você já possui uma solicitação de agendamento para o passeio em questão sob análise. Por favor, aguarde até que ela seja avaliada.");
-            }
+                })->first();
+        if (!is_null($agendamentoJaFeito)) {
+            throw new \Exception("Já existe uma solicitação de agendamento para o passeio em questão. Verifique-a na lista de agendamentos.");
+        }
+        if ($passeioColetivo->status !== PasseioStatus::PENDENTE) {
+            throw new \Exception("Não é possível solicitar um agendamento para o passeio selecionado. Por favor, atualize a página ou tente novamente mais tarde.");
         }
         $modalidade = Modalidade::find(ModalidadeIds::COLETIVO_UNITARIO);
-        \DB::beginTransaction();
-        try {
-            $agendamento = $this->salvarAgendamento(null, [
-                "idModalidade" => $modalidade->idModalidade,
-                "idCliente" => $cliente->idCliente,
-                "status" => AgendamentoStatus::FUNCIONARIO,
-                "precoPorCaoPorHora" => $modalidade->precoPorCaoPorHora
-            ]);
-            if ($agendamento->hasErrors()) {
-                \DB::rollBack();
-                return $this->defaultJsonResponse(false, $agendamento->getErrors());
-            }
-            $porte = $passeio->porte;
-            foreach ($caes as $cao) {
-                if ($porte !== $cao->porte) {
-                    \DB::rollBack();
-                    return $this->defaultJsonResponse(false, "Todos os cães devem ter o mesmo porte ($porte) em um passeio coletivo.");
-                }
-                $agendamento->caes()->attach($cao->idCao);
-            }
-
-            $agendamento->passeios()->attach($passeio->idPasseio);
-            \DB::commit();
-            return $this->defaultJsonResponse(true);
-        } catch (\Exception $ex) {
-            \DB::rollBack();
-            return $this->defaultJsonResponse(false, $ex->getMessage());
+        $agendamento = $this->salvarAgendamento(null, [
+            "idModalidade" => $modalidade->idModalidade,
+            "idCliente" => $cliente->idCliente,
+            "status" => $statusAgendamento,
+            "precoPorCaoPorHora" => $modalidade->precoPorCaoPorHora,
+            ""
+        ]);
+        if ($agendamento->hasErrors()) {
+            return $agendamento;
         }
+        $porte = $passeioColetivo->porte;
+        foreach ($caes as $cao) {
+            if ($porte !== $cao->porte) {
+                $agendamento->putErrors(["Todos os cães devem ter o mesmo porte ($porte) em um passeio coletivo."]);
+                return $agendamento;
+            }
+            $agendamento->caes()->attach($cao->idCao);
+        }
+
+        $agendamento->passeios()->attach($passeioColetivo->idPasseio);
+        return $agendamento;
     }
 
-    private function realizarAgendamentoConvencional($cliente, $modalidade, $data, $inicio, $fim, $local, $caes, $dias) {
-        \DB::beginTransaction();
-        try {
-            $agendamento = $this->salvarAgendamento(null, [
-                "idModalidade" => $modalidade->idModalidade,
-                "idCliente" => $cliente->idCliente,
-                "status" => AgendamentoStatus::FUNCIONARIO,
-                "precoPorCaoPorHora" => $modalidade->precoPorCaoPorHora
-            ]);
-            if ($agendamento->hasErrors()) {
-                \DB::rollBack();
-                return $this->defaultJsonResponse(false, $agendamento->getErrors());
-            }
-            $porte = $caes->first()->porte;
-            foreach ($caes as $cao) {
-                if ($porte !== $cao->porte && $modalidade->coletivo) {
-                    \DB::rollBack();
-                    return $this->defaultJsonResponse(false, "Todos os cães devem ter o mesmo porte em um passeio coletivo.");
-                }
-                $agendamento->caes()->attach($cao->idCao);
-            }
-
-            if ($modalidade->tipo === Servico::UNITARIO) {
-                $passeio = $this->passeioController->salvarPasseio(null, [
-                    "idLocal" => $local->idLocal,
-                    "inicio" => $inicio,
-                    "fim" => $fim,
-                    "data" => $data,
-                    "coletivo" => $modalidade->coletivo,
-                    "porte" => $modalidade->coletivo ? $porte : null
-                ]);
-                if ($passeio->hasErrors()) {
-                    \DB::rollBack();
-                    return $this->defaultJsonResponse(false, "Ocorreu um erro ao solicitar o agendamento. Por favor, tente novamente mais tarde.");
-                }
-                foreach ($caes as $cao) {
-                    $passeio->caes()->attach($cao->idCao);
-                }
-                $agendamento->passeios()->attach($passeio->idPasseio);
-            } else {
-                $dataAnterior = $data;
-                foreach ($dias as $dia) {
-                    $agendamento->dias()->attach($dia->idDia);
-                }
-                for ($i = 0; $i < $modalidade->quantidadeDePasseios; $i += $dias->count()) {
-                    for ($j = 0; $j < $dias->count(); $j++) {
-                        $dia = $dias[$j];
-                        $proximaData = Carbon::parse($dataAnterior)->modify("next " . $dia->getCarbonName());
-                        $passeio = $this->passeioController->salvarPasseio(null, [
-                            "idLocal" => $local->idLocal,
-                            "inicio" => $inicio,
-                            "fim" => $fim,
-                            "data" => $proximaData->format("Y-m-d"),
-                            "coletivo" => $modalidade->coletivo,
-                            "porte" => $modalidade->coletivo ? $porte : null
-                        ]);
-                        if ($passeio->hasErrors()) {
-                            \DB::rollBack();
-                            return $this->defaultJsonResponse(false, "Ocorreu um erro ao solicitar o agendamento. Por favor, tente novamente mais tarde.");
-                        }
-                        foreach ($caes as $cao) {
-                            $passeio->caes()->attach($cao->idCao);
-                        }
-                        $agendamento->passeios()->attach($passeio->idPasseio);
-                        $dataAnterior = $proximaData->format("Y-m-d");
-                    }
-                }
-            }
-            \DB::commit();
-            return $this->defaultJsonResponse(true);
-        } catch (\Exception $ex) {
-            \DB::rollBack();
-            return $this->defaultJsonResponse(false, $ex->getMessage());
+    public function realizarAgendamentoConvencional(Cliente $cliente, Modalidade $modalidade, $data, $inicio, $fim, Local $local, $caes, $dias, $statusAgendamento) {
+        $agendamento = $this->salvarAgendamento(null, [
+            "idModalidade" => $modalidade->idModalidade,
+            "idCliente" => $cliente->idCliente,
+            "status" => $statusAgendamento,
+            "precoPorCaoPorHora" => $modalidade->precoPorCaoPorHora
+        ]);
+        if ($agendamento->hasErrors()) {
+            return $agendamento;
         }
+
+        $porte = $caes->first()->porte;
+        foreach ($caes as $cao) {
+            if ($porte !== $cao->porte && $modalidade->coletivo) {
+                $agendamento->putErrors(["Todos os cães devem ter o mesmo porte em um passeio coletivo."]);
+                return $agendamento;
+            }
+            $agendamento->caes()->attach($cao->idCao);
+        }
+
+        if ($modalidade->tipo === Servico::UNITARIO) {
+            $passeio = $this->passeioController->salvarPasseio(null, [
+                "idLocal" => $local->idLocal,
+                "inicio" => $inicio,
+                "fim" => $fim,
+                "data" => $data,
+                "coletivo" => $modalidade->coletivo,
+                "porte" => $modalidade->coletivo ? $porte : null
+            ]);
+            if ($passeio->hasErrors()) {
+                $agendamento->putErrors(["Ocorreu um erro ao solicitar o agendamento. Por favor, tente novamente mais tarde."]);
+                return $agendamento;
+            }
+            foreach ($caes as $cao) {
+                $passeio->caes()->attach($cao->idCao);
+            }
+            $agendamento->passeios()->attach($passeio->idPasseio);
+        } else {
+            $dataAnterior = $data;
+            foreach ($dias as $dia) {
+                $agendamento->dias()->attach($dia->idDia);
+            }
+            for ($i = 0; $i < $modalidade->quantidadeDePasseios; $i += $dias->count()) {
+                for ($j = 0; $j < $dias->count(); $j++) {
+                    $dia = $dias[$j];
+                    $proximaData = Carbon::parse($dataAnterior)->modify("next " . $dia->getCarbonName());
+                    $passeio = $this->passeioController->salvarPasseio(null, [
+                        "idLocal" => $local->idLocal,
+                        "inicio" => $inicio,
+                        "fim" => $fim,
+                        "data" => $proximaData->format("Y-m-d"),
+                        "coletivo" => $modalidade->coletivo,
+                        "porte" => $modalidade->coletivo ? $porte : null
+                    ]);
+                    if ($passeio->hasErrors()) {
+                        $agendamento->putErrors(["Ocorreu um erro ao solicitar o agendamento. Por favor, tente novamente mais tarde."]);
+                        return $agendamento;
+                    }
+                    foreach ($caes as $cao) {
+                        $passeio->caes()->attach($cao->idCao);
+                    }
+                    $agendamento->passeios()->attach($passeio->idPasseio);
+                    $dataAnterior = $proximaData->format("Y-m-d");
+                }
+            }
+        }
+        return $agendamento;
     }
 
     // </editor-fold>

@@ -33,7 +33,9 @@ class Agendamento extends \WGPC\Eloquent\Model {
         parent::boot();
 
         static::saving(function($model) {
-            $model->data = date("Y-m-d H:i:s");
+            if(is_null($model->data)) {
+                $model->data = date("Y-m-d H:i:s");
+            }
         }, 1);
 
         static::$rules["status"][] = "in:" . implode(",", Status::getConstants());
@@ -60,16 +62,16 @@ class Agendamento extends \WGPC\Eloquent\Model {
     }
 
     public function getStatusFormatadoAttribute() {
-        if (!is_null($this->idAgendamentoNovo)) {
+        if ($this->foiReagendado()) {
             return "Reagendado";
         }
         return Status::format($this->status);
     }
 
-    /**
-     * Estes valores são estimativas por que, mesmo que um cão esteja marcado para participar de um passeio em seu agendamento,
-     * não necessariamente ele participará dele. O cliente poderá removê-lo se necessário (com um mínimo de 1 cão alocado).
-     */
+    public function foiReagendado() {
+        return !is_null($this->idAgendamentoNovo);
+    }
+    
     public function getPrecoPorPasseioAttribute() {
         //Todos os passeios de um agendamento possuem a mesma duração.
         $passeio = $this->passeios()->first();
@@ -90,6 +92,10 @@ class Agendamento extends \WGPC\Eloquent\Model {
 
     public function getPrecoTotalFormatadoAttribute() {
         return "R$ " . number_format($this->precoTotal, 2, ",", ".");
+    }
+
+    public function getPrecoPorCaoPorHoraFormatadoAttribute() {
+        return "R$ " . number_format($this->precoPorCaoPorHora, 2, ",", ".");
     }
 
     public function getDataFormatadaAttribute() {

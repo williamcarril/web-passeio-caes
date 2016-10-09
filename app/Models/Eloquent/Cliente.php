@@ -12,7 +12,28 @@ class Cliente extends Pessoa {
     }
 
     public function passeios() {
-        return $this->hasManyThrough("\App\Models\Eloquent\Passeio", "\App\Models\Eloquent\Agendamento", "idCliente", "idAgendamento", "idPasseio");
+        $idsAgendamentos = $this->agendamentos->map(function($agendamento) {
+                    return $agendamento->idAgendamento;
+                })->toArray();
+        return Passeio::whereHas("agendamentos", function($q) use ($idsAgendamentos) {
+                    $q->whereIn("agendamento.idAgendamento", $idsAgendamentos);
+                });
+    }
+
+    public function passeiosConfirmados() {
+        $idsAgendamentos = $this->agendamentos->map(function($agendamento) {
+                    return $agendamento->idAgendamento;
+                })->toArray();
+
+        $idsCaes = $this->caes->map(function($cao) {
+                    return $cao->idCao;
+                })->toArray();
+        return Passeio::whereHas("agendamentos", function($q) use ($idsAgendamentos) {
+                    $q->whereIn("agendamento.idAgendamento", $idsAgendamentos);
+                    $q->where("status", Enums\AgendamentoStatus::FEITO);
+                })->whereHas("caes", function($q) use ($idsCaes) {
+                    $q->whereIn("cao.idCao", $idsCaes);
+                });
     }
 
     public function caes() {

@@ -9,23 +9,43 @@ use App\Models\Eloquent\Funcionario;
 use App\Models\Eloquent\Cancelamento;
 use App\Models\Eloquent\Enums\PasseioStatus;
 use App\Models\Eloquent\Enums\AgendamentoStatus;
+use App\Models\Eloquent\Enums\CancelamentoStatus;
 use App\Models\Eloquent\Enums\FuncionarioTipo;
+use Illuminate\Contracts\Auth\Factory as AuthFactory;
 
 class PasseioController extends Controller {
 
-    // <editor-fold defaultstate="collapsed" desc="Rotas do site">
-    // <editor-fold defaultstate="collapsed" desc="Rotas que retornam Views">
-    public function route_getPasseios() {
-        $data = [];
-        return response()->view("passeio.listagem", $data);
+    private $auth;
+
+    public function __construct(AuthFactory $auth) {
+        $this->auth = $auth;
     }
 
-    public function route_getPasseio(Request $req, $id) {
-        $passeio = Passeio::findOrFail($id);
+    // <editor-fold defaultstate="collapsed" desc="Rotas do site">
+    // <editor-fold defaultstate="collapsed" desc="Rotas que retornam Views">
+    public function route_getPasseioDoCliente(Request $req, $id) {
+        $cliente = $this->auth->guard("web")->user();
+        $passeio = $cliente->passeios()->where("idPasseio", $id)->firstOrFail();
+        $agendamento = $passeio->getAgendamentoDoCliente($cliente);
         $data = [
-            "passeio" => $passeio
+            "passeio" => $passeio,
+            "statusPasseio" => PasseioStatus::getConstants(false),
+            "local" => $passeio->local,
+            "caes" => $passeio->caes,
+            "agendamento" => $agendamento,
+            "passeador" => $passeio->passeador
         ];
-        return response()->view("passeio.detalhes", $data);
+        return response()->view("cliente.passeio.detalhes", $data);
+    }
+
+    public function route_getPasseiosConfirmadosDoCliente(Request $req) {
+        $cliente = $this->auth->guard("web")->user();
+        $passeios = $cliente->passeiosConfirmados()->orderBy("data", "desc")->priorizarPorStatus()->get();
+        $data = [
+            "passeios" => $passeios,
+            "statusPasseio" => PasseioStatus::getConstants(false)
+        ];
+        return response()->view("cliente.passeio.listagem", $data);
     }
 
     // </editor-fold>
@@ -63,22 +83,91 @@ class PasseioController extends Controller {
         return $this->defaultJsonResponse(true, null, $passeio);
     }
 
+    public function route_postCancelarPasseio(Request $req, $id) {
+        $cliente = $this->auth->guard("web")->user();
+        $motivo = $req->input("motivo", null);
+        $passeio = $cliente->passeios()->where("idPasseio", $id)->first();
+        if (is_null($passeio)) {
+            return $this->defaultJsonResponse(false, trans("alert.error.generic", ["message" => "cancelar o passeio"]), null);
+        }
+        \DB::beginTransaction();
+        try {
+            if (!$this->cancelarPasseio($passeio, $cliente, $motivo)) {
+                \DB::rollBack();
+                return $this->defaultJsonResponse(false, $passeio->getErrors());
+            }
+            \DB::commit();
+            return $this->defaultJsonResponse();
+        } catch (\Exception $ex) {
+            \DB::rollBack();
+            return $this->defaultJsonResponse(false, $ex->getMessage());
+        }
+    }
+
     // </editor-fold>
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Rotas administrativas">
     // <editor-fold defaultstate="collapsed" desc="Rotas que retornam Views">
     public function route_getAdminPasseio(Request $req, $id) {
         $passeio = Passeio::findOrFail($id);
+        $passeadoresAptos = Funcionario::passeador()->get();
         $data = [
             "passeio" => $passeio,
             "statusAgendamento" => AgendamentoStatus::getConstants(false),
             "statusPasseio" => PasseioStatus::getConstants(false),
+            "statusCancelamento" => CancelamentoStatus::getConstants(false),
             "local" => $passeio->local,
             "caes" => $passeio->caes,
             "agendamentos" => $passeio->agendamentos,
-            "clientes" => $passeio->getClientesConfirmados()
+            "passeador" => $passeio->passeador,
+            "clientes" => $passeio->getClientesConfirmados(),
+            "passeadoresAptos" => $passeadoresAptos,
+            "cancelamentos" => $passeio->cancelamentos
         ];
         return response()->view("admin.passeio.detalhes", $data);
+    }
+
+    public function route_getAdminPasseiosMarcados(Request $req) {
+        $status = $req->input("status", null);
+        $dataInicial = $req->input("dataInicial", null);
+        $dataFinal = $req->input("dataFinal", null);
+
+        $passeios = Passeio::agendamentoConfirmado()->orderBy("data", "desc")->priorizarPorStatus();
+        switch ($status) {
+            case PasseioStatus::FEITO:
+                $passeios->feito();
+                break;
+            case PasseioStatus::EM_ANALISE:
+                $passeios->emAnalise();
+                break;
+            case PasseioStatus::EM_ANDAMENTO:
+                $passeios->emAndamento();
+                break;
+            case PasseioStatus::CANCELADO:
+                $passeios->cancelado();
+                break;
+            case PasseioStatus::PENDENTE:
+                $passeios->pendente();
+                break;
+        }
+        if (!empty($dataInicial)) {
+            $dataInicial = str_replace("/", "-", $dataInicial);
+            $passeios->where("data", ">=", date("Y-m-d", strtotime($dataInicial)));
+        }
+        if (!empty($dataFinal)) {
+            $dataFinal = str_replace("/", "-", $dataFinal);
+            $passeios->where("data", "<=", date("Y-m-d", strtotime($dataFinal)));
+        }
+
+        $data = [
+            "passeios" => $passeios->get(),
+            "statusPasseio" => PasseioStatus::getConstants(false),
+            "status" => $status,
+            "dataInicial" => $dataInicial,
+            "dataFinal" => $dataFinal
+        ];
+
+        return response()->view("admin.passeio.listagem", $data);
     }
 
     // </editor-fold>
@@ -101,16 +190,64 @@ class PasseioController extends Controller {
         return $this->defaultJsonResponse(true);
     }
 
+    public function route_postAdminAlocarPasseador(Request $req, $id) {
+        $passeio = Passeio::find($id);
+        $idPasseador = $req->input("idPasseador", null);
+        if (is_null($passeio)) {
+            return $this->defaultJsonResponse(false, trans("alert.error.generic", ["message" => "alocar o passeador"]));
+        }
+
+        if (is_null($idPasseador)) {
+            $passeio->idPasseador = null;
+            if (!$passeio->save()) {
+                return $this->defaultJsonResponse(false, trans("alert.error.generic", ["message" => "desalocar o passeador"]));
+            }
+            return $this->defaultJsonResponse(true);
+        }
+
+        $passeador = Funcionario::passeador()->where("idFuncionario", $idPasseador)->first();
+        $passeio->idPasseador = $passeador->idFuncionario;
+        if (!$passeio->save()) {
+            return $this->defaultJsonResponse(false, trans("alert.error.generic", ["message" => "alocar o passeador"]));
+        }
+
+        $arrPasseador = $passeador->toArray();
+        $arrPasseador["telefone"] = $passeador->telefoneFormatado;
+        $arrPasseador["thumbnail"] = $passeador->thumbnail;
+
+        return $this->defaultJsonResponse(true, null, $arrPasseador);
+    }
+
+    public function route_postAdminCancelarPasseio(Request $req, $id) {
+        $administrador = $this->auth->guard("admin")->user();
+        $motivo = $req->input("motivo", null);
+        $passeio = Passeio::find($id);
+        if (is_null($passeio)) {
+            return $this->defaultJsonResponse(false, trans("alert.error.generic", ["message" => "cancelar o passeio"]), null);
+        }
+        \DB::beginTransaction();
+        try {
+            if (!$this->cancelarPasseio($passeio, $administrador, $motivo)) {
+                \DB::rollBack();
+                return $this->defaultJsonResponse(false, $passeio->getErrors());
+            }
+            \DB::commit();
+            return $this->defaultJsonResponse();
+        } catch (\Exception $ex) {
+            \DB::rollBack();
+            return $this->defaultJsonResponse(false, $ex->getMessage());
+        }
+    }
+
     // </editor-fold>
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Outros métodos">
-    public function cancelarPasseioParaAgendamento($passeio, $solicitante, $motivo, $agendamento) {
+    public function cancelarPasseio($passeio, $solicitante, $motivo, $agendamento = null) {
         //Se o passeio não estiver pendente de alguma forma, ou ele já foi cancelado, ou já foi concluído
         //ou já iniciado. Portanto, o cancelamento é impossível.
         if (!$passeio->checarStatus([PasseioStatus::PENDENTE, PasseioStatus::EM_ANALISE])) {
             return false;
         }
-
         $cancelamento = new Cancelamento();
         $cancelamento->justificativa = $motivo;
         if ($solicitante instanceof Cliente) {
@@ -224,7 +361,7 @@ class PasseioController extends Controller {
                 return true;
             }
             //Verifica se, após a remoção dos cães do cliente, sobrou algum para participar do passeio
-            if($passeio->caes->count() === 0) {
+            if ($passeio->caes->count() === 0) {
                 $passeio->status = PasseioStatus::CANCELADO;
                 return $passeio->save();
             }
@@ -238,7 +375,9 @@ class PasseioController extends Controller {
     }
 
     private function cancelarPasseioPorAdministrador($passeio, $agendamento = null) {
+        $caes = $passeio->caes;
         if (!$passeio->coletivo) {
+            $this->removerCaesDoPasseio($caes, $passeio);
             $passeio->status = PasseioStatus::CANCELADO;
             return $passeio->save();
         } else {
@@ -248,6 +387,7 @@ class PasseioController extends Controller {
                 $cliente = $agendamento->cliente;
                 return $this->cancelarPasseioPorCliente($passeio, $cliente);
             } else {
+                $this->removerCaesDoPasseio($caes, $passeio);
                 $passeio->status = PasseioStatus::CANCELADO;
                 return $passeio->save();
             }

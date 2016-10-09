@@ -31,7 +31,7 @@ class AgendamentoTableSeeder extends Seeder {
         \DB::table("agendamento")->insert([
             [
                 "idAgendamento" => 2,
-                "idCliente" => 2,
+                "idCliente" => 4,
                 "idModalidade" => 3,
                 "data" => date("Y-m-d"),
                 "status" => "feito",

@@ -22,7 +22,7 @@
                     <a href="{{route("admin.agendamento.listagem.get")}}">Agendamentos</a>
                 </li>
                 <li>
-                    <a href="#">Passeios</a>
+                    <a href="{{route("admin.passeio.marcados.listagem.get")}}">Passeios</a>
                 </li>
                 <li>
                     <a href="{{route("admin.funcionario.passeador.listagem.get")}}">
@@ -36,7 +36,7 @@
                     <a href="{{route("admin.modalidade.listagem.get")}}">Modalidades</a>
                 </li>
                 <li>
-                    <a href="#">Cancelamentos</a>
+                    <a href="{{route("admin.cancelamento.listagem.get")}}">Cancelamentos</a>
                 </li>
             </ul>
             @endif

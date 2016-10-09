@@ -69,7 +69,6 @@ class Modalidade extends \WGPC\Eloquent\Model {
                 return $this->frequenciaNumericaPorSemana * $this->periodoNumericoPorMes * 4;
         }
     }
-
     public function getTipoFormatadoAttribute() {
         return Servico::format($this->tipo);
     }

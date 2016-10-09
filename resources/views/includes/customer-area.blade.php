@@ -42,6 +42,11 @@
             Visualizar agendamentos
         </a>
         <br/>
+        <a href="{{route("cliente.passeio.confirmado.get")}}">
+            <i class="flaticon-walking-dog"></i>
+            Visualizar passeios
+        </a>
+        <br/>
         <a href="{{route("cliente.auth.logout.get")}}">
             <i class="glyphicon glyphicon-off"></i>
             Sair

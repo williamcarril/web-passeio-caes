@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Eloquent\Cliente;
 use App\Models\Eloquent\Cao;
+use App\Models\Eloquent\Passeio;
 use Illuminate\Contracts\Auth\Factory as AuthFactory;
 use App\Models\File\Repositorio;
 use App\Models\Eloquent\Enums\AgendamentoStatus;
@@ -37,29 +38,6 @@ class ClienteController extends Controller {
         return response()->view("cliente.cao.manter", $data);
     }
 
-    public function route_getAgendamentos(Request $req) {
-        $cliente = $this->auth->guard("web")->user();
-        $data = [
-            "agendamentos" => $cliente->agendamentos()->orderBy("data", "desc")->priorizarPorStatus()->get(),
-            "statusAgendamento" => AgendamentoStatus::getConstants(false)
-        ];
-        return response()->view("cliente.agendamento.listagem", $data);
-    }
-
-    public function route_getAgendamento(Request $req, $id) {
-        $cliente = $this->auth->guard("web")->user();
-        $agendamento = $cliente->agendamentos()->where("idAgendamento", $id)->firstOrFail();
-        $data = [
-            "agendamento" => $agendamento,
-            "statusAgendamento" => AgendamentoStatus::getConstants(false),
-            "statusPasseio" => PasseioStatus::getConstants(false),
-            "local" => $agendamento->passeios()->first()->local,
-            "caes" => $agendamento->caes,
-            "modalidade" => $agendamento->modalidade,
-            "passeios" => $agendamento->passeios
-        ];
-        return response()->view("cliente.agendamento.detalhes", $data);
-    }
 
     /**
      * @todo
@@ -277,6 +255,7 @@ class ClienteController extends Controller {
             return $this->defaultJsonResponse(false, $ex->getMessage());
         }
     }
+
 
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Rotas que causam redirects">

@@ -9,247 +9,254 @@ foreach ($passeios as $passeio) {
         ];
     }
 }
-?>
-@extends("layouts.default")
 
-@section("title") Agendamento de passeios | {{config("app.name")}} @endsection
+$customer = $agendamento->cliente;
+$modalidade = $agendamento->modalidade;
+$local = $agendamento->passeios()->first()->local;
+?>
+@extends("admin.layouts.default")
+
+@section("title") Reagendamento - {{$agendamento->idAgendamento}} | {{config("app.name")}} @endsection
 
 @section("main")
 <section>
-    <h1>Agendamento de passeios</h1>
-    @include("includes.calendar", ["id" => "calendario", "events" => $events])
-    <div id="agendamento-wrapper" class="hidden">
-        <h2>Horários do Dia - <span data-role="date"></span></h2>
-        <div class="timetable-wrapper">
-            <div id="timetable" class="timetable"></div>
-        </div>
-        <form id="agendamento-form" class="form-horizontal" action="{!! route('passeio.agendamento.post') !!}" method="POST">
-            <input type="hidden" name="idPasseioColetivo" value=""/>
-            <fieldset data-name="dataEHorarios">
-                <legend class="_cursor-pointer" data-toggle="collapse" data-target="#data-horario-collapsable">
-                    Data e Horários
-                    <i class="indicator glyphicon glyphicon-chevron-down"></i>
-                </legend>
-                <div id="data-horario-collapsable" class="collapse in">
-                    <div class="form-group">
-                        <input id='agendamento-data' value="" required name="data" type="hidden" class='form-control'>
-                        <label class="control-label col-sm-2" for='agendamento-data'>Data</label>
-                        <div class='col-sm-2'>
-                            <p class='form-control-static' data-role='date'></p>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="control-label col-sm-2" for='agendamento-inicio'>Horário inicial</label>
-                        <div class='col-sm-2'>
-                            <input id='agendamento-inicio' required name="inicio" type="time" class='form-control timepicker'>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="control-label col-sm-2" for='agendamento-fim'>Horário final</label>
-                        <div class='col-sm-2'>
-                            <input id='agendamento-fim' required name="fim" type="time" class='form-control timepicker'>
-                        </div>
-                    </div>
-                </div>
-            </fieldset>
-            <fieldset data-role="modalidade">
-                <legend  class="_cursor-pointer" data-toggle="collapse" data-target="#modalidade-collapsable">
-                    Modalidade
-                    <i class="indicator glyphicon glyphicon-chevron-down"></i>
-                </legend>
-                <div id="modalidade-collapsable" class="collapse in">
-                    <div class="form-group">
-                        <label class="control-label col-sm-2" for='agendamento-modalidade'>Nome</label>
-                        <div class='col-sm-3'>
-                            <select required class="form-control" id="agendamento-modalidade" name="modalidade">
-                                <option value="" selected>Selecione uma modalidade</option>
-                                @foreach($modalidades as $modalidade)
-                                <option value="{{$modalidade->idModalidade}}">{{$modalidade->nome}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    <div class="hidden" data-role="modalidade-information">
+    <h1>Reagendamento - {{$agendamento->idAgendamento}}</h1>
+    <p><b>Data da solicitação:</b> {{$agendamento->dataFormatada}}</p>
+    <p><b>Hora da solicitação:</b> {{$agendamento->horaFormatada}}</p>
+    <p><b>Link para detalhes: </b><a href='{{route("admin.agendamento.detalhes.get", ["id" => $agendamento->idAgendamento])}}' target='_blank'>{{route("admin.agendamento.detalhes.get", ["id" => $agendamento->idAgendamento])}}</a></p>
+    <hr/>
+    <section>
+        <h2>Informações relativas ao reagendamento</h2>
+        @include("includes.calendar", ["id" => "calendario", "events" => $events])
+        <div id="agendamento-wrapper" class="hidden">
+            <h3>Horários do Dia - <span data-role="date"></span></h3>
+            <div class="timetable-wrapper">
+                <div id="timetable" class="timetable"></div>
+            </div>
+            <form id="agendamento-form" class="form-horizontal" action="{!! route('admin.agendamento.reagendar.post', ['id' => $agendamento->idAgendamento]) !!}" method="POST">
+                <input type="hidden" name="idPasseioColetivo" value=""/>
+                <fieldset data-name="dataEHorarios">
+                    <legend class="_cursor-pointer" data-toggle="collapse" data-target="#data-horario-collapsable">
+                        Data e Horários
+                        <i class="indicator glyphicon glyphicon-chevron-down"></i>
+                    </legend>
+                    <div id="data-horario-collapsable" class="collapse in">
                         <div class="form-group">
-                            <label class="control-label col-sm-2">Descriçao</label>
-                            <div class="col-sm-8">
-                                <p class='form-control-static _text-justify' data-name="descricao">
-                                </p>
+                            <input id='agendamento-data' value="" required name="data" type="hidden" class='form-control'>
+                            <label class="control-label col-sm-2" for='agendamento-data'>Data</label>
+                            <div class='col-sm-2'>
+                                <p class='form-control-static' data-role='date'></p>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="control-label col-sm-2">Tipo</label>
-                            <div class="col-sm-3">
-                                <p class='form-control-static' data-name="tipo">
-                                </p>
+                            <label class="control-label col-sm-2" for='agendamento-inicio'>Horário inicial</label>
+                            <div class='col-sm-2'>
+                                <input id='agendamento-inicio' required name="inicio" type="time" class='form-control timepicker'>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="control-label col-sm-2">Coletivo</label>
-                            <div class="col-sm-3">
-                                <p class='form-control-static' data-name="coletivo" data-value="">
-                                </p>
+                            <label class="control-label col-sm-2" for='agendamento-fim'>Horário final</label>
+                            <div class='col-sm-2'>
+                                <input id='agendamento-fim' required name="fim" type="time" class='form-control timepicker'>
                             </div>
                         </div>
-                        <div class="hidden" data-role="package-only-fields">
-                            <div class="form-group">
-                                <label class="control-label col-sm-2">Período</label>
-                                <div class="col-sm-3">
-                                    <p class='form-control-static' data-name="periodo">
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label col-sm-2">Frequência</label>
-                                <div class="col-sm-3">
-                                    <p class='form-control-static' data-name="frequencia" data-value="">
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label col-sm-2">Dias</label>
-                                <div class="col-sm-6 _text-center">
-                                    @foreach($dias as $dia)
-                                    <label class="control-label col-sm-3 _text-center" for="agendamento-dia-{{$dia->idDia}}">
-                                        {{$dia->nome}}
-                                        <input name='modalidadeDias[]' class="form-control" id="agendamento-dia-{{$dia->idDia}}" type="checkbox" value="{{$dia->idDia}}" data-role="dia">
-                                    </label>
+                    </div>
+                </fieldset>
+                <fieldset data-role="modalidade">
+                    <legend  class="_cursor-pointer" data-toggle="collapse" data-target="#modalidade-collapsable">
+                        Modalidade
+                        <i class="indicator glyphicon glyphicon-chevron-down"></i>
+                    </legend>
+                    <div id="modalidade-collapsable" class="collapse in">
+                        <div class="form-group">
+                            <label class="control-label col-sm-2" for='agendamento-modalidade'>Nome</label>
+                            <div class='col-sm-3'>
+                                <select required class="form-control" id="agendamento-modalidade" name="modalidade">
+                                    <option value="" selected>Selecione uma modalidade</option>
+                                    @foreach($modalidades as $modalidade)
+                                    <option value="{{$modalidade->idModalidade}}">{{$modalidade->nome}}</option>
                                     @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="hidden" data-role="modalidade-information">
+                            <div class="form-group">
+                                <label class="control-label col-sm-2">Descriçao</label>
+                                <div class="col-sm-8">
+                                    <p class='form-control-static _text-justify' data-name="descricao">
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2">Tipo</label>
+                                <div class="col-sm-3">
+                                    <p class='form-control-static' data-name="tipo">
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2">Coletivo</label>
+                                <div class="col-sm-3">
+                                    <p class='form-control-static' data-name="coletivo" data-value="">
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="hidden" data-role="package-only-fields">
+                                <div class="form-group">
+                                    <label class="control-label col-sm-2">Período</label>
+                                    <div class="col-sm-3">
+                                        <p class='form-control-static' data-name="periodo">
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-sm-2">Frequência</label>
+                                    <div class="col-sm-3">
+                                        <p class='form-control-static' data-name="frequencia" data-value="">
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-sm-2">Dias</label>
+                                    <div class="col-sm-6 _text-center">
+                                        @foreach($dias as $dia)
+                                        <label class="control-label col-sm-3 _text-center" for="agendamento-dia-{{$dia->idDia}}">
+                                            {{$dia->nome}}
+                                            <input name='modalidadeDias[]' class="form-control" id="agendamento-dia-{{$dia->idDia}}" type="checkbox" value="{{$dia->idDia}}" data-role="dia">
+                                        </label>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2">Valor <br/>(cachorro / hora)</label>
+                                <div class="col-sm-3">
+                                    <p class='form-control-static' data-name="precoPorCaoPorHora" data-value="">
+                                    </p>
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label class="control-label col-sm-2">Valor <br/>(cachorro / hora)</label>
-                            <div class="col-sm-3">
-                                <p class='form-control-static' data-name="precoPorCaoPorHora" data-value="">
-                                </p>
-                            </div>
-                        </div>
                     </div>
-                </div>
-            </fieldset>
-            <fieldset data-role="local">
-                <legend  class="_cursor-pointer" data-toggle="collapse" data-target="#local-collapsable">
-                    Local de passeio
-                    <i class="indicator glyphicon glyphicon-chevron-down"></i>
-                </legend>
-                <div id="local-collapsable" class="collapse in">
-                    <div class="form-group">
-                        <label class="control-label col-sm-2" for='agendamento-local'>Nome</label>
-                        <div class='col-sm-3'>
-                            <select required class="form-control" id="agendamento-local" name="local">
-                                @if(!empty($localPreSelecionado))
-                                <option value="{{$localPreSelecionado->idLocal}}">{{$localPreSelecionado->nome}}</option>
-                                @else
+                </fieldset>
+                <fieldset data-role="local">
+                    <legend  class="_cursor-pointer" data-toggle="collapse" data-target="#local-collapsable">
+                        Local de passeio
+                        <i class="indicator glyphicon glyphicon-chevron-down"></i>
+                    </legend>
+                    <div id="local-collapsable" class="collapse in">
+                        <div class="form-group">
+                            <label class="control-label col-sm-2" for='agendamento-local'>Nome</label>
+                            <div class='col-sm-3'>
+                                <select required class="form-control" id="agendamento-local" name="local">
                                     <option value="" selected>Selecione um local de passeio</option>
                                     @foreach($locais as $local)
                                     <option value="{{$local->idLocal}}">{{$local->nome}}</option>
                                     @endforeach
-                                @endif
-                            </select>
-                        </div>
-                    </div>
-                    <div class="hidden" data-role="local-information">
-                        <div class="form-group">
-                            <label class="control-label col-sm-2">Imagem</label>
-                            <div class="col-sm-3">
-                                <img src="" data-name="imagem" alt=""/>
+                                </select>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label class="control-label col-sm-2">Link para detalhes</label>
-                            <div class="col-sm-3">
-                                <p class="form-control-static">
-                                    <a data-name="link" href="#" target="_blank">
-                                    </a>
-                                </p>
+                        <div class="hidden" data-role="local-information">
+                            <div class="form-group">
+                                <label class="control-label col-sm-2">Imagem</label>
+                                <div class="col-sm-3">
+                                    <img src="" data-name="imagem" alt=""/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2">Link para detalhes</label>
+                                <div class="col-sm-3">
+                                    <p class="form-control-static">
+                                        <a data-name="link" href="#" target="_blank">
+                                        </a>
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </div>
+                </fieldset>
+                <fieldset data-role="caes">
+                    <legend  class="_cursor-pointer" data-toggle="collapse" data-target="#cao-collapsable">
+                        Cachorros
+                        <i class="indicator glyphicon glyphicon-chevron-down"></i>
+                    </legend>
+                    <div id="cao-collapsable" class="collapse in table-responsive">
+                        <p class="hidden" data-role="porteDoPasseioWrapper"><b>Porte do passeio: </b><span data-role="porteDoPasseio"></span></p>
+                        <p>Selecione quais de seus cachorros participarão do(s) passeio(s) agendado(s):</p>
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Foto</th>
+                                    <th>Nome</th>
+                                    <th>Porte</th>
+                                    <th>Participação</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($caes as $cao)
+                                <tr data-id="{{$cao->idCao}}" data-role="cao" class="_error-color">
+                                    <td>
+                                        <img width="100px" height="100px" src='{{$cao->thumbnail}}' />
+                                    </td>
+                                    <td data-name="nome">
+                                        {{$cao->nome}}
+                                    </td>
+                                    <td  data-name="porte" data-value="{{$cao->porte}}">
+                                        {{$cao->porteFormatado}}
+                                    </td>
+                                    <td data-name="participacao">
+                                        <input class="hidden" type="checkbox" name="caes[]" value="{{$cao->idCao}}" data-role="value"/>
+                                        <span data-role="label">
+                                            Não participará
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="button-group">
+                                            <button class="btn btn-success" type="button" data-action="incluir-cao">
+                                                <i class="glyphicon glyphicon-ok"></i>
+                                                Incluir
+                                            </button>
+                                            <button class="btn btn-danger hidden" type="button" data-action="remover-cao">
+                                                <i class="glyphicon glyphicon-remove"></i>
+                                                Remover
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </fieldset>
+                <hr/>
+                <p><b>Duração do passeio:</b> <span data-role="duracao">Não definido</span></p>
+                <p><b>Preço por passeio:</b> <span data-role="precoPorPasseio">Não definido</span></p>
+                <p><b>Quantidade de passeios:</b> <span data-role="quantidadePasseio">Não definido</span></p>
+                <p><b>Preço total:</b> <span data-role="precoTotal">Não definido</span></p>
+                <hr/>
+                <p>
+                    * - Para selecionar os horários de início e fim, insira manualmente ou clique em alguma das horas na lista de horários do dia.
+                </p>
+                <p>
+                    ** - Para solicitar inclusão em algum dos passeios coletivos, clique um dos que estão disponíveis na lista de horários do dia.
+                </p>
+                <p>
+                    *** - Para agendamentos de pacotes de passeio, a data do primeiro passeio agendado é o próximo dia da semana dos selecionados a partir da data escolhida no calendário.
+                </p>
+                <hr/>
+                <div class="button-group pull-right">
+                    <button class="btn btn-warning hidden" type="button" data-action="cancelar-passeio-coletivo">
+                        <i class="glyphicon glyphicon-remove"></i>
+                        Cancelar inclusão
+                    </button>
+                    <button class="btn btn-success" type="submit">
+                        <i class="glyphicon glyphicon-ok"></i>
+                        Solicitar
+                    </button>
                 </div>
-            </fieldset>
-            <fieldset data-role="caes">
-                <legend  class="_cursor-pointer" data-toggle="collapse" data-target="#cao-collapsable">
-                    Cachorros
-                    <i class="indicator glyphicon glyphicon-chevron-down"></i>
-                </legend>
-                <div id="cao-collapsable" class="collapse in table-responsive">
-                    <p class="hidden" data-role="porteDoPasseioWrapper"><b>Porte do passeio: </b><span data-role="porteDoPasseio"></span></p>
-                    <p>Selecione quais de seus cachorros participarão do(s) passeio(s) agendado(s):</p>
-                    <table class="table table-striped table-hover">
-                        <thead>
-                            <tr>
-                                <th>Foto</th>
-                                <th>Nome</th>
-                                <th>Porte</th>
-                                <th>Participação</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($caes as $cao)
-                            <tr data-id="{{$cao->idCao}}" data-role="cao" class="_error-color">
-                                <td>
-                                    <img width="100px" height="100px" src='{{$cao->thumbnail}}' />
-                                </td>
-                                <td data-name="nome">
-                                    {{$cao->nome}}
-                                </td>
-                                <td  data-name="porte" data-value="{{$cao->porte}}">
-                                    {{$cao->porteFormatado}}
-                                </td>
-                                <td data-name="participacao">
-                                    <input class="hidden" type="checkbox" name="caes[]" value="{{$cao->idCao}}" data-role="value"/>
-                                    <span data-role="label">
-                                        Não participará
-                                    </span>
-                                </td>
-                                <td>
-                                    <div class="button-group">
-                                        <button class="btn btn-success" type="button" data-action="incluir-cao">
-                                            <i class="glyphicon glyphicon-ok"></i>
-                                            Incluir
-                                        </button>
-                                        <button class="btn btn-danger hidden" type="button" data-action="remover-cao">
-                                            <i class="glyphicon glyphicon-remove"></i>
-                                            Remover
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            </fieldset>
-            <hr/>
-            <p><b>Duração do passeio:</b> <span data-role="duracao">Não definido</span></p>
-            <p><b>Preço por passeio:</b> <span data-role="precoPorPasseio">Não definido</span></p>
-            <p><b>Quantidade de passeios:</b> <span data-role="quantidadePasseio">Não definido</span></p>
-            <p><b>Preço total:</b> <span data-role="precoTotal">Não definido</span></p>
-            <hr/>
-            <p>
-                * - Para selecionar os horários de início e fim, insira manualmente ou clique em alguma das horas na lista de horários do dia.
-            </p>
-            <p>
-                ** - Para solicitar inclusão em algum dos passeios coletivos, clique um dos que estão disponíveis na lista de horários do dia.
-            </p>
-            <p>
-                *** - Para agendamentos de pacotes de passeio, a data do primeiro passeio agendado é o próximo dia da semana dos selecionados a partir da data escolhida no calendário.
-            </p>
-            <hr/>
-            <div class="button-group">
-                <button class="btn btn-warning hidden" type="button" data-action="cancelar-passeio-coletivo">
-                    <i class="glyphicon glyphicon-remove"></i>
-                    Cancelar inclusão
-                </button>
-                <button class="btn btn-success" type="submit">
-                    <i class="glyphicon glyphicon-ok"></i>
-                    Solicitar
-                </button>
-            </div>
-        </form>
-    </div>
+            </form>
+        </div>
+    </section>
 </section>
 @endsection
 
@@ -291,10 +298,6 @@ foreach ($passeios as $passeio) {
         var url = "{!! route('passeio.porData.json.get', ['dia' => '!dia', 'mes' => '!mes', 'ano' => '!ano']) !!}";
         var urlSemDia = "{!! route('passeio.porData.json.get', ['mes' => '!mes', 'ano' => '!ano']) !!}";
         var dayClickAjax = null;
-        
-        @if(isset($localPreSelecionado))
-            carregarDetalhesDoLocal("{!!$localPreSelecionado->idLocal!!}", false);
-        @endif
 
         $calendario.responsiveCalendar({
             "translateMonths": globals.months,
@@ -537,7 +540,7 @@ foreach ($passeios as $passeio) {
             $wrapper.scrollView();
         });
 
-        $form.defaultAjaxSubmit("{!! route('cliente.agendamento.get') !!}", function () {
+        $form.defaultAjaxSubmit("{!! route('admin.agendamento.listagem.get') !!}", function () {
             var $caesQueParticiparao = $caes.find("[data-role='cao']").filter(function () {
                 return $(this).find("input[name='caes[]']:checked").length > 0;
             });
@@ -628,7 +631,7 @@ foreach ($passeios as $passeio) {
 
         function prepararInclusaoParaPasseioColetivo(idPasseio, inicio, fim, idLocal, porte) {
             resetarCampos();
-            
+
             $form.find("input[name='idPasseioColetivo']").val(idPasseio);
 
             $startingTime.val(inicio);
@@ -772,7 +775,7 @@ foreach ($passeios as $passeio) {
 
         function restaurarEstadoBaseDaTela() {
             $btnCancelarPasseioColetivo.addClass("hidden");
-            
+
             resetarCampos();
             resetarParticipacaoDosCaes();
             limparEstadoDaTimetable();
@@ -783,18 +786,18 @@ foreach ($passeios as $passeio) {
 
         function resetarCampos() {
             $form.find("input[name='idPasseioColetivo']").val("");
-            
+
             $startingTime.val("");
             $startingTime.prop("disabled", false);
-            
+
             $endingTime.val("");
             $endingTime.prop("disabled", false);
-            
+
             var $localSelect = $local.find("select[name='local']");
             $localSelect.find("option[value='']").prop("selected", true);
             $localSelect.trigger("change");
             $localSelect.prop("disabled", false);
-            
+
             var $modalidadeSelect = $modalidade.find("select[name='modalidade']");
             $modalidadeSelect.find("option[value='']").prop("selected", true);
             $modalidadeSelect.trigger("change");
@@ -802,7 +805,7 @@ foreach ($passeios as $passeio) {
 
             $porteDoPasseio.attr("data-value", "").text("");
             $porteDoPasseioWrapper.addClass("hidden");
-            
+
             $form.find("input,select").filter(".-error,.-success").removeClass("-error").removeClass("-success");
         }
 

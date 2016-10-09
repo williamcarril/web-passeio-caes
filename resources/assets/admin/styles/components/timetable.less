@@ -1,0 +1,42 @@
+// -------------------------
+// Timetable - Component
+// -------------------------
+.timetable {
+    .rem("margin-bottom", @base-space);
+    
+    .time-label {
+        cursor: pointer;
+
+        &:hover {
+            font-weight: bold;
+        }
+        
+        &.-starting-time {
+            color: #5cb85c;
+        }
+        &.-ending-time {
+            color: #d9534f;
+        }
+    }
+    .time-entry {
+        cursor: pointer;
+        font-size: @base-font-size;
+        background-color: @container-color;
+        border-color: @container-divisory-color;
+        
+        &:hover {
+            background-color: lighten(@container-color, 25%);
+            border-color: @container-divisory-color;
+        }
+    }
+    
+    aside .row-heading {
+        @media @smartphones {
+            overflow-x: scroll;
+        }
+    }
+}
+
+.timetable-wrapper {
+    .rem("min-height", 120px);
+}

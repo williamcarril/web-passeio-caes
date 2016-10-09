@@ -43,8 +43,8 @@ Route::group(["prefix" => "cliente"], function() {
         Route::get("/cachorro/{id}/vacinas", ["as" => "cliente.caes.vacina.get", "uses" => "ClienteController@route_getVacinacao"]);
 
         Route::group(["prefix" => "agendamento"], function() {
-            Route::get("/", ["as" => "cliente.agendamento.get", "uses" => "ClienteController@route_getAgendamentos"]);
-            Route::get("/{id}", ["as" => "cliente.agendamento.detalhes.get", "uses" => "ClienteController@route_getAgendamento"])
+            Route::get("/", ["as" => "cliente.agendamento.get", "uses" => "AgendamentoController@route_getAgendamentosDoCliente"]);
+            Route::get("/{id}", ["as" => "cliente.agendamento.detalhes.get", "uses" => "AgendamentoController@route_getAgendamentoDoCliente"])
                     ->where('id', '[0-9]+');
             Route::post("/{id}/cancelar", ["as" => "cliente.agendamento.cancelar.post", "uses" => "AgendamentoController@route_postCancelarAgendamento"])
                     ->where('id', '[0-9]+');
@@ -53,10 +53,10 @@ Route::group(["prefix" => "cliente"], function() {
         });
         
         Route::group(["prefix" => "passeio"], function() {
-            Route::get("/", ["as" => "cliente.passeio.get", "uses" => "ClienteController@route_getPasseios"]);
-            Route::get("/{id}", ["as" => "cliente.passeio.detalhes.get", "uses" => "ClienteController@route_getPasseio"])
+            Route::get("/", ["as" => "cliente.passeio.confirmado.get", "uses" => "PasseioController@route_getPasseiosConfirmadosDoCliente"]);
+            Route::get("/{id}", ["as" => "cliente.passeio.detalhes.get", "uses" => "PasseioController@route_getPasseioDoCliente"])
                     ->where('id', '[0-9]+');
-                    
+            Route::post("/{id}/cancelar", ["as" => "cliente.passeio.cancelar.post", "uses" => "PasseioController@route_postCancelarPasseio"]);
         });
     });
 });
@@ -70,17 +70,14 @@ Route::group(["prefix" => "local"], function() {
 
 Route::group(["prefix" => "agendamento"], function() {
     Route::group(["middleware" => "auth.customer"], function() {
-        Route::get("/", ["as" => "passeio.agendamento.get", "uses" => "AgendamentoController@route_getAgendamento"]);
-        Route::post("/", ["as" => "passeio.agendamento.post", "uses" => "AgendamentoController@route_postAgendamento"]);
+        Route::get("/", ["as" => "passeio.agendamento.get", "uses" => "AgendamentoController@route_getCadastrarAgendamento"]);
+        Route::post("/", ["as" => "passeio.agendamento.post", "uses" => "AgendamentoController@route_postCadastrarAgendamento"]);
     });
 });
 
 Route::group(["prefix" => "passeio"], function() {
     Route::get("/ano/{ano}/mes/{mes?}/dia/{dia?}", ["as" => "passeio.porData.json.get", "uses" => "PasseioController@route_getPasseiosJson"]);
     Route::group(["middleware" => "auth.customer"], function() {
-        Route::get("/", ["as" => "passeio.listagem.get", "uses" => "PasseioController@route_getPasseios"]);
-        Route::get("/{id}", ["as" => "passeio.detalhes.get", "uses" => "PasseioController@route_getPasseio"])
-                ->where('id', '[0-9]+');
         Route::get("/{id}/json", ["as" => "passeio.json.get", "uses" => "PasseioController@route_getPasseioJson"])
                 ->where('id', '[0-9]+');
     });
