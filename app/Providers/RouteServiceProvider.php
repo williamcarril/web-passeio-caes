@@ -16,6 +16,7 @@ class RouteServiceProvider extends ServiceProvider {
      */
     protected $namespace = 'App\Http\Controllers';
     protected $adminNamespace = 'App\Http\Controllers';
+    protected $walkerNamespace = 'App\Http\Controllers';
 
     /**
      * Define your route model bindings, pattern filters, etc.
@@ -48,6 +49,14 @@ class RouteServiceProvider extends ServiceProvider {
      * @return void
      */
     protected function mapWebRoutes(Router $router) {
+        
+        //Walker routes
+        $router->group([
+            "namespace" => $this->walkerNamespace, "middleware" => "walker", "prefix" => "walker"
+        ], function($router) {
+            require app_path("Http/routes.walker.php");
+        });
+        
         //Admin routes
         $router->group([
             'namespace' => $this->adminNamespace, 'middleware' => 'admin', "prefix" => "admin"

@@ -55,11 +55,16 @@ class Handler extends ExceptionHandler {
         if ($this->isHttpException($e)) {
             $path = $request->path();
             $path = explode("/", $path);
-            if (array_shift($path) === "admin") {
+            
+            $firstPath = array_shift($path);
+            if ($firstPath === "admin") {
                 return $this->toIlluminateResponse($this->renderAdminHttpException($e), $e);
-            } else {
-                return $this->toIlluminateResponse($this->renderHttpException($e), $e);
             }
+            
+            if($firstPath === "walker") {
+                return $this->toIlluminateResponse($this->renderWalkerHttpException($e), $e);
+            }
+            return $this->toIlluminateResponse($this->renderHttpException($e), $e);
         } else {
             return $this->toIlluminateResponse($this->convertExceptionToResponse($e), $e);
         }
@@ -70,6 +75,16 @@ class Handler extends ExceptionHandler {
 
         if (view()->exists("admin.errors.{$status}")) {
             return response()->view("admin.errors.{$status}", ['exception' => $e], $status, $e->getHeaders());
+        } else {
+            return $this->convertExceptionToResponse($e);
+        }
+    }
+
+    protected function renderWalkerHttpException(HttpException $e) {
+        $status = $e->getStatusCode();
+
+        if (view()->exists("walker.errors.{$status}")) {
+            return response()->view("walker.errors.{$status}", ['exception' => $e], $status, $e->getHeaders());
         } else {
             return $this->convertExceptionToResponse($e);
         }

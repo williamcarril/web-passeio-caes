@@ -1,4 +1,4 @@
-@extends("layouts.default", ["hasMap" => true])
+@extends("walker.layouts.default", ["hasMap" => true])
 @section("title") Passeio - {{$passeio->idPasseio}} | {{config("app.name")}} @endsection
 
 @section("main")
@@ -9,7 +9,7 @@
     <p><b>Término:</b> {{$passeio->fimFormatado}}</p>
     <p><b>Tipo:</b> {{$passeio->tipo}}</p>
     <p><b>Porte:</b> {{$passeio->porteFormatado}}</p>
-    <p><b>Preço:</b> {{$passeio->getValor($customer, true)}}</p>
+    <p><b>Preço:</b> {{$passeio->getValor(null, true)}}</p>
     <?php
     $statusClass = "";
     switch ($passeio->status) {
@@ -48,22 +48,6 @@
         @include("includes.map", $mapData)
     </section>
     <section>
-        <h2>Passeador</h2>
-        @if(is_null($passeador))
-        <p>Não alocado</p>
-        @else
-        <div class="row">
-            <div class="col-lg-2 ">
-                <img data-name="thumbnail" alt="" src="{!! $passeador->thumbnail !!}"/>
-            </div>
-            <div class="col-lg-6">
-                <p><b>Nome: </b> <span data-name="nome">{{$passeador->nome}}</span></p>
-                <p><b>Telefone: </b> <span data-name="telefone">{{$passeador->telefoneFormatado}}</span></p>
-            </div>
-        </div>
-        @endif
-    </section>
-    <section>
         <h2>Cachorros</h2>
         @if($caes->count() === 0)
         <p>Não há cães confirmados para participar deste passeio.</p>
@@ -75,11 +59,16 @@
                         <th>Foto</th>
                         <th>Nome</th>
                         <th>Porte</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($caes as $cao)
-                    <tr class="{{$cao->idCliente === $customer->idCliente ? "_success-color" : ""}}">
+                    <?php 
+                    $lat = $cao->cliente->lat;
+                    $lng = $cao->cliente->lng;
+                    ?>
+                    <tr>
                         <td>
                             <img width="100px" height="100px" src='{{$cao->thumbnail}}' />
                         </td>
@@ -88,6 +77,12 @@
                         </td>
                         <td  data-name="porte" data-value="{{$cao->porte}}">
                             {{$cao->porteFormatado}}
+                        </td>
+                        <td>
+                            <a href="http://maps.google.com/maps?daddr={{$lat}},{{$lng}}" target="_blank" class="btn btn-default">
+                                <i class="glyphicon glyphicon-road"></i>
+                                Ver rota
+                            </a>
                         </td>
                     </tr>
                     @endforeach
@@ -98,8 +93,29 @@
     </section>
     <hr/>
     <div class="button-group pull-right">
+        <?php 
+        $agora = strtotime(date("Y-m-d H:i:s"));
+        $inicio = strtotime("$passeio->data $passeio->inicio");
+        $fim = strtotime("$passeio->data $passeio->fim");
+        ?>
+        @if($inicio <= $agora && $fim >= $agora && $passeio->status === $statusPasseio["PENDENTE"])
+        <button class="btn btn-success" data-action="iniciar-passeio">
+            <i class="glyphicon glyphicon-ok"></i>
+            Iniciar
+        </button>
+        @endif
+        @if($passeio->status === $statusPasseio["EM_ANDAMENTO"])
+        <button class="btn btn-success" data-action="finalizar-passeio">
+            <i class="glyphicon glyphicon-ok"></i>
+            Finalizar
+        </button>
+        @endif
+        <a href="http://maps.google.com/maps?daddr=lat,long&saddr=lat,long" target="_blank" class="btn btn-default">
+            <i class="glyphicon glyphicon-road"></i>
+            Ver rota
+        </a>
         <?php
-        $podeSerCancelado = $passeio->status !== $statusPasseio["CANCELADO"] && $passeio->status !== $statusPasseio["FEITO"] && $passeio->getCaesConfirmadosDoCliente($customer)->count() > 0
+        $podeSerCancelado = $passeio->status !== $statusPasseio["CANCELADO"] && $passeio->status !== $statusPasseio["FEITO"];
         ?>
         @if($podeSerCancelado)
         <a class="btn btn-danger btn-sm" data-toggle="modal" data-target="#cancelamento-modal">
@@ -151,14 +167,32 @@
                 return;
             }
             $(this).defaultAjaxCall(
-                    "{!! route('cliente.passeio.cancelar.post', ['id' => $passeio->idPasseio]) !!}",
+                    "{!! route('walker.passeio.cancelar.post', ['id' => $passeio->idPasseio]) !!}",
                     "POST",
-                    "{!! route('cliente.passeio.detalhes.get', ['id' => $passeio->idPasseio]) !!}",
+                    "{!! route('walker.passeio.confirmado.listagem.get') !!}",
                     {
                         "motivo": motivo
                     });
         });
-
+        
+        $("[data-action='iniciar-passeio']").click(function(ev) {
+            ev.preventDefault();
+            ev.stopPropagation();
+            $(this).defaultAjaxCall(
+                    "{!! route('walker.passeio.iniciar.post', ['id' => $passeio->idPasseio]) !!}",
+                    "POST",
+                    "{!! route('walker.passeio.detalhes.get', ['id' => $passeio->idPasseio]) !!}"
+            );
+        });
+        $("[data-action='finalizar-passeio']").click(function(ev) {
+            ev.preventDefault();
+            ev.stopPropagation();
+            $(this).defaultAjaxCall(
+                    "{!! route('walker.passeio.finalizar.post', ['id' => $passeio->idPasseio]) !!}",
+                    "POST",
+                    "{!! route('walker.passeio.detalhes.get', ['id' => $passeio->idPasseio]) !!}"
+            );
+        });
         window.decorateMap = function (map) {
             var latLng = new google.maps.LatLng(parseFloat("{!! $local->lat !!}"), parseFloat("{!! $local->lng !!}"));
             var bounds = new google.maps.LatLngBounds();
@@ -170,15 +204,17 @@
                 icon: "{!!asset('img/markers/place.png')!!}"
             }));
             map.circles.push(new google.maps.Circle({
-                strokeColor: '#367A38',
-                strokeOpacity: 0.8,
-                strokeWeight: 2,
-                fillColor: '#367A38',
-                fillOpacity: 0.35,
-                map: map,
-                center: latLng,
-                radius: parseFloat("{!!$local->raioAtuacao!!}")
+            strokeColor: '#367A38',
+                    strokeOpacity: 0.8,
+                    strokeWeight: 2,
+                    fillColor: '#367A38',
+                    fillOpacity: 0.35,
+                    map: map,
+                    center: latLng,
+                    radius: parseFloat("{!!$local->raioAtuacao!!}")
             }));
+            @foreach($caes as $cao)
+            <?php $customer = $cao->cliente; ?>
             var customerLatLng = new google.maps.LatLng(parseFloat("{!!$customer->lat!!}"), parseFloat("{!!$customer->lng!!}"));
             var infowindow = new google.maps.InfoWindow({
                 content: ""
@@ -189,7 +225,7 @@
                 icon: "{!!asset('img/markers/user.png')!!}"
             });
 
-            marker.html = "<p>{!! $customer->nome !!}</p>";
+            marker.html = "<p>Cão: {!! $cao->nome !!}<br/>Cliente: {!! $customer->nome !!}</p>";
 
             marker.addListener('click', function () {
                 infowindow.setContent(this.html);
@@ -197,6 +233,8 @@
             });
 
             map.markers.push(marker);
+            @endforeach
+
             for (var i = 0; i < map.markers.length; i++) {
                 bounds.extend(map.markers[i].getPosition());
             }

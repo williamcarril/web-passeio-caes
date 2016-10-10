@@ -37,7 +37,7 @@ class Funcionario extends Pessoa {
     }
 
     public function passeios() {
-        return $this->hasMany("\App\Models\Eloquent\Passeio", "idFuncionario", "idPasseador");
+        return $this->hasMany("\App\Models\Eloquent\Passeio", "idPasseador", "idFuncionario");
     }
 
     public function getAuthIdentifierName() {

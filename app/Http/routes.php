@@ -13,15 +13,8 @@
 if (!\App::environment("production")) {
     Route::group(["prefix" => "tests"], function() {
         Route::get("/", ["as" => "test", "uses" => function() {
-            $customPriority = [
-                App\Models\Eloquent\Enums\AgendamentoStatus::CLIENTE => 1,
-                App\Models\Eloquent\Enums\AgendamentoStatus::FUNCIONARIO => 0
-            ];
-            $priority = [App\Models\Eloquent\Enums\AgendamentoStatus::CLIENTE => 0, App\Models\Eloquent\Enums\AgendamentoStatus::FUNCIONARIO => 1, App\Models\Eloquent\Enums\AgendamentoStatus::CANCELADO => 2, App\Models\Eloquent\Enums\AgendamentoStatus::FEITO => 3];
-            $priority = array_merge($priority, $customPriority);
-            echo json_encode(array($priority));
-            exit;
-            }]);
+            
+        }]);
     });
 }
 

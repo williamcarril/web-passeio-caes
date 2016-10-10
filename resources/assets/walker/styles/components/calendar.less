@@ -1,0 +1,38 @@
+// -------------------------
+// Calendar - Component
+// -------------------------
+.responsive-calendar {
+    .rem("margin-top", @base-space);
+}
+
+.responsive-calendar .day {
+    .rem("font-size", @base-font-size);
+    a {
+        color: @link-color;
+    }
+    a:hover { 
+        background-color: lighten(@link-hover-color, 50%);
+    }
+    &.header {
+        border-bottom: 1px @divisory-color solid;
+    }
+    &.active {
+        a {
+            border: 1px solid @container-divisory-color;
+            background-color: @container-color;
+            color: @container-font-color;
+        }
+        a:hover {
+            background-color: lighten(@container-color, 15%);
+        }
+    }
+    &.today {
+        a {
+            color: @container-link-color;
+            background-color: lighten(@container-color, 10%);
+        }
+        a:hover {
+            background-color: lighten(@container-color, 25%);
+        }
+    }
+}

@@ -67,9 +67,6 @@ class Cao extends \WGPC\Eloquent\Model {
         return asset("img/dog.png");
     }
 
-    /**
-     * @todo Definir thumbnail padrão
-     */
     public function getThumbnailAttribute() {
         $imagem = $this->imagem;
         if (!is_null($imagem)) {

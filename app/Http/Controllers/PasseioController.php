@@ -21,6 +21,93 @@ class PasseioController extends Controller {
         $this->auth = $auth;
     }
 
+    // <editor-fold defaultstate="collapsed" desc="Rotas do passeador">
+    // <editor-fold defaultstate="collapsed" desc="Rotas que retornam Views">
+    public function route_getWalkerPasseio(Request $req, $id) {
+        $passeador = $this->auth->guard("walker")->user();
+        $passeio = $passeador->passeios()->where("idPasseio", $id)->firstOrFail();
+        $data = [
+            "passeio" => $passeio,
+            "statusPasseio" => PasseioStatus::getConstants(false),
+            "local" => $passeio->local,
+            "caes" => $passeio->caes,
+            "clientes" => $passeio->getClientesConfirmados()
+        ];
+        return response()->view("walker.passeio.detalhes", $data);
+    }
+
+    public function route_getWalkerPasseiosConfirmados(Request $req) {
+        $passeador = $this->auth->guard("walker")->user();
+        $passeios = $passeador->passeios()->agendamentoConfirmado()->orderBy("data", "desc")->priorizarPorStatus()->get();
+        $data = [
+            "passeios" => $passeios,
+            "statusPasseio" => PasseioStatus::getConstants(false)
+        ];
+        return response()->view("walker.passeio.listagem", $data);
+    }
+    
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Rotas POST que retornam JSON">
+    public function route_postWalkerCancelarPasseio(Request $req, $id) {
+        $passeador = $this->auth->guard("walker")->user();
+        $motivo = $req->input("motivo", null);
+        $passeio = $passeador->passeios()->where("idPasseio", $id)->first();
+        if (is_null($passeio)) {
+            return $this->defaultJsonResponse(false, trans("alert.error.generic", ["message" => "cancelar o passeio"]), null);
+        }
+        \DB::beginTransaction();
+        try {
+            if (!$this->cancelarPasseio($passeio, $passeador, $motivo)) {
+                \DB::rollBack();
+                return $this->defaultJsonResponse(false, $passeio->getErrors());
+            }
+            \DB::commit();
+            return $this->defaultJsonResponse();
+        } catch (\Exception $ex) {
+            \DB::rollBack();
+            return $this->defaultJsonResponse(false, $ex->getMessage());
+        }
+    }
+    public function route_postWalkerIniciarPasseio(Request $req, $id) {
+        $passeador = $this->auth->guard("walker")->user();
+        $passeio = $passeador->passeios()->where("idPasseio", $id)->first();
+        if (is_null($passeio)) {
+            return $this->defaultJsonResponse(false, trans("alert.error.generic", ["message" => "cancelar o passeio"]), null);
+        }
+        \DB::beginTransaction();
+        try {
+            if (!$this->iniciarPasseio($passeio)) {
+                \DB::rollBack();
+                return $this->defaultJsonResponse(false, $passeio->getErrors());
+            }
+            \DB::commit();
+            return $this->defaultJsonResponse();
+        } catch (\Exception $ex) {
+            \DB::rollBack();
+            return $this->defaultJsonResponse(false, $ex->getMessage());
+        }
+    }
+    public function route_postWalkerFinalizarPasseio(Request $req, $id) {
+        $passeador = $this->auth->guard("walker")->user();
+        $passeio = $passeador->passeios()->where("idPasseio", $id)->first();
+        if (is_null($passeio)) {
+            return $this->defaultJsonResponse(false, trans("alert.error.generic", ["message" => "cancelar o passeio"]), null);
+        }
+        \DB::beginTransaction();
+        try {
+            if (!$this->finalizarPasseio($passeio)) {
+                \DB::rollBack();
+                return $this->defaultJsonResponse(false, $passeio->getErrors());
+            }
+            \DB::commit();
+            return $this->defaultJsonResponse();
+        } catch (\Exception $ex) {
+            \DB::rollBack();
+            return $this->defaultJsonResponse(false, $ex->getMessage());
+        }
+    }
+    // </editor-fold>
+    // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Rotas do site">
     // <editor-fold defaultstate="collapsed" desc="Rotas que retornam Views">
     public function route_getPasseioDoCliente(Request $req, $id) {
@@ -242,6 +329,26 @@ class PasseioController extends Controller {
     // </editor-fold>
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Outros métodos">
+    public function iniciarPasseio(Passeio $passeio) {
+        $agora = strtotime(date("Y-m-d H:i:s"));
+        $inicio = strtotime("$passeio->data $passeio->inicio");
+        $fim = strtotime("$passeio->data $passeio->fim");
+        if($inicio > $agora || $fim < $agora) {
+            $passeio->putErrors(["Este passeio só pode ser iniciado no dia {$passeio->dataFormatada} entre {$passeio->inicioFormatado} e {$passeio->fimFormatado}."]);
+            return false;
+        }
+        $passeio->status = PasseioStatus::EM_ANDAMENTO;
+        return $passeio->save();
+    }
+    public function finalizarPasseio(Passeio $passeio) {
+        if($passeio->status !== PasseioStatus::EM_ANDAMENTO) {
+            $passeio->putErrors(["Este passeio só pode ser finalizado caso esteja em andamento."]);
+            return false;
+        }
+        $passeio->status = PasseioStatus::FEITO;
+        return $passeio->save();
+    }
+    
     public function cancelarPasseio($passeio, $solicitante, $motivo, $agendamento = null) {
         //Se o passeio não estiver pendente de alguma forma, ou ele já foi cancelado, ou já foi concluído
         //ou já iniciado. Portanto, o cancelamento é impossível.

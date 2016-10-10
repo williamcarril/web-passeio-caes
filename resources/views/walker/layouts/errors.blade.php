@@ -18,7 +18,7 @@ $linkMessage = isset($linkMessage) ? $linkMessage : "Retorne";
                 padding: 0;
                 width: 100%;
                 color: #FFF;
-                background-color: #000;
+                background-color: #0D2034;
                 display: table;
                 font-weight: 100;
                 font-family: 'Lato';
@@ -56,12 +56,12 @@ $linkMessage = isset($linkMessage) ? $linkMessage : "Retorne";
                 @yield("message")
                 <br/>
                 <br/>
-                @if(is_null($link))
+                @if(!is_null($link))
                 <p>{{$linkMessage}} clicando <a href="{{$link}}">aqui</a>.</p>
                 <a href="{{$link}}"><img src="{{asset("img/medium-logo-white.png")}}" /></a>
                 @else
                 @if($hasLinkToHome)
-                <p>Retorne para a HOME clicando <a href="{{route("admin.home")}}">aqui</a>.</p>
+                <p>Retorne para a HOME clicando <a href="{{route("walker.home")}}">aqui</a>.</p>
                 <a href="{{route("admin.home")}}"><img src="{{asset("img/medium-logo-white.png")}}" /></a>
                 @else
                 <img src="{{asset("img/logo-white.png")}}" />

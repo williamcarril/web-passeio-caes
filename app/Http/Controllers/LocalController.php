@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Models\Eloquent\Local;
+use App\Models\Eloquent\Enums\ImagemTamanho;
 use Illuminate\Contracts\Auth\Factory as AuthFactory;
 
 class LocalController extends Controller {

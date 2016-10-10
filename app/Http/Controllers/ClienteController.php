@@ -145,10 +145,7 @@ class ClienteController extends Controller {
             return $this->defaultJsonResponse(false, $ex->getMessage());
         }
     }
-
-    /**
-     * @todo Impedir alteração de regras para passeio como "Porte" e "Gênero".
-     */
+    
     public function route_postCaes(Request $req) {
         $id = $req->input("id");
         $cliente = $this->auth->guard("web")->user();

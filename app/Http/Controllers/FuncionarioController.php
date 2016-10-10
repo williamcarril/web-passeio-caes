@@ -239,4 +239,31 @@ class FuncionarioController extends Controller {
 
 // </editor-fold>
     // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Rotas do passeador">
+    // <editor-fold defaultstate="collapsed" desc="Rotas que retornam Views">
+    public function route_getWalkerLogin() {
+        $data = [];
+        return response()->view("walker.login", $data);
+    }
+    
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Rotas que causam redirects">
+    public function route_postWalkerLogin(Request $req) {
+        $email = $req->input("email");
+        $senha = $req->input("senha");
+        $funcionario = Funcionario::passeador()->where(["email" => $email])->first();
+        if (!is_null($funcionario) && \Hash::check($senha, $funcionario->senha)) {
+            $this->auth->guard("walker")->login($funcionario);
+            return redirect()->route("walker.home");
+        }
+        return redirect()->back()->withErrors(["As credenciais fornecidas estão incorretas."]);
+    }
+
+    public function route_getWalkerLogout(Request $req) {
+        $this->auth->guard("walker")->logout();
+        return redirect()->route("walker.login.get");
+    }
+
+    // </editor-fold>
+    // </editor-fold>
 }
