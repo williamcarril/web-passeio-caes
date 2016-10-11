@@ -125,6 +125,15 @@ class Passeio extends \WGPC\Eloquent\Model {
         return $agendamento->caes;
     }
 
+    public function getCaesConfirmadosDoClienteFormatados($cliente) {
+        $caesDoCliente = $this->getCaesConfirmadosDoCliente($cliente);
+        $nomesDosCães = $caesDoCliente->map(function($cao) {
+            return $cao->nome;
+        })->toArray();
+        return str_lreplace(", ", " e ", implode(", ", $nomesDosCães));
+    }
+    
+    
     public function getCaesConfirmadosDoCliente($cliente) {
         if (is_numeric($cliente)) {
             $cliente = (object) ["idCliente" => $cliente];

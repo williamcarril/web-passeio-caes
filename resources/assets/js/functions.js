@@ -557,4 +557,28 @@
         }
         return strHours;
     };
+
+    //Gmaps Utils
+    window.makeMarkerWithInfowindow = function (map, position, html, icon) {
+        var markerData = {
+            "map": map,
+            "position": position
+        };
+        if (icon) {
+            markerData.icon = icon;
+        }
+        var infowindow = new google.maps.InfoWindow({
+            content: ""
+        });
+
+        var marker = new google.maps.Marker(markerData);
+        marker.html = html;
+
+        marker.addListener('click', function () {
+            infowindow.setContent(this.html);
+            infowindow.open(map, this);
+        });
+
+        return marker;
+    };
 })();

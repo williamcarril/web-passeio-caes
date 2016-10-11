@@ -7027,11 +7027,11 @@ textarea.-error {
   transform: translateX(100%);
 }
 #sidebar a {
-  color: #BEEE9E;
+  color: #b3b3b3;
 }
 #sidebar a:hover {
   text-decoration: none;
-  color: #71D161;
+  color: #808080;
   background: rgba(0, 0, 0, 0);
 }
 #sidebar.toggled {
@@ -7057,7 +7057,7 @@ textarea.-error {
   Ignore: a;line-height:2.5rem;
   Ignore: a;padding:5px;
   Ignore: a;padding:0.3125rem;
-  border-bottom: 1px solid #E6FFBF;
+  border-bottom: 1px solid #17395d;
 }
 #sidebar > .sidebar > li > .close-icon {
   cursor: pointer;
@@ -7089,11 +7089,11 @@ textarea.-error {
 }
 .btn.btn-default.-green {
   background-color: #0D2034;
-  color: #BEEE9E;
+  color: #b3b3b3;
   border-color: #FFF;
 }
 .btn.btn-default.-green:hover {
-  color: #71D161;
+  color: #808080;
   border-color: #bfbfbf;
 }
 .responsive-calendar {
@@ -7114,7 +7114,7 @@ textarea.-error {
   border-bottom: 1px #0D2034 solid;
 }
 .responsive-calendar .day.active a {
-  border: 1px solid #E6FFBF;
+  border: 1px solid #17395d;
   background-color: #0D2034;
   color: #FFF;
 }
@@ -7122,7 +7122,7 @@ textarea.-error {
   background-color: #1c4671;
 }
 .responsive-calendar .day.today a {
-  color: #BEEE9E;
+  color: #b3b3b3;
   background-color: #17395d;
 }
 .responsive-calendar .day.today a:hover {
@@ -7154,7 +7154,7 @@ fieldset > legend > .indicator {
 }
 .panel.-green {
   background-color: #0D2034;
-  color: #BEEE9E;
+  color: #b3b3b3;
   border-color: #FFF;
 }
 .search-box.-map {

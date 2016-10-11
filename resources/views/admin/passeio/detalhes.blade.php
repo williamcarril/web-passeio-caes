@@ -45,7 +45,7 @@
             @else
             <div data-role="passeador">
                 <div class="col-lg-2 ">
-                    <img data-name="thumbnail" alt="" src="{!! $passeador->thumbnail !!}"/>
+                    <img data-name="thumbnail" alt="{{$passeador->nome}}" src="{{ $passeador->thumbnail }}"/>
                 </div>
                 <div class="col-lg-6">
                     <p><b>Nome: </b> <span data-name="nome">{{$passeador->nome}}</span></p>

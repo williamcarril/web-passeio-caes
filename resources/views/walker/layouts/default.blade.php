@@ -18,6 +18,7 @@ $hasMap = isset($hasMap) ? $hasMap : false;
         <meta content="{{config("app.name")}}" name="application-name"/>
         <meta content="@yield('keywords', '')" name="keywords" />
         <meta content="@yield('description', '')" name="description"/>
+        <meta name="gmaps-key" content="{{config("services.google.maps.key")}}"/>
     </head>
     <body>
         <div id="wrapper">

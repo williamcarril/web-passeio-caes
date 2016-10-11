@@ -31,7 +31,7 @@ class PasseioController extends Controller {
             "statusPasseio" => PasseioStatus::getConstants(false),
             "local" => $passeio->local,
             "caes" => $passeio->caes,
-            "clientes" => $passeio->getClientesConfirmados()
+            "clientesConfirmados" => $passeio->getClientesConfirmados()
         ];
         return response()->view("walker.passeio.detalhes", $data);
     }
@@ -44,6 +44,19 @@ class PasseioController extends Controller {
             "statusPasseio" => PasseioStatus::getConstants(false)
         ];
         return response()->view("walker.passeio.listagem", $data);
+    }
+
+    public function route_getWalkerPasseioRotas(Request $req, $id) {
+        $passeador = $this->auth->guard("walker")->user();
+        $passeio = $passeador->passeios()->where("idPasseio", $id)->firstOrFail();
+        $data = [
+            "passeio" => $passeio,
+            "statusPasseio" => PasseioStatus::getConstants(false),
+            "local" => $passeio->local,
+            "caes" => $passeio->caes,
+            "clientesConfirmados" => $passeio->getClientesConfirmados()
+        ];
+        return response()->view("walker.passeio.rotas", $data);
     }
     
     // </editor-fold>

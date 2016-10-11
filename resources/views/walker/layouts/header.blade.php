@@ -21,6 +21,9 @@
                 <li>
                     <a href="{{route("walker.passeio.confirmado.listagem.get")}}">Passeios</a>
                 </li>
+                <li>
+                    <a href="{{route("walker.local.listagem.get")}}">Locais</a>
+                </li>
             </ul>
             @endif
         </div>

@@ -1,5 +1,5 @@
 @extends("walker.layouts.default", ["hasMap" => true])
-@section("title") Passeio - {{$passeio->idPasseio}} | {{config("app.name")}} @endsection
+@section("title") Passeio - {{$passeio->idPasseio}} | {{config("app.name")}} Walker @endsection
 
 @section("main")
 <section>
@@ -36,6 +36,12 @@
         <h2>Local de passeio</h2>
         <p><b>Nome: </b>{{$local->nome}}</p>
         <p><b>Endereço: </b>{{$local->getEndereco()}}</p>
+        <p>
+            <a href="http://maps.google.com/maps?daddr={{$local->lat}},{{$local->lng}}" target="_blank" class="btn btn-default">
+                <i class="glyphicon glyphicon-road"></i>
+                Ver rota
+            </a>
+        </p>
         <?php
         $mapData = [
             "id" => "local-map",
@@ -59,6 +65,8 @@
                         <th>Foto</th>
                         <th>Nome</th>
                         <th>Porte</th>
+                        <th>Cliente</th>
+                        <th>Contato</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -78,6 +86,12 @@
                         <td  data-name="porte" data-value="{{$cao->porte}}">
                             {{$cao->porteFormatado}}
                         </td>
+                        <td>{{$cao->cliente->nome}}</td>
+                        <td>
+                            <a href="tel:{{$cao->cliente->telefone}}">
+                                {{$cao->cliente->telefoneFormatado}}
+                            </a>
+                            </td>
                         <td>
                             <a href="http://maps.google.com/maps?daddr={{$lat}},{{$lng}}" target="_blank" class="btn btn-default">
                                 <i class="glyphicon glyphicon-road"></i>
@@ -110,9 +124,9 @@
             Finalizar
         </button>
         @endif
-        <a href="http://maps.google.com/maps?daddr=lat,long&saddr=lat,long" target="_blank" class="btn btn-default">
+        <a href="{{route("walker.passeio.rotas.get", ["id" => $passeio->idPasseio])}}" class="btn btn-default">
             <i class="glyphicon glyphicon-road"></i>
-            Ver rota
+            Ver rota completa
         </a>
         <?php
         $podeSerCancelado = $passeio->status !== $statusPasseio["CANCELADO"] && $passeio->status !== $statusPasseio["FEITO"];
@@ -145,6 +159,12 @@
         </div>
     </div>
 </section>
+@endsection
+
+@section("templates")
+    @foreach($clientesConfirmados as $cliente)
+    @include("includes.templates.gmap-passeio-cliente-tooltip", ["cliente" => $cliente, "passeio" => $passeio]);
+    @endforeach
 @endsection
 
 @section("scripts")
@@ -193,16 +213,16 @@
                     "{!! route('walker.passeio.detalhes.get', ['id' => $passeio->idPasseio]) !!}"
             );
         });
+        
         window.decorateMap = function (map) {
             var latLng = new google.maps.LatLng(parseFloat("{!! $local->lat !!}"), parseFloat("{!! $local->lng !!}"));
             var bounds = new google.maps.LatLngBounds();
             map.markers = [];
             map.circles = [];
-            map.markers.push(new google.maps.Marker({
-                position: latLng,
-                map: map,
-                icon: "{!!asset('img/markers/place.png')!!}"
-            }));
+            
+            var localMarker = makeMarkerWithInfowindow(map,latLng, "<p>{!! $local->nome !!}</p>", "{!!asset('img/markers/place.png')!!}");
+            map.markers.push(localMarker);
+            
             map.circles.push(new google.maps.Circle({
             strokeColor: '#367A38',
                     strokeOpacity: 0.8,
@@ -213,26 +233,16 @@
                     center: latLng,
                     radius: parseFloat("{!!$local->raioAtuacao!!}")
             }));
-            @foreach($caes as $cao)
-            <?php $customer = $cao->cliente; ?>
-            var customerLatLng = new google.maps.LatLng(parseFloat("{!!$customer->lat!!}"), parseFloat("{!!$customer->lng!!}"));
-            var infowindow = new google.maps.InfoWindow({
-                content: ""
-            });
-            var marker = new google.maps.Marker({
-                position: customerLatLng,
-                map: map,
-                icon: "{!!asset('img/markers/user.png')!!}"
-            });
-
-            marker.html = "<p>Cão: {!! $cao->nome !!}<br/>Cliente: {!! $customer->nome !!}</p>";
-
-            marker.addListener('click', function () {
-                infowindow.setContent(this.html);
-                infowindow.open(map, this);
-            });
-
-            map.markers.push(marker);
+            
+            @foreach($clientesConfirmados as $customer)
+                var customerLatLng = new google.maps.LatLng(parseFloat("{!!$customer->lat!!}"), parseFloat("{!!$customer->lng!!}"));
+                var html = globals.templates.find("[data-template='cliente-tooltip-{!!$customer->idCliente!!}']").html();
+                map.markers.push(makeMarkerWithInfowindow(
+                    map, 
+                    customerLatLng, 
+                    html, 
+                    "{!!asset('img/markers/user.png')!!}")
+                );
             @endforeach
 
             for (var i = 0; i < map.markers.length; i++) {

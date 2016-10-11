@@ -11,11 +11,26 @@ use Illuminate\Contracts\Auth\Factory as AuthFactory;
 class LocalController extends Controller {
 
     private $auth;
+    private $imageController;
 
-    public function __construct(AuthFactory $auth) {
+    public function __construct(AuthFactory $auth, ImagemController $imageController) {
         $this->auth = $auth;
+        $this->imageController = $imageController;
     }
-
+    // <editor-fold defaultstate="collapsed" desc="Rotas do passeador">
+    public function route_getWalkerLocais() {
+        $data = [
+            "locais" => Local::all()
+        ];
+        return response()->view("walker.local.listagem", $data);
+    }
+    public function route_getWalkerLocal(Request $req, $id) {
+        $data = [
+            "local" => Local::findOrFail($id)
+        ];
+        return response()->view("walker.local.detalhes", $data);
+    }
+    // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Rotas do site">
     // <editor-fold defaultstate="collapsed" desc="Rotas que retornam Views">
     public function route_getLocais() {
