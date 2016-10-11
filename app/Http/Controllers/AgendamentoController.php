@@ -354,6 +354,7 @@ class AgendamentoController extends Controller {
                 $agendamento = $this->realizarAgendamentoConvencional($cliente, $modalidade, $data, $inicio, $fim, $local, $caes, $dias, AgendamentoStatus::FUNCIONARIO);
             }
             if ($agendamento->hasErrors()) {
+                \DB::rollBack();
                 return $this->defaultJsonResponse(false, $agendamento->getErrors());
             }
             \DB::commit();

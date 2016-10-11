@@ -58,7 +58,7 @@
             </div>
             <div class="col-lg-6">
                 <p><b>Nome: </b> <span data-name="nome">{{$passeador->nome}}</span></p>
-                <p><b>Telefone: </b> <span data-name="telefone">{{$passeador->telefoneFormatado}}</span></p>
+                <p><b>Telefone: </b> <span data-name="telefone"><a href="tel:{{$passeador->telefone}}">{{$passeador->telefoneFormatado}}</a></span></p>
             </div>
         </div>
         @endif

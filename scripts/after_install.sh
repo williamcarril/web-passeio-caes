@@ -3,6 +3,7 @@ sudo mkdir -p -- "vendor"
 sudo chmod 777 vendor
 sudo chmod 777 -R storage
 sudo chmod 777 bootstrap/cache
+sudo chmod 777 composer.lock
 
 sudo ln -svf /var/www/tcc/storage/app/repository /var/www/tcc/public/repository
 
