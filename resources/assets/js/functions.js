@@ -286,7 +286,7 @@
         "defaultAjaxCall": function (url, type, redirectUrl, data, validation, redirectTimer, callbacks) {
             var $this = $(this);
             var formData;
-            if (!$this.is("button")) {
+            if (!$this.is("button") || !$this.is("a")) {
                 $this = null;
             } else {
                 if ($this.hasClass("disabled")) {

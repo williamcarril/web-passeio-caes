@@ -1,5 +1,6 @@
 <?php 
 $cliente = isset($cliente) ? $cliente : null;
+$destaqueSemPasseadores = isset($destaqueSemPasseadores) ? $destaqueSemPasseadores: false;
 ?>
 <table class="table table-hover table-striped">
     <thead>
@@ -32,6 +33,9 @@ $cliente = isset($cliente) ? $cliente : null;
             case $statusPasseio["FEITO"]:
                 $statusClass = "_success-color";
                 break;
+        }
+        if($destaqueSemPasseadores && !$passeio->temPasseador()) {
+            $statusClass = "_warning-color";
         }
         ?>
         <tr class="{{$statusClass}}">

@@ -24,7 +24,7 @@
             <button class="btn btn-default" type="submit">Filtrar</button>
         </form>
         <hr/>
-        @include("admin.includes.passeios-tabela", ["passeios" => $passeios])
+        @include("admin.includes.passeios-tabela", ["passeios" => $passeios, "destaqueSemPasseadores" => true])
     </div>
 </section>
 @endsection

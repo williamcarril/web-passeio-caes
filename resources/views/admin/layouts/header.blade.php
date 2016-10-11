@@ -19,10 +19,22 @@
             @if(!empty($administrator))
             <ul class="nav navbar-nav">
                 <li>
-                    <a href="{{route("admin.agendamento.listagem.get")}}">Agendamentos</a>
+                    <a href="{{route("admin.agendamento.listagem.get")}}"
+                       {!! (!empty($agendamentosPendentes) ? "data-toggle='tooltip' title='Agendamentos pendentes'" : "") !!}>
+                        Agendamentos
+                        @if(!empty($agendamentosPendentes))
+                        <span class="badge">{{$agendamentosPendentes}}</span>
+                        @endif
+                    </a>
                 </li>
                 <li>
-                    <a href="{{route("admin.passeio.marcados.listagem.get")}}">Passeios</a>
+                    <a href="{{route("admin.passeio.marcados.listagem.get")}}" 
+                       {!! (!empty($passeiosPendentesSemPasseadores) ? "data-toggle='tooltip' title='Passeios pendentes sem passeadores alocados'" : "") !!}>
+                        Passeios
+                        @if(!empty($passeiosPendentesSemPasseadores))
+                        <span class="badge">{{$passeiosPendentesSemPasseadores}}</span>
+                        @endif
+                    </a>
                 </li>
                 <li>
                     <a href="{{route("admin.funcionario.passeador.listagem.get")}}">
@@ -36,7 +48,13 @@
                     <a href="{{route("admin.modalidade.listagem.get")}}">Modalidades</a>
                 </li>
                 <li>
-                    <a href="{{route("admin.cancelamento.listagem.get")}}">Cancelamentos</a>
+                    <a href="{{route("admin.cancelamento.listagem.get")}}"
+                       {!! (!empty($cancelamentosNaoVerificados) ? "data-toggle='tooltip' title='Cancelamentos não verificados'" : "") !!}>
+                        Cancelamentos
+                        @if(!empty($cancelamentosNaoVerificados))
+                        <span class="badge">{{$cancelamentosNaoVerificados}}</span>
+                        @endif
+                    </a>
                 </li>
             </ul>
             @endif

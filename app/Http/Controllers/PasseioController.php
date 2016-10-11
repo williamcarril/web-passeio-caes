@@ -152,21 +152,30 @@ class PasseioController extends Controller {
     // <editor-fold defaultstate="collapsed" desc="Rotas GET que retornam JSON">
     public function route_getPasseiosJson(Request $req, $ano, $mes = null, $dia = null) {
         $coletivo = $req->input("coletivo", null);
+        $discriminarLocalPorPorte = $req->input("discriminarPorte", null);
         if (!is_null($coletivo)) {
             $coletivo = filter_var($coletivo, FILTER_VALIDATE_BOOLEAN);
         }
+        if (!is_null($discriminarLocalPorPorte)) {
+            $discriminarLocalPorPorte = filter_var($discriminarLocalPorPorte, FILTER_VALIDATE_BOOLEAN);
+        }
         $passeios = $this->getPasseiosByDataEColetividade($ano, $mes, $dia, $coletivo);
         $locais = collect();
-        $passeios = $passeios->map(function($model) use ($locais) {
+        $passeios = $passeios->map(function($model) use ($locais, $discriminarLocalPorPorte) {
             $arr = $model->toArray();
 
             unset($arr["idAgendamento"]);
             unset($arr["idPasseador"]);
             unset($arr["idPasseioReagendado"]);
             unset($arr["precoPorCaoPorHora"]);
-            $arr["local"] = $model->local->nome;
             $arr["tipo"] = $model->tipo;
-            $locais[$model->local->idLocal] = $model->local->nome;
+            if(!$discriminarLocalPorPorte) {
+                $locais[$model->local->idLocal] = $model->local->nome;
+                $arr["local"] = $model->local->nome;
+            } else {
+                $locais["{$model->local->idLocal}{$model->porte}"] = "{$model->local->nome} ({$model->porteFormatado})";
+                $arr["local"] = "{$model->local->nome} ({$model->porteFormatado})";
+            }
 
             return $arr;
         });
@@ -182,7 +191,8 @@ class PasseioController extends Controller {
         $passeio = Passeio::find($id);
         return $this->defaultJsonResponse(true, null, $passeio);
     }
-
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Rotas POST que retornam JSON">
     public function route_postCancelarPasseio(Request $req, $id) {
         $cliente = $this->auth->guard("web")->user();
         $motivo = $req->input("motivo", null);
@@ -203,8 +213,8 @@ class PasseioController extends Controller {
             return $this->defaultJsonResponse(false, $ex->getMessage());
         }
     }
-
     // </editor-fold>
+
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Rotas administrativas">
     // <editor-fold defaultstate="collapsed" desc="Rotas que retornam Views">
@@ -330,6 +340,14 @@ class PasseioController extends Controller {
             if (!$this->cancelarPasseio($passeio, $administrador, $motivo)) {
                 \DB::rollBack();
                 return $this->defaultJsonResponse(false, $passeio->getErrors());
+            }
+            foreach($passeio->getClientesConfirmados() as $cliente) {
+                \Mail::send("emails.cliente.passeio.cancelamento", [
+                    'passeio' => $passeio,
+                    "cliente" => $cliente
+                        ], function ($m) use ($cliente) {
+                    $m->to($cliente->email, $cliente->nome)->subject("Cancelamento de passeio");
+                });
             }
             \DB::commit();
             return $this->defaultJsonResponse();
