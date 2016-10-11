@@ -160,7 +160,7 @@
         </div>
     </div>
     <div id="passeador-modal" class="modal fade" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
+        <div class="modal-dialog modal-lg" role="document">
             <section class="modal-content">
                 <header class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -200,6 +200,25 @@
                                         </div>
                                     </td>
                                 </tr>
+                                <tr>
+                                    <td>Disponibilidade:</td>
+                                    <td colspan="6">
+                                    <?php
+                                    $passeadorPasseios = $funcionario->obterPasseiosDaData($passeio->data);
+                                    $options = [
+                                        "inicio" => $passeio->inicio,
+                                        "fim" => $passeio->fim,
+                                        "passeios" => $passeadorPasseios,
+                                        "classe" => $funcionario->conflitaComSeusPasseios($passeio) ? "_error-background" : "_success-background"
+                                    ];
+                                    ?>
+                                    @if($passeadorPasseios->count() === 0)
+                                    <span class="_success-color">Total</span>
+                                    @else
+                                    @include("includes.timetable", $options)
+                                    @endif
+                                    </td>
+                                </tr>
                                 @endforeach
                             </tbody>
                         </table>
@@ -213,30 +232,6 @@
         </div>
     </div>
 </section>
-@endsection
-
-@section("templates")
-<div data-template="passeador" data-role="passeador">
-    <div class="col-lg-2 ">
-        <img data-name="thumbnail" alt="" src=""/>
-    </div>
-    <div class="col-lg-6">
-        <p><b>Nome: </b> <span data-name="nome"></span></p>
-        <p><b>Telefone: </b> <span data-name="telefone"></span></p>
-        <p><b>E-mail: </b> <span data-name="email"></span></p>
-    </div>
-    <div class="col-lg-6">
-        <a class="btn btn-default" href="#passeador-modal" data-toggle="modal">Realocar passeador</a>
-        <button class="btn btn-danger" data-action="remover-passeador">Remover passeador</button>
-    </div>
-</div>
-
-<div data-template="sem-passeador">
-    <div class="col-lg-6">
-        <p class="_error-color">Não alocado</p>
-        <a class="btn btn-default" href="#passeador-modal" data-toggle="modal">Alocar passeador</a>
-    </div>
-</div>
 @endsection
 
 @section("scripts")
@@ -258,22 +253,13 @@
         });
 
         $passeadorWrapper.on("click", "[data-action='remover-passeador']", function () {
-            $(this).defaultAjaxCall(
+            askConfirmation("Remover passeador", "Tem certeza que deseja remover este passeador?", function () {
+                $(this).defaultAjaxCall(
                     "{!!route('admin.passeio.alocar.passeador.post', ['id' => $passeio->idPasseio])!!}",
-                    "POST", null, null, null, null, {
-                        "success": {
-                            "afterSuccess": function (response) {
-                                var passeador = response.data;
-                                var $passeadorTemplate = globals.templates.find("[data-template='sem-passeador']");
-
-                                var $clone = $passeadorTemplate.clone();
-                                $clone.removeAttr("data-template");
-
-                                $passeadorWrapper.html($clone.html());
-                                $modalPasseador.modal("hide");
-                            }
-                        }
-                    });
+                    "POST", 
+                    "{!!route('admin.passeio.detalhes.get', ['id' => $passeio->idPasseio])!!}", null, null, 1000
+                    );
+            });
         });
 
         $modalPasseador.on("click", "[data-role='passeador']", function () {
@@ -298,24 +284,10 @@
             var idPasseador = $selected.attr("data-id");
             $this.defaultAjaxCall(
                     "{!!route('admin.passeio.alocar.passeador.post', ['id' => $passeio->idPasseio])!!}",
-                    "POST", null, {"idPasseador": parseInt(idPasseador)}, null, null, {
-                "success": {
-                    "afterSuccess": function (response) {
-                        var passeador = response.data;
-                        var $passeadorTemplate = globals.templates.find("[data-template='passeador']");
-
-                        var $clone = $passeadorTemplate.clone();
-                        $clone.removeAttr("data-template");
-                        $clone.find("[data-name='nome']").text(passeador.nome);
-                        $clone.find("[data-name='telefone']").text(passeador.telefone);
-                        $clone.find("[data-name='email']").text(passeador.email);
-                        $clone.find("[data-name='thumbnail']").attr("src", passeador.thumbnail).attr("alt", passeador.nome);
-
-                        $passeadorWrapper.html($clone.html());
-                        $modalPasseador.modal("hide");
-                    }
-                }
-            });
+                    "POST", 
+                    "{!!route('admin.passeio.detalhes.get', ['id' => $passeio->idPasseio])!!}", 
+                    {"idPasseador": parseInt(idPasseador)}, null, 1000
+                );
         });
 
         $modalCancelamento.on("modal.bs.hidden", function () {

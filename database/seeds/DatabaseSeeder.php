@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder {
         $this->call(ClienteTableSeeder::class);
         $this->call(CaoTableSeeder::class);
         $this->call(FuncionarioTableSeeder::class);
+        $this->call(FuncionarioLimiteCaesTableSeeder::class);
         $this->call(AgendamentoTableSeeder::class);
         $this->call(PasseioTableSeeder::class);
         Model::reguard();

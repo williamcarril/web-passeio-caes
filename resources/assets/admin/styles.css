@@ -151,16 +151,28 @@ Creation date: 29/08/2016 18:46
   cursor: pointer;
 }
 ._warning-color {
-  color: #f0ad4e;
+  color: #f0ad4e !important;
 }
 ._information-color {
-  color: #31708F;
+  color: #31708F !important;
 }
 ._success-color {
-  color: #5cb85c;
+  color: #5cb85c !important;
 }
 ._error-color {
-  color: #d9534f;
+  color: #d9534f !important;
+}
+._error-background {
+  background-color: #d9534f !important;
+}
+._warning-background {
+  background-color: #f0ad4e !important;
+}
+._information-background {
+  background-color: #31708F !important;
+}
+._success-background {
+  background-color: #5cb85c !important;
 }
 input.loading,
 select.loading,
@@ -501,11 +513,15 @@ ol.draggable-list li.placeholder:before {
 .timetable .time-label.-ending-time {
   color: #d9534f;
 }
+.timetable.-non-clicable .time-entry {
+  cursor: inherit;
+}
 .timetable .time-entry {
   cursor: pointer;
   font-size: 16px;
   background-color: #000;
   border-color: #111;
+  text-align: center;
 }
 .timetable .time-entry:hover {
   background-color: #404040;

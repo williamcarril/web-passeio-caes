@@ -41,6 +41,21 @@ $title = isset($title) ? $title : "Funcionário";
                 <input tabindex='4' value="{{!empty($funcionario->telefone) ? $funcionario->telefone : ""}}" required name="telefone" data-inputmask="'mask': '(99) 9999[9]-9999', 'greedy': false" id="funcionario-telefone" type="tel" class="form-control" placeholder="Informe seu telefone">
             </div>
         </fieldset>
+        @if(!empty($portes))
+        <fieldset>
+            <legend>Informações relativas à execução de passeios</legend>
+            <p>Limite de cães por porte</p>
+            @foreach($portes as $porte)
+            <?php 
+            $limite = $funcionario->limiteDeCaes->where("porte", $porte["value"])->first();
+            ?>
+            <div class="form-group">
+                <label class="control-label" for="funcionario-{{$porte["value"]}}">{{$porte["text"]}}</label>
+                <input class="form-control" type="number" value="{{!empty($limite) ? $limite->limite : ""}}" name="limite[{{$porte["value"]}}]">
+            </div>
+            @endforeach
+        </fieldset>
+        @endif
         <fieldset>
             <legend>Informações de acesso</legend>
             <div class="form-group">
@@ -144,7 +159,7 @@ $title = isset($title) ? $title : "Funcionário";
         });
         @endif
 
-        $form.defaultAjaxSubmit("{!! route('admin.funcionario.salvar.get') !!}");
+        $form.defaultAjaxSubmit("{!! Request::url() !!}");
     })();
 </script>
 @endsection

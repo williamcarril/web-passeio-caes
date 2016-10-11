@@ -8,7 +8,10 @@ class Cliente extends Pessoa {
     protected $table = 'cliente';
 
     public function cancelamentos() {
-        return $this->morphMany("\App\Models\Eloquent\Cancelamento", "pessoa", "cliente");
+        return $this->hasMany("\App\Models\Eloquent\Cancelamento",
+        "idPessoa",
+        "idCliente"
+        )->where("tipoPessoa", "cliente");
     }
 
     public function passeios() {

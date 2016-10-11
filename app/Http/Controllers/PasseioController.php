@@ -220,7 +220,7 @@ class PasseioController extends Controller {
     // <editor-fold defaultstate="collapsed" desc="Rotas que retornam Views">
     public function route_getAdminPasseio(Request $req, $id) {
         $passeio = Passeio::findOrFail($id);
-        $passeadoresAptos = Funcionario::passeador()->get();
+        $passeadoresAptos = Funcionario::passeador()->where("idFuncionario", "!=", $passeio->idPasseador)->get();
         $data = [
             "passeio" => $passeio,
             "statusAgendamento" => AgendamentoStatus::getConstants(false),
@@ -306,6 +306,10 @@ class PasseioController extends Controller {
         if (is_null($passeio)) {
             return $this->defaultJsonResponse(false, trans("alert.error.generic", ["message" => "alocar o passeador"]));
         }
+        
+        if($passeio->status !== PasseioStatus::PENDENTE) {
+            return $this->defaultJsonResponse(false, "Somente um passeio pendente pode alocar/realocar/remover seu passeador.");
+        }
 
         if (is_null($idPasseador)) {
             $passeio->idPasseador = null;
@@ -316,6 +320,9 @@ class PasseioController extends Controller {
         }
 
         $passeador = Funcionario::passeador()->where("idFuncionario", $idPasseador)->first();
+        if($passeador->conflitaComSeusPasseios($passeio)) {
+            return $this->defaultJsonResponse(false, "O passeio em questão possui conflito de horário com os passeios do passeador.");
+        }
         $passeio->idPasseador = $passeador->idFuncionario;
         if (!$passeio->save()) {
             return $this->defaultJsonResponse(false, trans("alert.error.generic", ["message" => "alocar o passeador"]));

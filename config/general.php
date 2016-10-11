@@ -8,7 +8,7 @@
 
 return [
     "businessTime" => [
-        "start" => "9",
-        "end" => "19"
+        "start" => "9:00",
+        "end" => "19:00"
     ]
 ];

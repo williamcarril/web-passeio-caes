@@ -399,6 +399,51 @@ fieldset > legend > .indicator {
   color: #b3b3b3;
   border-color: #FFF;
 }
+.place-box {
+  Ignore: a;padding:10px;
+  Ignore: a;padding:0.625rem;
+  Ignore: a;margin-bottom:10px;
+  Ignore: a;margin-bottom:0.625rem;
+  box-shadow: 0 0 0 1px #3178c3 inset;
+}
+.place-box:hover {
+  box-shadow: 0 0 0 1px #265f9a inset;
+}
+.place-box.-agendable {
+  background-color: rgba(92, 184, 92, 0.08);
+}
+.place-box > .header {
+  Ignore: a;margin-bottom:10px;
+  Ignore: a;margin-bottom:0.625rem;
+}
+.place-box > .header > a {
+  text-decoration: none;
+}
+.place-box > .header .image,
+.place-box > .header .title {
+  display: inline-block;
+  vertical-align: middle;
+}
+.place-box > .header .title {
+  max-width: 49%;
+}
+.place-box > .content {
+  Ignore: a;min-height:100px;
+  Ignore: a;min-height:6.25rem;
+}
+.place-box > .content > .address {
+  display: block;
+  size: 10px;
+  color: #0D2034;
+  Ignore: a;margin-bottom:5px;
+  Ignore: a;margin-bottom:0.3125rem;
+}
+.place-box > .content > .description {
+  text-align: justify;
+}
+.place-box > footer {
+  text-align: right;
+}
 .search-box.-map {
   margin-top: 10px;
   border: 1px solid transparent;

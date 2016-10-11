@@ -1,8 +1,10 @@
 <?php 
 $cliente = isset($cliente) ? $cliente : null;
-$destaqueSemPasseadores = isset($destaqueSemPasseadores) ? $destaqueSemPasseadores: false;
+$destaqueSemPasseadores = isset($destaqueSemPasseadores) ? $destaqueSemPasseadores : false;
+$passeadores = isset($passeadores) ? $passeadores : null;
+$idTabela = uniqid();
 ?>
-<table class="table table-hover table-striped">
+<table id="{{$idTabela}}" class="table table-hover table-striped">
     <thead>
         <tr>
             <th>ID</th>
@@ -53,9 +55,40 @@ $destaqueSemPasseadores = isset($destaqueSemPasseadores) ? $destaqueSemPasseador
                         <i class="glyphicon glyphicon-search"></i>
                         Detalhes
                     </a>
+                    @if(!empty($passeadores) && !$passeio->temPasseador())
+                    <a class="btn btn-default" data-toggle="collapse" data-target="[data-collapse='{{$idTabela}}-{{$passeio->idPasseio}}']">
+                        <i class="flaticon-walker"></i>
+                        Mostrar
+                    </a>
+                    @endif
                 </div>
             </td>
         </tr>
+        @if(!empty($passeadores) && !$passeio->temPasseador())
+            @foreach($passeadores as $passeador)
+            <tr class="collapse" data-collapse="{{$idTabela}}-{{$passeio->idPasseio}}">
+                <td><b>Passeador:</b></td>
+                <td>{{$passeador->nome}}</td>
+                <td><b>Disponibilidade:</b></td>
+                <td colspan="6">
+                    <?php
+                    $passeadorPasseios = $passeador->obterPasseiosDaData($passeio->data);
+                    $options = [
+                        "inicio" => $passeio->inicio,
+                        "fim" => $passeio->fim,
+                        "passeios" => $passeadorPasseios,
+                        "classe" => $passeador->conflitaComSeusPasseios($passeio) ? "_error-background" : "_success-background"
+                    ];
+                    ?>
+                    @if($passeadorPasseios->count() === 0)
+                    <span class="_success-color">Total</span>
+                    @else
+                    @include("includes.timetable", $options)
+                    @endif
+                </td>
+            </tr>
+            @endforeach
+        @endif
         @endforeach
     </tbody>
 </table>

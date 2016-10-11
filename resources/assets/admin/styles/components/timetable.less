@@ -18,11 +18,17 @@
             color: #d9534f;
         }
     }
+    &.-non-clicable {
+        .time-entry {
+            cursor: inherit;
+        }
+    }
     .time-entry {
         cursor: pointer;
         font-size: @base-font-size;
         background-color: @container-color;
         border-color: @container-divisory-color;
+        text-align: center;
         
         &:hover {
             background-color: lighten(@container-color, 25%);
