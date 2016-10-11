@@ -112,6 +112,7 @@ class AgendamentoController extends Controller {
     public function route_postAdminAceitarAgendamento(Request $req, $id) {
         $administrador = $this->auth->guard("admin")->user();
         $agendamento = Agendamento::where("idAgendamento", $id)->first();
+        $cliente = $agendamento->cliente;
         if (is_null($agendamento)) {
             return $this->defaultJsonResponse(false, trans("alert.error.generic", ["message" => "aceitar o agendamento"]));
         }
@@ -124,6 +125,12 @@ class AgendamentoController extends Controller {
                     \DB::rollBack();
                     return $this->defaultJsonResponse(false, trans("alert.error.generic", ["message" => "aceitar o agendamento"]));
                 }
+                \Mail::send('emails.cliente.agendamento.cancelamento.imprevisto', [
+                    'agendamento' => $agendamento,
+                    "cliente" => $cliente
+                        ], function ($m) use ($cliente) {
+                    $m->to($cliente->email, $cliente->nome)->subject("Cancelamento de agendamento");
+                });
                 \DB::commit();
                 return $this->defaultJsonResponse(false, "A data do primeiro passeio programado já passou. "
                                 . "Portanto, o agendamento em questão é considerado inválido e foi cancelado.", [
@@ -142,6 +149,12 @@ class AgendamentoController extends Controller {
                 \DB::rollBack();
                 return $this->defaultJsonResponse(false, $agendamento->getErrors());
             }
+            \Mail::send("emails.cliente.agendamento.confirmacao.simples", [
+                'agendamento' => $agendamento,
+                "cliente" => $cliente
+                    ], function ($m) use ($cliente) {
+                $m->to($cliente->email, $cliente->nome)->subject("Confirmação de agendamento");
+            });
             \DB::commit();
             return $this->defaultJsonResponse(true);
         } catch (\Exception $ex) {
@@ -159,10 +172,39 @@ class AgendamentoController extends Controller {
         }
         \DB::beginTransaction();
         try {
+            $razaoDoCancelamento = "";
+            switch($agendamento->status) {
+                case AgendamentoStatus::FUNCIONARIO:
+                    $razaoDoCancelamento = "recusa";
+                    break;
+                default:
+                    $razaoDoCancelamento = "imprevisto";
+                    break;
+            }
             if (!$this->cancelarAgendamento($agendamento, $administrador, $motivo)) {
                 \DB::rollBack();
                 return $this->defaultJsonResponse(false, $agendamento->getErrors());
             }
+            $cliente = $agendamento->cliente;
+            
+            $emailView = "";
+            $emailTitle = "";
+            switch($razaoDoCancelamento) {
+                case "imprevisto":
+                    $emailView = "emails.cliente.agendamento.cancelamento.imprevisto";
+                    $emailTitle = "Cancelamento de agendamento";
+                    break;
+                case "recusa":
+                    $emailView = "emails.cliente.agendamento.cancelamento.recusa";
+                    $emailTitle = "Recusa de agendamento";
+                    break;
+            }
+            \Mail::send($emailView, [
+                'agendamento' => $agendamento,
+                "cliente" => $cliente
+                    ], function ($m) use ($cliente, $emailTitle) {
+                $m->to($cliente->email, $cliente->nome)->subject($emailTitle);
+            });
             \DB::commit();
             return $this->defaultJsonResponse();
         } catch (\Exception $ex) {
@@ -206,8 +248,8 @@ class AgendamentoController extends Controller {
                 return $this->defaultJsonResponse(false, $agendamentoNovo->getErrors());
             }
             $agendamento->idAgendamentoNovo = $agendamentoNovo->idAgendamento;
-           
-            if(!$agendamento->save()) {
+
+            if (!$agendamento->save()) {
                 \DB::rollBack();
                 return $this->defaultJsonResponse(false, $agendamento->getErrors());
             }
@@ -215,6 +257,14 @@ class AgendamentoController extends Controller {
                 \DB::rollBack();
                 return $this->defaultJsonResponse(false, $agendamento->getErrors());
             }
+            
+            \Mail::send('emails.cliente.agendamento.cancelamento.reagendamento', [
+                'agendamento' => $agendamento,
+                "cliente" => $cliente,
+                "reagendamento" => $agendamentoNovo
+                    ], function ($m) use ($cliente) {
+                $m->to($cliente->email, $cliente->nome)->subject("Sugestão de reagendamento");
+            });
             \DB::commit();
             return $this->defaultJsonResponse(true);
         } catch (\Exception $ex) {

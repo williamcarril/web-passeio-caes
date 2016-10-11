@@ -37,6 +37,7 @@ class Kernel extends HttpKernel {
             \Illuminate\Session\Middleware\StartSession::class,
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             \App\Http\Middleware\ShareAdminFromSession::class,
+            \App\Http\Middleware\ShareInformacoesAdministrativas::class,
             \App\Http\Middleware\VerifyCsrfToken::class,
         ],
         "walker" => [
@@ -45,6 +46,7 @@ class Kernel extends HttpKernel {
             \Illuminate\Session\Middleware\StartSession::class,
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             \App\Http\Middleware\ShareWalkerFromSession::class,
+            \App\Http\Middleware\ShareInformacoesDoPasseador::class,
             \App\Http\Middleware\VerifyCsrfToken::class,
         ],
         'api' => [

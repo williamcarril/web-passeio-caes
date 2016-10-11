@@ -331,6 +331,14 @@ class PasseioController extends Controller {
                 \DB::rollBack();
                 return $this->defaultJsonResponse(false, $passeio->getErrors());
             }
+            foreach($passeio->getClientesConfirmados() as $cliente) {
+                \Mail::send("emails.cliente.passeio.cancelamento", [
+                    'passeio' => $passeio,
+                    "cliente" => $cliente
+                        ], function ($m) use ($cliente) {
+                    $m->to($cliente->email, $cliente->nome)->subject("Cancelamento de passeio");
+                });
+            }
             \DB::commit();
             return $this->defaultJsonResponse();
         } catch (\Exception $ex) {

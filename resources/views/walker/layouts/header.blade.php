@@ -19,7 +19,13 @@
             @if(!empty($passeador))
             <ul class="nav navbar-nav">
                 <li>
-                    <a href="{{route("walker.passeio.confirmado.listagem.get")}}">Passeios</a>
+                    <a href="{{route("walker.passeio.confirmado.listagem.get")}}"
+                       {!! (!empty($passeiosPendentes) ? "data-toggle='tooltip' title='Passeios pendentes'" : "") !!}>
+                        Passeios
+                        @if(!empty($passeiosPendentes))
+                        <span class="badge">{{$passeiosPendentes}}</span>
+                        @endif
+                    </a>
                 </li>
                 <li>
                     <a href="{{route("walker.local.listagem.get")}}">Locais</a>

@@ -13,7 +13,12 @@
 if (!\App::environment("production")) {
     Route::group(["prefix" => "tests"], function() {
         Route::get("/", ["as" => "test", "uses" => function() {
-            
+            $cliente = \App\Models\Eloquent\Cliente::first();
+            return response()->view("emails.cliente.cancelamento.agendamento", [
+                "cliente" => $cliente,
+                "message" => "Oi",
+                "agendamento" => $cliente->agendamentos()->first()
+            ]);
         }]);
     });
 }

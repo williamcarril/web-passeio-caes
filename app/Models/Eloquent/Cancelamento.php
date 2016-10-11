@@ -111,5 +111,9 @@ class Cancelamento extends \WGPC\Eloquent\Model {
                             WHEN 'null' THEN 4
                     END"), "ASC");
     }
+    
+    public function scopePendente($query) {
+        return $query->where("status", Status::PENDENTE);
+    }
 
 }

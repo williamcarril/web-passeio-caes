@@ -128,12 +128,11 @@ class Passeio extends \WGPC\Eloquent\Model {
     public function getCaesConfirmadosDoClienteFormatados($cliente) {
         $caesDoCliente = $this->getCaesConfirmadosDoCliente($cliente);
         $nomesDosCães = $caesDoCliente->map(function($cao) {
-            return $cao->nome;
-        })->toArray();
+                    return $cao->nome;
+                })->toArray();
         return str_lreplace(", ", " e ", implode(", ", $nomesDosCães));
     }
-    
-    
+
     public function getCaesConfirmadosDoCliente($cliente) {
         if (is_numeric($cliente)) {
             $cliente = (object) ["idCliente" => $cliente];
@@ -166,16 +165,16 @@ class Passeio extends \WGPC\Eloquent\Model {
                     $q->whereIn("idCao", $ids->all());
                 })->get();
     }
-    
+
     public function getAgendamentoDoCliente($cliente) {
-        if(is_numeric($cliente)) {
+        if (is_numeric($cliente)) {
             $cliente = (object) [
-                "idCliente" => $cliente
+                        "idCliente" => $cliente
             ];
         }
         return $this->agendamentos()->whereHas("cliente", function($q) use ($cliente) {
-            $q->where("idCliente", $cliente->idCliente);
-        });
+                    $q->where("idCliente", $cliente->idCliente);
+                });
     }
 
     public function setDataAttribute($value) {
@@ -225,6 +224,10 @@ class Passeio extends \WGPC\Eloquent\Model {
                         $q->where("idCliente", $cliente->idCliente);
                     }
                 })->count() > 0;
+    }
+    
+    public function temPasseador() {
+        return !is_null($this->idPasseador);
     }
 
     public function scopeAgendamentoConfirmado($query, $cliente = null) {
@@ -293,6 +296,10 @@ class Passeio extends \WGPC\Eloquent\Model {
                             $strPriority
                             WHEN 'null' THEN 4
                     END"), "ASC");
+    }
+
+    public function scopeSemPasseador($query) {
+        return $query->where("idPasseador", null);
     }
 
     public function getDataFormatadaAttribute() {
