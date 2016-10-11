@@ -64,10 +64,8 @@
                     <tr>
                         <th>Foto</th>
                         <th>Nome</th>
+                        <th>Dono</th>
                         <th>Porte</th>
-                        <th>Cliente</th>
-                        <th>Contato</th>
-                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -80,20 +78,46 @@
                         <td>
                             <img width="100px" height="100px" src='{{$cao->thumbnail}}' />
                         </td>
+
                         <td data-name="nome">
                             {{$cao->nome}}
                         </td>
+                        <td>{{$cao->cliente->nome}}</td>
                         <td  data-name="porte" data-value="{{$cao->porte}}">
                             {{$cao->porteFormatado}}
                         </td>
-                        <td>{{$cao->cliente->nome}}</td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+        @endif
+    </section>
+    @if($clientesConfirmados->count() > 0)
+    <section>
+        <h2>Clientes</h2>
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Contato</th>
+                        <th>Valor a receber</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($clientesConfirmados as $cliente)
+                    <tr>
+                        <td>{{$cliente->nome}}</td>
                         <td>
-                            <a href="tel:{{$cao->cliente->telefone}}">
-                                {{$cao->cliente->telefoneFormatado}}
+                            <a href="tel:{{$cliente->telefone}}">
+                                {{$cliente->telefoneFormatado}}
                             </a>
-                            </td>
+                        </td>
+                        <td>{{$passeio->getValor($cliente, true)}}</td>
                         <td>
-                            <a href="http://maps.google.com/maps?daddr={{$lat}},{{$lng}}" target="_blank" class="btn btn-default">
+                            <a href="http://maps.google.com/maps?daddr={{$cliente->lat}},{{$cliente->lng}}" target="_blank" class="btn btn-default">
                                 <i class="glyphicon glyphicon-road"></i>
                                 Ver rota
                             </a>
@@ -103,8 +127,8 @@
                 </tbody>
             </table>
         </div>
-        @endif
     </section>
+    @endif
     <hr/>
     <div class="button-group pull-right">
         <?php 
