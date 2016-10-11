@@ -23,6 +23,17 @@ foreach ($passeios as $passeio) {
         <div class="timetable-wrapper">
             <div id="timetable" class="timetable"></div>
         </div>
+        <hr/>
+        <p>
+            * - Os locais exibidos na lista de horários do dia estão discriminados de acordo com o porte de seus passeios. Exemplo: Chico Mendes (Grande) diz respeito aos passeios de cães de grande porte que serão realizados no Chico Mendes.
+        </p>
+        <p>
+            ** - Para selecionar os horários de início e fim, insira manualmente ou clique em alguma das horas na lista de horários do dia.
+        </p>
+        <p>
+            *** - Para solicitar inclusão em algum dos passeios coletivos, clique um dos que estão disponíveis na lista de horários do dia.
+        </p>
+        <hr/>
         <form id="agendamento-form" class="form-horizontal" action="{!! route('passeio.agendamento.post') !!}" method="POST">
             <input type="hidden" name="idPasseioColetivo" value=""/>
             <fieldset data-name="dataEHorarios">
@@ -128,6 +139,11 @@ foreach ($passeios as $passeio) {
                     </div>
                 </div>
             </fieldset>
+            <hr/>
+            <p>
+                **** - Para agendamentos de pacotes de passeio, a data do primeiro passeio agendado é o próximo dia da semana dos selecionados a partir da data escolhida no calendário.
+            </p>
+            <hr/>
             <fieldset data-role="local">
                 <legend  class="_cursor-pointer" data-toggle="collapse" data-target="#local-collapsable">
                     Local de passeio
@@ -227,16 +243,6 @@ foreach ($passeios as $passeio) {
             <p><b>Preço por passeio:</b> <span data-role="precoPorPasseio">Não definido</span></p>
             <p><b>Quantidade de passeios:</b> <span data-role="quantidadePasseio">Não definido</span></p>
             <p><b>Preço total:</b> <span data-role="precoTotal">Não definido</span></p>
-            <hr/>
-            <p>
-                * - Para selecionar os horários de início e fim, insira manualmente ou clique em alguma das horas na lista de horários do dia.
-            </p>
-            <p>
-                ** - Para solicitar inclusão em algum dos passeios coletivos, clique um dos que estão disponíveis na lista de horários do dia.
-            </p>
-            <p>
-                *** - Para agendamentos de pacotes de passeio, a data do primeiro passeio agendado é o próximo dia da semana dos selecionados a partir da data escolhida no calendário.
-            </p>
             <hr/>
             <div class="button-group">
                 <button class="btn btn-warning hidden" type="button" data-action="cancelar-passeio-coletivo">
@@ -352,7 +358,8 @@ foreach ($passeios as $passeio) {
                     "url": url.replace("!dia", day).replace("!mes", month).replace("!ano", year),
                     "type": "GET",
                     "data": {
-                        "coletivo": true
+                        "coletivo": true,
+                        "discriminarPorte": true
                     },
                     "beforeSend": function () {
                         restaurarEstadoBaseDaTela();

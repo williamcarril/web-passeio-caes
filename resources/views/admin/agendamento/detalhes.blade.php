@@ -174,8 +174,9 @@
         });
 
         $("[data-action='aceitar-agendamento']").on("click", function () {
+            var $this = $(this);
             askConfirmation("Aceitação de agendamento", "Tem certeza que deseja realizar esta operação?", function () {
-                $(this).defaultAjaxCall(
+                $this.defaultAjaxCall(
                         "{!! route('admin.agendamento.aceitar.post', ['id' => $agendamento->idAgendamento]) !!}",
                         "POST",
                         "{!! route('admin.agendamento.detalhes.get', ['id' => $agendamento->idAgendamento]) !!}"
