@@ -40,6 +40,10 @@ return [
             'driver' => 'session',
             'provider' => 'admin',
         ],
+        "walker" => [
+            "driver" => "session",
+            "provider" => "walker"
+        ]
 //        'api' => [
 //            'driver' => 'token',
 //            'provider' => 'users',
@@ -70,6 +74,10 @@ return [
             'driver' => 'eloquent',
             'model' => App\Models\Eloquent\Funcionario::class,
         ],
+        "walker" => [
+            "driver" => "eloquent",
+            "model" => App\Models\Eloquent\Funcionario::class
+        ]
     // 'users' => [
     //     'driver' => 'database',
     //     'table' => 'users',

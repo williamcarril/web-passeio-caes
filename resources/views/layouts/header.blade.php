@@ -17,7 +17,7 @@
             <ul class="nav navbar-nav">
                 <li><a href="{{route("local.listagem.get")}}">Locais</a></li>
                 @if(!empty($customer))
-                <li><a href="{{route("passeio.agenda.get")}}">Agendamento</a></li>
+                <li><a href="{{route("passeio.agendamento.get")}}">Agendamento</a></li>
                 @endif
             </ul>
         </div>

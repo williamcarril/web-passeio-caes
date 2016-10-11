@@ -1,6 +1,7 @@
 <?php
 $thumbnail = isset($thumbnail) ? $thumbnail : asset("img/local.png");
 $agendable = isset($agendable) ? $agendable : false;
+$agendableLink = isset($agendableLink) ? $agendableLink : "#";
 $link = isset($link) ? $link : "#";
 ?>
 <article class="place-box {{$agendable ? "-agendable" : ""}}">
@@ -20,7 +21,7 @@ $link = isset($link) ? $link : "#";
     <footer class="footer">
         <div class="button-group">
             @if($agendable)
-            <a class="btn btn-success" href="#">
+            <a class="btn btn-success" href="{{$agendableLink}}">
                 <i class="flaticon-calendar"></i>
                 Agendar passeio
             </a>

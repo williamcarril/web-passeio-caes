@@ -20,6 +20,7 @@
             ];
             if (!empty($customer)) {
                 $data["agendable"] = $local->verificarServico($customer->lat, $customer->lng);
+                $data["agendableLink"] = route("passeio.agendamento.get") . "?idLocal=" . $local->idLocal;
             }
             ?>
             @include("local.includes.place-box", $data)

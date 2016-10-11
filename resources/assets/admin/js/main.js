@@ -19,25 +19,6 @@
     //Bootstrapping JQuery Input Mask plugin on data-inputmask inputs.
     $(":input").inputmask();
 
-    //Customizing and Bootstrapping calendars
-    var months = [
-        "Janeiro",
-        "Fevereiro",
-        "Março",
-        "Abril",
-        "Maio",
-        "Junho",
-        "Julho",
-        "Agosto",
-        "Setembro",
-        "Outubro",
-        "Novembro",
-        "Dezembro"
-    ];
-    $('.responsive-calendar').responsiveCalendar({
-        "translateMonths": months
-    });
-
     //Removing input number scroll
     $("input[type='number'].-no-spin").on("mousewheel", function (ev) {
         ev.preventDefault();
@@ -50,6 +31,14 @@
         }
     });
 
+    //Initializing timepickers
+    $(".timepicker").timepicker({
+        "showMeridian": false,
+        "defaultTime": false,
+        "snapToStep": true,
+        "minuteStep": 15
+    });
+    
     //Initializing drag and drop
     $("ol[data-action='drag-and-drop']").sortable({
         "cancel": '.non-draggable',
@@ -64,4 +53,14 @@
         $parent.find(".tab-toggler").removeClass("active");
         $this.addClass("active");
     });
+    
+    //Toggling chevron arrow on fieldset collapses
+    function toggleChevron(e) {
+        $(e.target)
+                .prev("legend")
+                .find('i.indicator')
+                .toggleClass('glyphicon-chevron-down glyphicon-chevron-right');
+    }
+    $('fieldset .collapse').on('hidden.bs.collapse', toggleChevron);
+    $('fieldset .collapse').on('shown.bs.collapse', toggleChevron);
 })();

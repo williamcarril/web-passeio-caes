@@ -13,13 +13,13 @@ class DiaTableSeeder extends Seeder {
         \DB::beginTransaction();
         try {
             \DB::table("dia")->insert([
-                ["idDia" => 1, "nome" => "domingo"],
-                ["idDia" => 2, "nome" => "segunda-feira"],
-                ["idDia" => 3, "nome" => "terça-feira"],
-                ["idDia" => 4, "nome" => "quarta-feira"],
-                ["idDia" => 5, "nome" => "quinta-feira"],
-                ["idDia" => 6, "nome" => "sexta-feira"],
-                ["idDia" => 7, "nome" => "sábado"],
+                ["idDia" => 1, "nome" => "domingo", "ordem" => 1],
+                ["idDia" => 2, "nome" => "segunda-feira", "ordem" => 2],
+                ["idDia" => 3, "nome" => "terça-feira", "ordem" => 3],
+                ["idDia" => 4, "nome" => "quarta-feira", "ordem" => 4],
+                ["idDia" => 5, "nome" => "quinta-feira", "ordem" => 5],
+                ["idDia" => 6, "nome" => "sexta-feira", "ordem" => 6],
+                ["idDia" => 7, "nome" => "sábado", "ordem" => 7],
             ]);
             \DB::commit();
         } catch (\Exception $ex) {

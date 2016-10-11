@@ -15,4 +15,17 @@ abstract class AgendamentoStatus extends Enum {
     const FUNCIONARIO = "pendente_funcionario";
     const CLIENTE = "pendente_cliente";
 
+    public static function format($const) {
+        switch ($const) {
+            case static::FEITO:
+                return "Confirmado";
+            case static::CANCELADO:
+                return ucfirst($const);
+            case static::FUNCIONARIO:
+                return "Em avaliação";
+            case static::CLIENTE:
+                return "Pendente verificação do cliente";
+        }
+    }
+
 }

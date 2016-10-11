@@ -6756,6 +6756,180 @@ button.close {
 }
 /*# sourceMappingURL=bootstrap.css.map */
 
+/*!
+ * Timepicker Component for Twitter Bootstrap
+ *
+ * Copyright 2013 Joris de Wit
+ *
+ * Contributors https://github.com/jdewit/bootstrap-timepicker/graphs/contributors
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+.bootstrap-timepicker {
+    position: relative;
+
+    &.pull-right {
+        .bootstrap-timepicker-widget {
+            &.dropdown-menu {
+                left: auto;
+                right: 0;
+
+                &:before {
+                    left: auto;
+                    right: 12px;
+                }
+                &:after {
+                    left: auto;
+                    right: 13px;
+                }
+            }
+        }
+    }
+
+    .input-group-addon {
+        cursor: pointer;
+        i {
+           display: inline-block;
+           width: 16px;
+           height: 16px;
+        }
+    }
+}
+.bootstrap-timepicker-widget {
+    &.dropdown-menu {
+        padding: 4px;
+        &.open {
+            display: inline-block;
+        }
+        &:before {
+            border-bottom: 7px solid rgba(0, 0, 0, 0.2);
+            border-left: 7px solid transparent;
+            border-right: 7px solid transparent;
+            content: "";
+            display: inline-block;
+            position: absolute;
+        }
+        &:after {
+            border-bottom: 6px solid #FFFFFF;
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            content: "";
+            display: inline-block;
+            position: absolute;
+        }
+    }
+    &.timepicker-orient-left {
+        &:before {
+           left: 6px;
+        }
+        &:after {
+           left: 7px;
+        }
+    }
+    &.timepicker-orient-right {
+        &:before {
+           right: 6px;
+        }
+        &:after {
+           right: 7px;
+        }
+    }
+    &.timepicker-orient-top {
+        &:before {
+           top: -7px;
+        }
+        &:after {
+            top: -6px;
+        }
+    }
+    &.timepicker-orient-bottom {
+        &:before {
+            bottom: -7px;
+            border-bottom: 0;
+            border-top: 7px solid #999;
+        }
+        &:after {
+            bottom: -6px;
+            border-bottom: 0;
+            border-top: 6px solid #ffffff;
+        }
+    }
+    a.btn, input {
+        border-radius: 4px;
+    }
+
+    table {
+        width: 100%;
+        margin: 0;
+
+        td {
+            text-align: center;
+            height: 30px;
+            margin: 0;
+            padding: 2px;
+
+            &:not(.separator) {
+                min-width: 30px;
+            }
+
+            span {
+                width: 100%;
+            }
+            a {
+                border: 1px transparent solid;
+                width: 100%;
+                display: inline-block;
+                margin: 0;
+                padding: 8px 0;
+                outline: 0;
+                color: #333;
+
+                &:hover {
+                    text-decoration: none;
+                    background-color: #eee;
+                    -webkit-border-radius: 4px;
+                    -moz-border-radius: 4px;
+                    border-radius: 4px;
+                    border-color: #ddd;
+                }
+
+                i {
+                    margin-top: 2px;
+                    font-size: 18px;
+                }
+            }
+            input {
+                width: 25px;
+                margin: 0;
+                text-align: center;
+            }
+        }
+    }
+}
+
+.bootstrap-timepicker-widget .modal-content {
+    padding: 4px;
+}
+
+@media (min-width: 767px) {
+    .bootstrap-timepicker-widget.modal {
+        width: 200px;
+        margin-left: -100px;
+    }
+}
+
+@media (max-width: 767px) {
+    .bootstrap-timepicker {
+        width: 100%;
+
+        .dropdown-menu {
+            width: 100%;
+        }
+    }
+}
+
+.timetable{box-sizing:border-box}.timetable::after{clear:both;content:"";display:table}.timetable *,.timetable *:before,.timetable *:after{box-sizing:inherit}.timetable ul,.timetable li{margin:0;padding:0;list-style-type:none}.timetable aside,.timetable section{float:left}.timetable aside{width:25%;padding:0!important;margin-top:46px;border-right:5px solid transparent}.timetable aside li{padding:0 15px;background-color:#EFEFEF;line-height:46px}.timetable aside li:not(:last-of-type){border-bottom:1px solid #fff}.timetable aside .row-heading{display:inline-block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;word-wrap:normal}.timetable ul{list-style-type:none;margin:0}.timetable aside li,.timetable time li{height:46px}.timetable section{width:75%;padding:0!important;overflow-x:scroll;-webkit-overflow-scrolling:touch}.timetable section time{white-space:nowrap;display:inline-block}.timetable section header{height:46px;transform-style:preserve-3d;font-size:0}.timetable section header::after{clear:both;content:"";display:table}.timetable section header li{display:inline-block;font-size:1rem;overflow:visible;width:0;line-height:46px;display:inline-block;position:relative}.timetable section header li:not(:last-of-type){width:96px}.timetable section header li .time-label{display:block;position:absolute;left:0}.timetable section header li:not(:first-of-type) .time-label{transform:translateX(-50%)}.timetable section header li:last-of-type .time-label{transform:translateX(-100%)}@media only screen and (max-width:960px){.timetable aside{width:40%}.timetable section{width:60%}}.timetable ul.room-timeline{border-left:none;position:relative;overflow:hidden}.timetable ul.room-timeline li{position:relative;background-color:#F4F4F4}.timetable ul.room-timeline li:nth-of-type(odd){background-color:#FDFDFD}.timetable ul.room-timeline li:first-of-type{border-top:1px solid #E5E5E5}.timetable ul.room-timeline li:last-of-type{border-bottom:1px solid #E5E5E5}.timetable ul.room-timeline li:not(:last-of-type){border-bottom:none}.timetable ul.room-timeline li:first-child .time-entry{height:44px}.timetable ul.room-timeline li:after,.timetable ul.room-timeline li:before{content:"";position:absolute;z-index:1;left:0;top:0;right:0;bottom:0}.timetable ul.room-timeline li:before{background-image:linear-gradient(to right,#E5E5E5 1px,transparent 1px);background-size:24px auto}.timetable ul.room-timeline li:after{background-image:linear-gradient(to right,#E5E5E5,#E5E5E5 1px,#F4F4F4 1px,#F4F4F4 2px,#E5E5E5 2px,#E5E5E5 3px,transparent 3px,transparent);background-size:96px auto;background-position:-2px 0}.timetable .time-entry{background-color:#EC6A5E;transition:200ms background-color;height:45px;display:block;position:absolute;z-index:2;padding:0 10px;white-space:normal;overflow:hidden;color:#fff;border:1px solid #e32c1b;transform-style:preserve-3d}.timetable .time-entry small{position:relative;top:50%;transform:translateY(-50%);display:block}.timetable .time-entry:hover{background-color:#e74030}
 .responsive-calendar .controls {
   text-align: center;
 }
@@ -6890,8 +7064,14 @@ Creation date: 29/08/2016 18:46
 .flaticon-smile:before {
   content: "\f107";
 }
-.flaticon-social:before {
+.flaticon-user:before {
   content: "\f108";
+}
+.flaticon-walker:before {
+  content: "\f109";
+}
+.flaticon-walking-dog:before {
+  content: "\f10a";
 }
 ._no-border {
   border: none !important;
@@ -6904,6 +7084,9 @@ Creation date: 29/08/2016 18:46
 }
 ._warning-color {
   color: #f0ad4e;
+}
+._information-color {
+  color: #31708F;
 }
 ._success-color {
   color: #5cb85c;
@@ -7086,34 +7269,6 @@ input[type=number].-no-spin::-webkit-outer-spin-button {
 .responsive-calendar {
   Ignore: a;margin-top:10px;
   Ignore: a;margin-top:0.625rem;
-  /*    &.-sidebar {
-        .day a {
-            color: @container-link-color;
-        }
-        .day a:hover { 
-            background-color: @container-link-hover-color;
-        }
-        .day.header {
-            border-bottom: 1px @container-divisory-color solid;
-        }
-        .day.active a {
-            background-color: #1d86c8;
-            color: #ffffff;
-        }
-        .day.active a:hover {
-            background-color: #36a0e2;
-        }
-        .day.active .not-current {
-            background-color: #8fcaef;
-            color: #ffffff;
-        }
-        .day.active .not-current:hover {
-            background-color: #bcdff5;
-        }
-        .day.not-current a {
-            color: #ddd;
-        }
-    }*/
 }
 .responsive-calendar .day {
   Ignore: a;font-size:16px;
@@ -7123,27 +7278,25 @@ input[type=number].-no-spin::-webkit-outer-spin-button {
   color: #999;
 }
 .responsive-calendar .day a:hover {
-  background-color: #666;
+  background-color: #e6e6e6;
 }
 .responsive-calendar .day.header {
   border-bottom: 1px #111 solid;
 }
 .responsive-calendar .day.active a {
-  background-color: #1d86c8;
-  color: #ffffff;
+  border: 1px solid #111;
+  background-color: #000;
+  color: #FFF;
 }
 .responsive-calendar .day.active a:hover {
-  background-color: #36a0e2;
+  background-color: #262626;
 }
-.responsive-calendar .day.active .not-current {
-  background-color: #8fcaef;
-  color: #ffffff;
+.responsive-calendar .day.today a {
+  color: #999;
+  background-color: #1a1a1a;
 }
-.responsive-calendar .day.active .not-current:hover {
-  background-color: #bcdff5;
-}
-.responsive-calendar .day.not-current a {
-  color: #ddd;
+.responsive-calendar .day.today a:hover {
+  background-color: #404040;
 }
 .carousel.-fit-content {
   display: inline-block;
@@ -7263,4 +7416,39 @@ ol.draggable-list li.placeholder:before {
 }
 .table tbody > tr > td {
   vertical-align: middle;
+}
+.timetable {
+  Ignore: a;margin-bottom:10px;
+  Ignore: a;margin-bottom:0.625rem;
+}
+.timetable .time-label {
+  cursor: pointer;
+}
+.timetable .time-label:hover {
+  font-weight: bold;
+}
+.timetable .time-label.-starting-time {
+  color: #5cb85c;
+}
+.timetable .time-label.-ending-time {
+  color: #d9534f;
+}
+.timetable .time-entry {
+  cursor: pointer;
+  font-size: 16px;
+  background-color: #000;
+  border-color: #111;
+}
+.timetable .time-entry:hover {
+  background-color: #404040;
+  border-color: #111;
+}
+@media only screen and (max-width: 767px) {
+  .timetable aside .row-heading {
+    overflow-x: scroll;
+  }
+}
+.timetable-wrapper {
+  Ignore: a;min-height:120px;
+  Ignore: a;min-height:7.5rem;
 }

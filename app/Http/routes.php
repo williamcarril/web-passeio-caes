@@ -13,9 +13,7 @@
 if (!\App::environment("production")) {
     Route::group(["prefix" => "tests"], function() {
         Route::get("/", ["as" => "test", "uses" => function() {
-            return call_user_func_array(function($teste = null) {
-                return is_null($teste) ? "teste nulo" : "nao nulo";
-            }, [""]);
+            
         }]);
     });
 }
@@ -36,26 +34,45 @@ Route::group(["prefix" => "cliente"], function() {
         Route::post("/cachorro", ["as" => "cliente.caes.post", "uses" => "ClienteController@route_postCaes"]);
         Route::post("/cachorro/delete", ["as" => "cliente.caes.delete.post", "uses" => "ClienteController@route_postDeleteCao"]);
         Route::get("/cachorro/{id}/vacinas", ["as" => "cliente.caes.vacina.get", "uses" => "ClienteController@route_getVacinacao"]);
+
+        Route::group(["prefix" => "agendamento"], function() {
+            Route::get("/", ["as" => "cliente.agendamento.get", "uses" => "AgendamentoController@route_getAgendamentosDoCliente"]);
+            Route::get("/{id}", ["as" => "cliente.agendamento.detalhes.get", "uses" => "AgendamentoController@route_getAgendamentoDoCliente"])
+                    ->where('id', '[0-9]+');
+            Route::post("/{id}/cancelar", ["as" => "cliente.agendamento.cancelar.post", "uses" => "AgendamentoController@route_postCancelarAgendamento"])
+                    ->where('id', '[0-9]+');
+            Route::post("/{id}/aceitar", ["as" => "cliente.agendamento.aceitar.post", "uses" => "AgendamentoController@route_postAceitarAgendamento"])
+                    ->where('id', '[0-9]+');
+        });
+        
+        Route::group(["prefix" => "passeio"], function() {
+            Route::get("/", ["as" => "cliente.passeio.confirmado.get", "uses" => "PasseioController@route_getPasseiosConfirmadosDoCliente"]);
+            Route::get("/{id}", ["as" => "cliente.passeio.detalhes.get", "uses" => "PasseioController@route_getPasseioDoCliente"])
+                    ->where('id', '[0-9]+');
+            Route::post("/{id}/cancelar", ["as" => "cliente.passeio.cancelar.post", "uses" => "PasseioController@route_postCancelarPasseio"]);
+        });
     });
 });
 
 Route::group(["prefix" => "local"], function() {
     Route::get("/", ["as" => "local.listagem.get", "uses" => "LocalController@route_getLocais"]);
     Route::get("/{slug}", ["as" => "local.detalhes.get", "uses" => "LocalController@route_getLocal"]);
-    Route::get("/{id}/json", ["as" => "local.json.get", "uses" => "LocalController@route_getLocalJson"]);
+    Route::get("/{id}/json", ["as" => "local.json.get", "uses" => "LocalController@route_getLocalJson"])
+            ->where('id', '[0-9]+');
 });
 
 Route::group(["prefix" => "agendamento"], function() {
     Route::group(["middleware" => "auth.customer"], function() {
-        Route::get("/", ["as" => "passeio.agenda.get", "uses" => "AgendamentoController@route_getAgenda"]);
+        Route::get("/", ["as" => "passeio.agendamento.get", "uses" => "AgendamentoController@route_getCadastrarAgendamento"]);
+        Route::post("/", ["as" => "passeio.agendamento.post", "uses" => "AgendamentoController@route_postCadastrarAgendamento"]);
     });
 });
 
 Route::group(["prefix" => "passeio"], function() {
     Route::get("/ano/{ano}/mes/{mes?}/dia/{dia?}", ["as" => "passeio.porData.json.get", "uses" => "PasseioController@route_getPasseiosJson"]);
     Route::group(["middleware" => "auth.customer"], function() {
-        Route::get("/", ["as" => "passeio.listagem.get", "uses" => "PasseioController@route_getPasseios"]);
-        Route::get("/{id}", ["as" => "passeio.detalhes.get", "uses" => "PasseioController@route_getPasseio"]);
+        Route::get("/{id}/json", ["as" => "passeio.json.get", "uses" => "PasseioController@route_getPasseioJson"])
+                ->where('id', '[0-9]+');
     });
 });
 
@@ -65,6 +82,7 @@ Route::group(["prefix" => "modalidade"], function() {
 
 Route::group(["prefix" => "api", "namespace" => "Api"], function() {
     Route::group(["prefix" => "v1"], function() {
+        
     });
 });
 

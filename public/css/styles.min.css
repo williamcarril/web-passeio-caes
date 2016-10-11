@@ -7064,8 +7064,14 @@ Creation date: 29/08/2016 18:46
 .flaticon-smile:before {
   content: "\f107";
 }
-.flaticon-social:before {
+.flaticon-user:before {
   content: "\f108";
+}
+.flaticon-walker:before {
+  content: "\f109";
+}
+.flaticon-walking-dog:before {
+  content: "\f10a";
 }
 ._no-border {
   border: none !important;

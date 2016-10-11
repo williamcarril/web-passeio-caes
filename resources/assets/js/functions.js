@@ -283,6 +283,119 @@
 
     //Default ajax request to a simple form element.
     $.fn.extend({
+        "defaultAjaxCall": function (url, type, redirectUrl, data, validation, redirectTimer, callbacks) {
+            var $this = $(this);
+            var formData;
+            if (!$this.is("button")) {
+                $this = null;
+            } else {
+                if ($this.hasClass("disabled")) {
+                    return;
+                }
+            }
+            redirectTimer = redirectTimer || 3000;
+            type = type || "POST";
+            validation = validation || function () {
+                return true;
+            };
+            var defaultCallbacks = {
+                "beforeSend": {
+                    "after": function () {
+
+                    }
+                },
+                "success": {
+                    "afterFailure": function (response) {
+
+                    },
+                    "afterSuccess": function (response) {
+
+                    }
+                },
+                "error": {
+                    "after": function (request) {
+
+                    }
+                },
+                "complete": {
+                    "after": function () {
+
+                    }
+                }
+            };
+            $.extend(defaultCallbacks, callbacks);
+            if (!validation($this)) {
+                return false;
+            }
+            if (!(data instanceof FormData)) {
+                formData = new FormData();
+                for (var key in data) {
+                    formData.append(key, data[key]);
+                }
+            } else {
+                formData = data;
+            }
+
+            $.ajax({
+                "url": url,
+                "type": type,
+                "data": formData,
+                "processData": false,
+                "contentType": false,
+                "beforeSend": function () {
+                    if ($this) {
+                        $this.addClass("disabled").addClass("loading");
+                    }
+                    defaultCallbacks.beforeSend.after();
+                },
+                "success": function (response) {
+                    if (!response.status) {
+                        var messageLevel = "error";
+                        if (response.data && response.data.messageLevel) {
+                            messageLevel = response.data.messageLevel;
+                        }
+                        showAlert(response.messages, messageLevel);
+                        if ($this) {
+                            $this.removeClass("disabled");
+                        }
+                        if (response.data && response.data.redirect && redirectUrl) {
+                            setInterval(function () {
+                                window.location.replace(redirectUrl);
+                            }, redirectTimer);
+                        }
+                        defaultCallbacks.success.afterFailure(response);
+                    } else {
+                        showAlert('Operação realizada com sucesso!', "success");
+                        if (redirectUrl) {
+                            setInterval(function () {
+                                window.location.replace(redirectUrl);
+                            }, redirectTimer);
+                        } else {
+                            if ($this) {
+                                $this.removeClass("disabled");
+                            }
+                        }
+                        defaultCallbacks.success.afterSuccess(response);
+                    }
+                },
+                "error": function (request) {
+                    if (request.statusText !== 'abort') {
+                        showAlert("Ocorreu um problema ao enviar a requisição. Por favor, atualize a página ou tente novamente mais tarde.", "error");
+                    }
+                    if ($this) {
+                        $this.removeClass("disabled");
+                    }
+                    defaultCallbacks.error.after(request);
+                },
+                "complete": function () {
+                    if ($this) {
+                        $this.removeClass("loading");
+                    }
+                    defaultCallbacks.complete.after();
+                }
+            });
+            return $this;
+        },
         "defaultAjaxSubmit": function (redirectUrl, validation, redirectTimer) {
             var $this = $(this);
             if (!$this.is("form")) {
@@ -299,40 +412,7 @@
                 if (!validation($this, $submitButton)) {
                     return false;
                 }
-                $.ajax({
-                    "url": $this.attr("action"),
-                    "type": $this.attr("method"),
-                    "data": new FormData($this[0]),
-                    "processData": false,
-                    "contentType": false,
-                    "beforeSend": function () {
-                        if ($submitButton) {
-                            $submitButton.addClass("disabled").addClass("loading");
-                        }
-                    },
-                    "success": function (response) {
-                        if (!response.status) {
-                            showAlert(response.messages, "error");
-                            $submitButton.removeClass("disabled");
-                        } else {
-                            showAlert('Operação realizada com sucesso!', "success");
-                            if (redirectUrl) {
-                                setInterval(function () {
-                                    window.location.replace(redirectUrl);
-                                }, redirectTimer);
-                            }
-                        }
-                    },
-                    "error": function (request) {
-                        if (request.statusText !== 'abort') {
-                            showAlert("Ocorreu um problema ao enviar a requisição. Por favor, atualize a página ou tente novamente mais tarde.", "error");
-                        }
-                        $submitButton.removeClass("disabled");
-                    },
-                    "complete": function () {
-                        $submitButton.removeClass("loading");
-                    }
-                });
+                $submitButton.defaultAjaxCall($this.attr("action"), $this.attr("method"), redirectUrl, new FormData($this[0]), null, redirectTimer);
             });
             return $this;
         }
@@ -406,7 +486,11 @@
 
     //Basic date formatation function
     window.simpleDateFormatter = function (day, month, year, format) {
+        var today = new Date();
         format = format || "d/m/Y";
+        day = day || today.getDate();
+        month = month || (today.getMonth() + 1);
+        year = year || today.getFullYear();
         if (parseInt(day) < 10) {
             day = "0" + day;
         }
@@ -472,5 +556,29 @@
             return strHours + " e " + strMinutes;
         }
         return strHours;
+    };
+
+    //Gmaps Utils
+    window.makeMarkerWithInfowindow = function (map, position, html, icon) {
+        var markerData = {
+            "map": map,
+            "position": position
+        };
+        if (icon) {
+            markerData.icon = icon;
+        }
+        var infowindow = new google.maps.InfoWindow({
+            content: ""
+        });
+
+        var marker = new google.maps.Marker(markerData);
+        marker.html = html;
+
+        marker.addListener('click', function () {
+            infowindow.setContent(this.html);
+            infowindow.open(map, this);
+        });
+
+        return marker;
     };
 })();

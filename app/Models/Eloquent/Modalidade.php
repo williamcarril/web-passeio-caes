@@ -5,6 +5,7 @@ namespace App\Models\Eloquent;
 use App\Models\Eloquent\Enums\Servico;
 use App\Models\Eloquent\Enums\Periodo;
 use App\Models\Eloquent\Enums\Frequencia;
+use App\Models\Eloquent\Enums\Ids\Modalidade as ModalidadesBase;
 
 class Modalidade extends \WGPC\Eloquent\Model {
 
@@ -48,6 +49,11 @@ class Modalidade extends \WGPC\Eloquent\Model {
         static::$rules["tipo"][] = "in:" . implode(",", Servico::getConstants());
         static::$rules["periodo"][] = "in:" . implode(",", Periodo::getConstants());
         static::$rules["frequencia"][] = "in:" . implode(",", Frequencia::getConstants());
+        static::setStatusGlobalScope();
+    }
+
+    public function eModalidadeBase() {
+        return ModalidadesBase::isValidValue($this->idModalidade);
     }
 
     public function overrideNormalRules($rules) {
@@ -55,6 +61,14 @@ class Modalidade extends \WGPC\Eloquent\Model {
         return $rules;
     }
 
+    public function getQuantidadeDePasseiosAttribute() {
+        switch ($this->tipo) {
+            case Servico::UNITARIO:
+                return 1;
+            case Servico::PACOTE:
+                return $this->frequenciaNumericaPorSemana * $this->periodoNumericoPorMes * 4;
+        }
+    }
     public function getTipoFormatadoAttribute() {
         return Servico::format($this->tipo);
     }
@@ -86,9 +100,9 @@ class Modalidade extends \WGPC\Eloquent\Model {
         }
         return null;
     }
-    
+
     public function getPeriodoNumericoPorMesAttribute() {
-        switch($this->periodo) {
+        switch ($this->periodo) {
             case Periodo::MENSAL:
                 return 1;
             case Periodo::BIMESTRAL:
@@ -101,6 +115,48 @@ class Modalidade extends \WGPC\Eloquent\Model {
                 return 12;
         }
         return null;
+    }
+
+    public function setNomeAttribute($value) {
+        if ($this->eModalidadeBase()) {
+            return;
+        }
+        $this->attributes["nome"] = $value;
+    }
+
+    public function setTipoAttribute($value) {
+        if ($this->eModalidadeBase()) {
+            return;
+        }
+        $this->attributes["tipo"] = $value;
+    }
+
+    public function setPeriodoAttribute($value) {
+        if ($this->eModalidadeBase()) {
+            return;
+        }
+        $this->attributes["periodo"] = $value;
+    }
+
+    public function setFrequenciaAttribute($value) {
+        if ($this->eModalidadeBase()) {
+            return;
+        }
+        $this->attributes["frequencia"] = $value;
+    }
+
+    public function setAtivoAttribute($value) {
+        if ($this->eModalidadeBase()) {
+            return;
+        }
+        $this->attributes["ativo"] = $value;
+    }
+
+    public function setColetivoAttribute($value) {
+        if ($this->eModalidadeBase()) {
+            return;
+        }
+        $this->attributes["coletivo"] = $value;
     }
 
 }

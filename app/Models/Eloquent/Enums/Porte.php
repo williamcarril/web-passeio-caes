@@ -9,7 +9,13 @@
 namespace App\Models\Eloquent\Enums;
 
 abstract class Porte extends Enum {
+
     const PEQUENO = "pequeno";
     const MEDIO = "medio";
     const GRANDE = "grande";
+
+    public static function format($const) {
+        return ucfirst($const);
+    }
+
 }

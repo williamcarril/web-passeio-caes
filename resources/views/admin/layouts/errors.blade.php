@@ -1,6 +1,6 @@
 <?php
 $hasLinkToHome = isset($hasLinkToHome) ? $hasLinkToHome : true;
-$link = isset($link) ? $link : true;
+$link = isset($link) ? $link : null;
 $linkMessage = isset($linkMessage) ? $linkMessage : "Retorne";
 ?>
 <!DOCTYPE html>
@@ -56,7 +56,7 @@ $linkMessage = isset($linkMessage) ? $linkMessage : "Retorne";
                 @yield("message")
                 <br/>
                 <br/>
-                @if($link)
+                @if(is_null($link))
                 <p>{{$linkMessage}} clicando <a href="{{$link}}">aqui</a>.</p>
                 <a href="{{$link}}"><img src="{{asset("img/medium-logo-white.png")}}" /></a>
                 @else

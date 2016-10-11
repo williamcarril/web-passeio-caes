@@ -24,7 +24,9 @@ class Imagem extends \WGPC\Eloquent\Model {
     public static function boot() {
         parent::boot();
         static::saving(function($model) {
-            $model->data = date("Y-m-d H:i:s");
+            if(is_null($model->data)) {
+                $model->data = date("Y-m-d H:i:s");
+            }
         }, 1);
     }
 

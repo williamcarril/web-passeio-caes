@@ -1,0 +1,19 @@
+// -------------------------
+// Header - Layout
+// -------------------------
+#header {
+    .rem("padding", @base-space);
+    .rem("min-height", @header-height);
+    
+    .navbar-brand {
+        .rem("padding", @base-space);
+    }
+    
+    .navbar-toggle {
+        padding: 4px 10px;
+    }
+    
+    @media @desktops {
+        position: relative;
+    }
+}
