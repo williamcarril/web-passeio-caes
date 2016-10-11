@@ -499,7 +499,7 @@ class PasseioController extends Controller {
                 return true;
             }
             //Verifica se, após a remoção dos cães do cliente, sobrou algum para participar do passeio
-            if ($passeio->caes->count() === 0) {
+            if ($passeio->caes()->count() === 0) {
                 $passeio->status = PasseioStatus::CANCELADO;
                 return $passeio->save();
             }
