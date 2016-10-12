@@ -7,6 +7,7 @@ use App\Http\Requests;
 use App\Models\Eloquent\Local;
 use App\Models\Eloquent\Enums\ImagemTamanho;
 use Illuminate\Contracts\Auth\Factory as AuthFactory;
+use App\Models\File\Repositorio;
 
 class LocalController extends Controller {
 
