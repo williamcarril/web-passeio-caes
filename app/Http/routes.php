@@ -13,12 +13,8 @@
 if (!\App::environment("production")) {
     Route::group(["prefix" => "tests"], function() {
         Route::get("/", ["as" => "test", "uses" => function() {
-            $cliente = \App\Models\Eloquent\Cliente::first();
-            return response()->view("emails.cliente.cancelamento.agendamento", [
-                "cliente" => $cliente,
-                "message" => "Oi",
-                "agendamento" => $cliente->agendamentos()->first()
-            ]);
+            return strtotime("9:00") . " " . strtotime(date("Y-m-d 9:00"));
+            return App\Models\Eloquent\Cliente::where("email", "williamcarril@terra.com.br")->first()->cancelamentos;
         }]);
     });
 }

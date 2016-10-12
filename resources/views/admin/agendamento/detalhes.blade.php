@@ -21,7 +21,8 @@
             break;
     }
     ?>
-    <p><b>Status:</b> 
+    <p>
+        <b>Status:</b>
         <span class="{{$statusClass}}">
             {{$agendamento->statusFormatado}}
         </span>
@@ -99,7 +100,16 @@
     <section>
         <h2>Passeios agendados</h2>
         <div class="table-responsive">
-            @include("admin.includes.passeios-tabela", ["passeios" => $passeios, "cliente" => $agendamento->cliente])
+            <?php 
+            $options = [
+                "passeios" => $passeios, 
+                "cliente" => $agendamento->cliente,
+                "passeadores" => $passeadores,
+                "destaqueSemPasseadores" => true,
+                "agendamento" => $agendamento
+            ];
+            ?>
+            @include("admin.includes.passeios-tabela", $options)
         </div>
     </section>
     <hr/>

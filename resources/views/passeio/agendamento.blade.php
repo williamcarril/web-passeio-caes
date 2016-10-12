@@ -420,7 +420,19 @@ foreach ($passeios as $passeio) {
             }
         });
 
-        $form.on("change", "input[name='inicio'],input[name='fim']", function () {
+        $form.on("change", "input[name='inicio']", function () {
+            var $this = $(this);
+            if($this.val() < "{!! $businessStartingTime !!}") {
+                $this.val("{!! $businessStartingTime !!}");
+            }
+            limparEstadoDaTimetable();
+            obterEDefinirTotais();
+        });
+        $form.on("change", "input[name='fim']", function () {
+            var $this = $(this);
+            if($this.val() > "{!! $businessEndingTime !!}") {
+                $this.val("{!! $businessEndingTime !!}");
+            }
             limparEstadoDaTimetable();
             obterEDefinirTotais();
         });

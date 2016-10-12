@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Eloquent\Funcionario;
+use App\Models\Eloquent\FuncionarioLimiteCaes;
+use App\Models\Eloquent\Enums\Porte;
+use App\Models\Eloquent\Enums\FuncionarioTipo;
 use Illuminate\Contracts\Auth\Factory as AuthFactory;
 use App\Models\File\Repositorio;
 use App\Http\Controllers\ImagemController;
@@ -76,6 +79,9 @@ class FuncionarioController extends Controller {
                 "title" => "Novo passeador"
             ];
         }
+        $data["portes"] = array_map(function($porte) {
+            return ["value" => $porte, "text" => Porte::format($porte)];
+        }, Porte::getConstants());
         return response()->view("admin.funcionario.salvar", $data);
     }
 
@@ -115,7 +121,6 @@ class FuncionarioController extends Controller {
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Rotas POST que retornam JSON">
     public function route_postAdminFuncionario(Request $req) {
-
         $id = $req->input("id");
         if (!is_null($id)) {
             $funcionario = Funcionario::find($id);
@@ -190,6 +195,30 @@ class FuncionarioController extends Controller {
             if (!$funcionario->save()) {
                 return $this->defaultJsonResponse(false, $funcionario->getErrors());
             }
+
+            if ($funcionario->tipo === FuncionarioTipo::PASSEADOR && $req->has("limite")) {
+                $limiteDeCaes = $req->input("limite");
+                foreach ($limiteDeCaes as $porte => $limite) {
+                    $limiteModel = $funcionario->limiteDeCaes()->where("porte", $porte)->first();
+                    if (is_null($limiteModel)) {
+                        $limiteModel = new FuncionarioLimiteCaes();
+                    } 
+                    if(empty($limite)) {
+                        if(!is_null($limiteModel)) {
+                            $limiteModel->delete();
+                        }
+                        continue;
+                    }
+                    $limiteModel->porte = $porte;
+                    $limiteModel->limite = $limite;
+                    $limiteModel->idFuncionario = $funcionario->idFuncionario;
+                    if(!$limiteModel->save()) {
+                        \DB::rollBack();
+                        return $this->defaultJsonResponse(false, trans("alert.error.generic", ["message" => "atualizar os limites de cães por porte deste funcionário"]));
+                    }
+                }
+            }
+
             if (!empty($idImagemAntiga)) {
                 if (!$this->imageController->deletar($idImagemAntiga)) {
                     \DB::rollBack();
@@ -245,7 +274,7 @@ class FuncionarioController extends Controller {
         $data = [];
         return response()->view("walker.login", $data);
     }
-    
+
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Rotas que causam redirects">
     public function route_postWalkerLogin(Request $req) {

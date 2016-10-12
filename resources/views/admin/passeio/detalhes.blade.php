@@ -160,7 +160,7 @@
         </div>
     </div>
     <div id="passeador-modal" class="modal fade" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
+        <div class="modal-dialog modal-lg" role="document">
             <section class="modal-content">
                 <header class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -183,23 +183,74 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($passeadoresAptos as $funcionario)
-                                <tr data-id="{{$funcionario->idFuncionario}}" class="_cursor-pointer" data-role="passeador">
-                                    <td><img src="{{$funcionario->thumbnail}}" alt="Foto"/></td>
-                                    <td>{{$funcionario->nome}}</td>
-                                    <td>{{$funcionario->cpfFormatado}}</td>
-                                    <td>{{$funcionario->rg}}</td>
-                                    <td>{{$funcionario->telefoneFormatado}}</td>
-                                    <td>{{$funcionario->email}}</td>
+                                @foreach($passeadoresAptos as $passeador)
+                                <tr data-id="{{$passeador->idFuncionario}}" class="_cursor-pointer" data-role="passeador">
+                                    <td><img src="{{$passeador->thumbnail}}" alt="Foto"/></td>
+                                    <td>{{$passeador->nome}}</td>
+                                    <td>{{$passeador->cpfFormatado}}</td>
+                                    <td>{{$passeador->rg}}</td>
+                                    <td>{{$passeador->telefoneFormatado}}</td>
+                                    <td>{{$passeador->email}}</td>
                                     <td>
                                         <div class="button-group">
-                                            <a href="{{route("admin.funcionario.passeador.alterar.get", ["id" => $funcionario->idFuncionario])}}" class="btn btn-default" target="_blank">
+                                            <a href="{{route("admin.funcionario.passeador.alterar.get", ["id" => $passeador->idFuncionario])}}" class="btn btn-default" target="_blank">
                                                 <i class="glyphicon glyphicon-search"></i>
                                                 Detalhes
                                             </a>
                                         </div>
                                     </td>
                                 </tr>
+                                <tr>
+                                    <td>Disponibilidade:</td>
+                                    <td colspan="6">
+                                    <?php
+                                    $passeadorPasseios = $passeador->obterPasseiosDaData($passeio->data);
+                                    $options = [
+                                        "inicio" => $passeio->inicio,
+                                        "fim" => $passeio->fim,
+                                        "passeios" => $passeadorPasseios,
+                                        "classe" => $passeador->conflitaComSeusPasseios($passeio) ? "_error-background" : "_success-background"
+                                    ];
+                                    ?>
+                                    @if($passeadorPasseios->count() === 0)
+                                    <span class="_success-color">Total</span>
+                                    @else
+                                    @include("includes.timetable", $options)
+                                    @endif
+                                    </td>
+                                </tr>
+                                @if($passeio->coletivo)
+                                <?php
+                                $limitePequenos = $passeador->getLimiteDeCaes("pequeno");
+                                $limiteMedios = $passeador->getLimiteDeCaes("medio");
+                                $limiteGrandes = $passeador->getLimiteDeCaes("grande");
+                                $indicativeClass = "";
+                                switch ($passeio->porte) {
+                                    case "pequeno":
+                                        $limiteVerificado = $limitePequenos;
+                                        break;
+                                    case "medio":
+                                        $limiteVerificado = $limiteMedios;
+                                        break;
+                                    case "grande":
+                                        $limiteVerificado = $limiteGrandes;
+                                        break;
+                                }
+                                if (is_null($limiteVerificado)) {
+                                    $indicativeClass .= "_warning-color";
+                                } elseif ($limiteVerificado < $passeio->caes->count()) {
+                                    $indicativeClass .= "_error-color";
+                                } else {
+                                    $indicativeClass .= "_success-color";
+                                }
+                                ?>
+                                <tr>
+                                    <td colspan="1"><b>Limite de cães:</b></td>
+                                    <td colspan='2' class="{{$passeio->porte === "pequeno" ? $indicativeClass : ""}}">Pequenos: {{!is_null($limitePequenos) ? $limitePequenos : "Não definido"}}</td>
+                                    <td colspan='2' class="{{$passeio->porte === "medio" ? $indicativeClass : ""}}">Médios: {{!is_null($limiteMedios) ? $limiteMedios : "Não definido"}}</td>
+                                    <td colspan='2' class="{{$passeio->porte === "grande" ? $indicativeClass : ""}}">Grandes: {{!is_null($limiteGrandes) ? $limiteGrandes : "Não definido"}}</td>
+                                </tr>
+                                @endif
                                 @endforeach
                             </tbody>
                         </table>
@@ -213,30 +264,6 @@
         </div>
     </div>
 </section>
-@endsection
-
-@section("templates")
-<div data-template="passeador" data-role="passeador">
-    <div class="col-lg-2 ">
-        <img data-name="thumbnail" alt="" src=""/>
-    </div>
-    <div class="col-lg-6">
-        <p><b>Nome: </b> <span data-name="nome"></span></p>
-        <p><b>Telefone: </b> <span data-name="telefone"></span></p>
-        <p><b>E-mail: </b> <span data-name="email"></span></p>
-    </div>
-    <div class="col-lg-6">
-        <a class="btn btn-default" href="#passeador-modal" data-toggle="modal">Realocar passeador</a>
-        <button class="btn btn-danger" data-action="remover-passeador">Remover passeador</button>
-    </div>
-</div>
-
-<div data-template="sem-passeador">
-    <div class="col-lg-6">
-        <p class="_error-color">Não alocado</p>
-        <a class="btn btn-default" href="#passeador-modal" data-toggle="modal">Alocar passeador</a>
-    </div>
-</div>
 @endsection
 
 @section("scripts")
@@ -258,22 +285,13 @@
         });
 
         $passeadorWrapper.on("click", "[data-action='remover-passeador']", function () {
-            $(this).defaultAjaxCall(
+            askConfirmation("Remover passeador", "Tem certeza que deseja remover este passeador?", function () {
+                $(this).defaultAjaxCall(
                     "{!!route('admin.passeio.alocar.passeador.post', ['id' => $passeio->idPasseio])!!}",
-                    "POST", null, null, null, null, {
-                        "success": {
-                            "afterSuccess": function (response) {
-                                var passeador = response.data;
-                                var $passeadorTemplate = globals.templates.find("[data-template='sem-passeador']");
-
-                                var $clone = $passeadorTemplate.clone();
-                                $clone.removeAttr("data-template");
-
-                                $passeadorWrapper.html($clone.html());
-                                $modalPasseador.modal("hide");
-                            }
-                        }
-                    });
+                    "POST", 
+                    "{!!route('admin.passeio.detalhes.get', ['id' => $passeio->idPasseio])!!}", null, null, 1000
+                    );
+            });
         });
 
         $modalPasseador.on("click", "[data-role='passeador']", function () {
@@ -298,24 +316,10 @@
             var idPasseador = $selected.attr("data-id");
             $this.defaultAjaxCall(
                     "{!!route('admin.passeio.alocar.passeador.post', ['id' => $passeio->idPasseio])!!}",
-                    "POST", null, {"idPasseador": parseInt(idPasseador)}, null, null, {
-                "success": {
-                    "afterSuccess": function (response) {
-                        var passeador = response.data;
-                        var $passeadorTemplate = globals.templates.find("[data-template='passeador']");
-
-                        var $clone = $passeadorTemplate.clone();
-                        $clone.removeAttr("data-template");
-                        $clone.find("[data-name='nome']").text(passeador.nome);
-                        $clone.find("[data-name='telefone']").text(passeador.telefone);
-                        $clone.find("[data-name='email']").text(passeador.email);
-                        $clone.find("[data-name='thumbnail']").attr("src", passeador.thumbnail).attr("alt", passeador.nome);
-
-                        $passeadorWrapper.html($clone.html());
-                        $modalPasseador.modal("hide");
-                    }
-                }
-            });
+                    "POST", 
+                    "{!!route('admin.passeio.detalhes.get', ['id' => $passeio->idPasseio])!!}", 
+                    {"idPasseador": parseInt(idPasseador)}, null, 1000
+                );
         });
 
         $modalCancelamento.on("modal.bs.hidden", function () {

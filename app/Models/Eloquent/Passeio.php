@@ -26,8 +26,8 @@ class Passeio extends \WGPC\Eloquent\Model {
         "idPasseador" => ["exists:funcionario,idFuncionario,tipo,passeador", "integer"],
         "idPasseioOriginal" => ["exists:passeio,idPasseio", "integer"],
         "coletivo" => ["boolean", "required"],
-        "inicio" => ["required", "date_format:H:i:s", "less_or_equal:fim"],
-        "fim" => ["required", "date_format:H:i:s", "greater_or_equal:inicio"],
+        "inicio" => ["required", "date_format:H:i:s", "date_less_or_equal:fim"],
+        "fim" => ["required", "date_format:H:i:s", "date_greater_or_equal:inicio"],
         "data" => ["required", "date"],
         "status" => ["required", "string"],
         "porte" => ["string"],
@@ -44,6 +44,8 @@ class Passeio extends \WGPC\Eloquent\Model {
         parent::boot();
         static::$rules["porte"][] = "in:" . implode(",", Porte::getConstants());
         static::$rules["status"][] = "in:" . implode(",", Status::getConstants());
+        static::$rules["inicio"][] = "date_greater_than:" . config("general.businessTime.start");
+        static::$rules["fim"][] = "date_less_than:" . config("general.businessTime.end");
     }
 
     public function agendamentos() {
@@ -166,6 +168,39 @@ class Passeio extends \WGPC\Eloquent\Model {
                 })->get();
     }
 
+    public function ocorreriaEm($data = null) {
+        if (is_null($data)) {
+            $data = strtotime(date("Y-m-d H:i:s"));
+        } else {
+            $data = strtotime(str_replace("/", "-", $data));
+        }
+
+        return (strtotime("$this->data $this->inicio") <= $data) && (strtotime("$this->data $this->fim") >= $data);
+    }
+    
+    public function ocorreriaEntre($inicio, $fim) {
+        $inicioPasseio = strtotime("$this->data $this->inicio");
+        $fimPasseio = strtotime("$this->data $this->fim");
+        
+        $inicio = strtotime(str_replace("/", "-", $inicio));
+        $fim = strtotime(str_replace("/", "-", $fim));
+        //Verifica se o passeio está compreendido entre o intervalo informado
+        if($inicioPasseio >= $inicio && $inicioPasseio <= $fim) {
+            return true;
+        }
+        if($fimPasseio >= $inicio && $fimPasseio >= $fim) {
+            return true;
+        }
+        //Verifica se o intervalo informado está compreendido entre o intervalo do passeio
+        if($inicio >= $inicioPasseio && $inicio <= $fimPasseio) {
+            return true;
+        }
+        if($fim >= $inicioPasseio && $fim <= $fimPasseio) {
+            return true;
+        }
+        return false;
+    }
+    
     public function getAgendamentoDoCliente($cliente) {
         if (is_numeric($cliente)) {
             $cliente = (object) [
@@ -183,11 +218,13 @@ class Passeio extends \WGPC\Eloquent\Model {
     }
 
     public function setInicioAttribute($value) {
-        $this->attributes["inicio"] = date("H:i:s", strtotime($value));
+        $inicio = date("H:i:s", strtotime($value));
+        $this->attributes["inicio"] = $inicio;
     }
 
     public function setFimAttribute($value) {
-        $this->attributes["fim"] = date("H:i:s", strtotime($value));
+        $fim = date("H:i:s", strtotime($value));
+        $this->attributes["fim"] = $fim;
     }
 
     public function getClienteAttribute() {
@@ -225,7 +262,7 @@ class Passeio extends \WGPC\Eloquent\Model {
                     }
                 })->count() > 0;
     }
-    
+
     public function temPasseador() {
         return !is_null($this->idPasseador);
     }

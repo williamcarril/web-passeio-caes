@@ -60,11 +60,6 @@ class CreateModelTables extends Migration {
             $table->tinyInteger("ordem")->unsigned()->unique();
         });
 
-        \Schema::create("vacina", function($table) {
-            $table->increments("idVacina");
-            $table->string("nome", 30)->unique();
-        });
-
         \Schema::create("cliente", function($table) {
             $table->increments("idCliente");
             $table->string("nome", 70);
@@ -82,6 +77,7 @@ class CreateModelTables extends Migration {
             $table->string("complemento", 50)->nullable();
             $table->rememberToken();
         });
+
         \Schema::create("funcionario", function($table) {
             $table->increments("idFuncionario");
             $table->string("nome", 70);
@@ -104,14 +100,6 @@ class CreateModelTables extends Migration {
             $table->rememberToken();
         });
 
-        \Schema::create("horario", function($table) {
-            $table->increments("idHorario");
-            $table->time("inicio")->default("00:00:00");
-            $table->time("fim")->default("23:59:59");
-            $table->integer("idCliente")->unsigned();
-            $table->foreign("idCliente")->references("idCliente")->on("cliente");
-        });
-
         \Schema::create("cao", function($table) {
             $table->increments("idCao");
             $table->string("nome", 50);
@@ -123,16 +111,6 @@ class CreateModelTables extends Migration {
             $table->foreign("idCliente")->references("idCliente")->on("cliente");
             $table->integer("idImagem")->unsigned()->nullable();
             $table->foreign("idImagem")->references("idImagem")->on("imagem");
-        });
-
-        \Schema::create("vacinacao", function($table) {
-            $table->increments("idVacinacao");
-            $table->integer("idCao")->unsigned();
-            $table->foreign("idCao")->references("idCao")->on("cao");
-            $table->integer("idVacina")->unsigned();
-            $table->foreign("idVacina")->references("idVacina")->on("vacina");
-            $table->date("aplicacao");
-            $table->date("proximaAplicacao")->nullable();
         });
 
         \Schema::create("agendamento", function($table) {
@@ -183,14 +161,6 @@ class CreateModelTables extends Migration {
             $table->primary(["idPasseio", "idCao"]);
         });
 
-        \Schema::create("a_horario_dia", function($table) {
-            $table->integer("idHorario")->unsigned();
-            $table->foreign("idHorario")->references("idHorario")->on("horario");
-            $table->integer("idDia")->unsigned();
-            $table->foreign("idDia")->references("idDia")->on("dia");
-            $table->primary(["idHorario", "idDia"]);
-        });
-
         \Schema::create("a_local_imagem", function($table) {
             $table->integer("idLocal")->unsigned();
             $table->foreign("idLocal")->references("idLocal")->on("local");
@@ -233,17 +203,13 @@ class CreateModelTables extends Migration {
         \Schema::drop("a_agendamento_passeio");
         \Schema::drop("a_agendamento_dia");
         \Schema::drop("a_local_imagem");
-        \Schema::drop("a_horario_dia");
         \Schema::drop("a_cao_passeio");
         \Schema::drop("cancelamento");
         \Schema::drop("passeio");
         \Schema::drop("agendamento");
-        \Schema::drop("vacinacao");
         \Schema::drop("cao");
-        \Schema::drop("horario");
         \Schema::drop("funcionario");
         \Schema::drop("cliente");
-        \Schema::drop("vacina");
         \Schema::drop("dia");
         \Schema::drop("modalidade");
         \Schema::drop("local");

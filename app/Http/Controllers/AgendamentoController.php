@@ -9,6 +9,7 @@ use App\Models\Eloquent\Passeio;
 use App\Models\Eloquent\Cliente;
 use App\Models\Eloquent\Cao;
 use App\Models\Eloquent\Local;
+use App\Models\Eloquent\Funcionario;
 use App\Models\Eloquent\Modalidade;
 use App\Models\Eloquent\Enums\AgendamentoStatus;
 use App\Models\Eloquent\Enums\PasseioStatus;
@@ -75,7 +76,8 @@ class AgendamentoController extends Controller {
             "caes" => $agendamento->caes,
             "modalidade" => $agendamento->modalidade,
             "passeios" => $agendamento->passeios,
-            "customer" => $agendamento->cliente
+            "customer" => $agendamento->cliente,
+            "passeadores" => Funcionario::passeador()->get()
         ];
 
         return response()->view("admin.agendamento.detalhes", $data);

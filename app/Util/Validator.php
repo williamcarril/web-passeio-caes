@@ -93,6 +93,20 @@ class Validator {
 
         return $isTheGreatest;
     }
+    public function checkDateGreaterOrEqualThan($attribute = null, $value = null, $parameters = [], $validator = null) {
+        $data = $validator->getData();
+        $isTheGreatest = true;
+        $value = strtotime($value);
+        foreach ($parameters as $field) {
+            $smallerOrEqualValue = isset($data["$field"]) ? $data["$field"] : null;
+            if (is_null($smallerOrEqualValue)) {
+                continue;
+            }
+            $isTheGreatest &= ($value >= strtotime($smallerOrEqualValue));
+        }
+
+        return $isTheGreatest;
+    }
 
     /**
      * Verifica se um valor é o maior em um conjunto de valores.
@@ -111,6 +125,20 @@ class Validator {
                 continue;
             }
             $isTheGreatest &= ($value > $smallerValue);
+        }
+
+        return $isTheGreatest;
+    }
+
+    public function checkDateGreaterThanValue($attribute = null, $value = null, $parameters = [], $validator = null) {
+        $data = $validator->getData();
+        $isTheGreatest = true;
+        $value = strtotime($value);
+        foreach ($parameters as $smallerValue) {
+            if (is_null($smallerValue)) {
+                continue;
+            }
+            $isTheGreatest &=  ($value > strtotime($smallerValue));
         }
 
         return $isTheGreatest;
@@ -138,6 +166,20 @@ class Validator {
         return $isTheLeast;
     }
 
+    public function checkDateLessThanValue($attribute = null, $value = null, $parameters = [], $validator = null) {
+        $data = $validator->getData();
+        $isTheLeast = true;
+        $value = strtotime($value);
+        foreach ($parameters as $greaterValue) {
+            if (is_null($greaterValue)) {
+                continue;
+            }
+            $isTheLeast &= ($value < strtotime($greaterValue));
+        }
+
+        return $isTheLeast;
+    }
+
     /**
      * Verifica se um valor é o menor em um conjunto de valores.
      * @param string $attribute Nome do atributo a ser validado
@@ -155,6 +197,21 @@ class Validator {
                 continue;
             }
             $isTheLeast &= ($value <= $greaterValue);
+        }
+
+        return $isTheLeast;
+    }
+
+    public function checkDateLessOrEqualThan($attribute = null, $value = null, $parameters = [], $validator = null) {
+        $data = $validator->getData();
+        $isTheLeast = true;
+        $value = strtotime($value);
+        foreach ($parameters as $field) {
+            $greaterValue = isset($data["$field"]) ? $data["$field"] : null;
+            if (is_null($greaterValue)) {
+                continue;
+            }
+            $isTheLeast &= ($value <= strtotime($greaterValue));
         }
 
         return $isTheLeast;
