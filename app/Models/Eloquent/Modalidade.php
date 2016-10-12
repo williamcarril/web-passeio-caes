@@ -34,7 +34,7 @@ class Modalidade extends \WGPC\Eloquent\Model {
     ];
     protected $appends = ["frequenciaNumericaPorSemana", "periodoNumericoPorMes"];
     protected static $rules = [
-        "nome" => ["required", "string"],
+        "nome" => ["required", "string", "max:35"],
         "descricao" => ["required", "string"],
         "tipo" => ["required", "string"],
         "periodo" => ["string"],

@@ -47,7 +47,7 @@ abstract class Pessoa extends \WGPC\Eloquent\Model implements Authenticatable {
         "lat" => ["numeric", "required"],
         "lng" => ["numeric", "required"],
         "complemento" => ["max:50", "string"],
-        "email" => ["required", "email", "string"]
+        "email" => ["required", "email", "string", "max:80"]
     ];
 
     public function setTelefoneAttribute($value) {

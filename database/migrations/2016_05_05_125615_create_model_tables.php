@@ -132,8 +132,6 @@ class CreateModelTables extends Migration {
             $table->foreign("idLocal")->references("idLocal")->on("local");
             $table->integer("idPasseador")->unsigned()->nullable();
             $table->foreign("idPasseador")->references("idFuncionario")->on("funcionario");
-            $table->integer("idPasseioOriginal")->unsigned()->nullable();
-            $table->foreign("idPasseioOriginal")->references("idPasseio")->on("passeio");
             $table->boolean("coletivo")->default(false);
             $table->time("inicio");
             $table->time("fim");
@@ -183,6 +181,7 @@ class CreateModelTables extends Migration {
             $table->foreign("idAgendamento")->references("idAgendamento")->on("agendamento");
             $table->integer("idPasseio")->unsigned();
             $table->foreign("idPasseio")->references("idPasseio")->on("passeio");
+            $table->primary(["idPasseio", "idAgendamento"]);
         });
         
         \Schema::create("a_agendamento_cao", function($table) {
@@ -190,6 +189,7 @@ class CreateModelTables extends Migration {
             $table->foreign("idAgendamento")->references("idAgendamento")->on("agendamento");
             $table->integer("idCao")->unsigned();
             $table->foreign("idCao")->references("idCao")->on("cao");
+            $table->primary(["idAgendamento", "idCao"]);
         });
     }
 

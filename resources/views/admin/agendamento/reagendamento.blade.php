@@ -436,6 +436,13 @@ $local = $agendamento->passeios()->first()->local;
         
         $timetable.on("click", ".time-label", function () {
             var $this = $(this);
+            
+            var clickedDate = $form.find("input[name='data']").val();
+            //Verificar se a data é anterior à atual e não exibir formulário de agendamento caso positivo.
+            if (clickedDate <= simpleDateFormatter(null, null, null, "Y-m-d")) {
+                return;
+            }
+            
             if ($this.hasClass("-starting-time")) {
                 $this.removeClass("-starting-time");
                 definirHorarios("starting", null);
