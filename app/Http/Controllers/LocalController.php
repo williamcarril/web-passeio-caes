@@ -54,7 +54,7 @@ class LocalController extends Controller {
                 $distancia = $local->distanciaEntre($cliente->lat, $cliente->lng);
             
                 if($distancia <= $local->raioAtuacao) {
-                    return $distancia * 1000000;
+                    return $distancia / 1000000;
                 }
                 return $distancia;
             });
