@@ -51,7 +51,12 @@ class LocalController extends Controller {
                             ->orderBy("quantidade", "desc")
                             ->orderBy("nome", "asc")->get();
             $locais = $locais->sortBy(function($local) use ($cliente) {
-                return $local->distanciaEntre($cliente->lat, $cliente->lng);
+                $distancia = $local->distanciaEntre($cliente->lat, $cliente->lng);
+            
+                if($distancia <= $local->raioAtuacao) {
+                    return $distancia * 1000000;
+                }
+                return $distancia;
             });
         } else {
             $locais = Local::orderBy("nome", "asc")->get();
