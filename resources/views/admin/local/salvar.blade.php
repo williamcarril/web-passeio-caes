@@ -198,6 +198,10 @@ $urlLocalDetalhes = route('local.detalhes.get', ['slug' => '']);
             }
         }
         map.circles = [];
+        
+        if(!tamanho) {
+            return;
+        }
         map.circles.push(new google.maps.Circle({
             strokeColor: '#F75448',
             strokeOpacity: 0.8,

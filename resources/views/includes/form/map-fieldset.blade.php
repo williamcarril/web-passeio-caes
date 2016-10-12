@@ -223,6 +223,7 @@ $postMapLoad = isset($postMapLoad) ? $postMapLoad : null;
                     markerData.icon = "{!!$customMarker!!}";
                 @endif
                 map.markers.push(new google.maps.Marker(markerData));
+
                 if (place.geometry.viewport) {
                     bounds.union(place.geometry.viewport);
                 } else {
