@@ -47,13 +47,24 @@ class ModalidadeTableSeeder extends Seeder {
             [
                 "idModalidade" => 4,
                 "nome" => "Passeio Coletivo (pacote semanal)",
-                "descricao" => "Trata-se de um pacote de passeios coletivos, duas vezes por semana, durante um período de um mês, pelo intervalo de horas determinado pelo cliente.",
+                "descricao" => "Trata-se de um pacote de passeios coletivos, uma vez por semana, durante um período de um mês, pelo intervalo de horas determinado pelo cliente.",
                 "tipo" => "pacote",
                 "periodo" => "mensal",
                 "frequencia" => "semanal",
                 "ativo" => true,
                 "coletivo" => true,
                 "precoPorCaoPorHora" => 7.5
+            ],
+            [
+                "idModalidade" => 5,
+                "nome" => "Passeio Simples (pacote semanal)",
+                "descricao" => "Trata-se de um pacote de passeios simples, uma vez por semana, durante um período de um mês, pelo intervalo de horas determinado pelo cliente.",
+                "tipo" => "pacote",
+                "periodo" => "mensal",
+                "frequencia" => "semanal",
+                "ativo" => true,
+                "coletivo" => false,
+                "precoPorCaoPorHora" => 10
             ],
         ]);
     }
