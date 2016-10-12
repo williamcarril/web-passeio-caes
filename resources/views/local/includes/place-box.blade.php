@@ -14,7 +14,7 @@ $link = isset($link) ? $link : "#";
     <section class="content">
         <a class="address" href="http://maps.google.com/?q={{"$lat,$lng"}}" target="_blank">
             <i class="glyphicon glyphicon-map-marker"></i>
-            {{\str_limit($address, 35)}}
+            {{\str_limit($address, 34)}}
         </a>
         <p class="description">{{\str_limit($description, 105)}}</p>
     </section>
