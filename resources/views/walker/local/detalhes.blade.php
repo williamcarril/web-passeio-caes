@@ -33,7 +33,9 @@
         </div>
     </center>
     @endif
-    <p>{{$local->descricao}}</p>
+    <hr/>
+    <p class="_text-justify">{{$local->descricao}}</p>
+    <hr/>
     <h2>Endereço</h2>
     <?php
     $mapData = [
