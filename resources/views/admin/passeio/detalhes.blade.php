@@ -135,9 +135,6 @@
         @if($passeio->status === $statusPasseio["PENDENTE"] && strtotime(date("Y-m-d")) > strtotime($passeio->data))
         <button class="btn btn-warning" data-action="marcar-feito">Marcar como feito</button>
         @endif
-        @if($passeio->status === $statusPasseio["EM_ANALISE"] && $passeio->foiOriginado())
-        <button class="btn btn-success" data-action="aceitar-passeio">Aceitar passeio</button>
-        @endif
     </div>
     <div id="cancelamento-modal" class="modal fade" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
