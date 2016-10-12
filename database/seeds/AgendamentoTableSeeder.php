@@ -15,7 +15,7 @@ class AgendamentoTableSeeder extends Seeder {
                 "idAgendamento" => 1,
                 "idCliente" => 1,
                 "idModalidade" => 1,
-                "data" => date("Y-m-d"),
+                "data" => date("Y-m-d H:i:s", strtotime("-15 day")),
                 "precoPorCaoPorHora" => 25,
                 "status" => "feito"
             ]
@@ -33,7 +33,7 @@ class AgendamentoTableSeeder extends Seeder {
                 "idAgendamento" => 2,
                 "idCliente" => 4,
                 "idModalidade" => 3,
-                "data" => date("Y-m-d"),
+                "data" => date("Y-m-d H:i:s", strtotime("-10 day")),
                 "status" => "feito",
                 "precoPorCaoPorHora" => 15,
             ]
@@ -62,7 +62,7 @@ class AgendamentoTableSeeder extends Seeder {
                 "idAgendamento" => 3,
                 "idCliente" => 1,
                 "idModalidade" => 2,
-                "data" => date("Y-m-d"),
+                "data" => date("Y-m-d H:i:s", strtotime("-10 day")),
                 "status" => "feito",
                 "precoPorCaoPorHora" => 18,
             ]
@@ -80,7 +80,7 @@ class AgendamentoTableSeeder extends Seeder {
                 "idAgendamento" => 4,
                 "idCliente" => 3,
                 "idModalidade" => 2,
-                "data" => date("Y-m-d"),
+                "data" => date("Y-m-d H:i:s", strtotime("-10 day")),
                 "status" => "feito",
                 "precoPorCaoPorHora" => 18,
             ]
