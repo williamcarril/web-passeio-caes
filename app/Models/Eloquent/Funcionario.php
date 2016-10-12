@@ -97,5 +97,13 @@ class Funcionario extends Pessoa {
         }
         return false;
     }
+    
+    public function getLimiteDeCaes($porte) {
+        $limiteDeCaes = $this->limiteDeCaes()->where("porte", $porte)->first();
+        if(is_null($limiteDeCaes)) {
+            return null;
+        }
+        return $limiteDeCaes->limite;
+    }
 
 }

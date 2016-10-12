@@ -7106,6 +7106,12 @@ Creation date: 29/08/2016 18:46
 ._success-background {
   background-color: #5cb85c !important;
 }
+._bold {
+  font-weight: bold !important;
+}
+._underlined {
+  text-decoration: underline;
+}
 input.loading,
 select.loading,
 textarea.loading {

@@ -105,7 +105,8 @@
                 "passeios" => $passeios, 
                 "cliente" => $agendamento->cliente,
                 "passeadores" => $passeadores,
-                "destaqueSemPasseadores" => true
+                "destaqueSemPasseadores" => true,
+                "agendamento" => $agendamento
             ];
             ?>
             @include("admin.includes.passeios-tabela", $options)

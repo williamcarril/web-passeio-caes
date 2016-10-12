@@ -221,6 +221,7 @@ class PasseioController extends Controller {
     public function route_getAdminPasseio(Request $req, $id) {
         $passeio = Passeio::findOrFail($id);
         $passeadoresAptos = Funcionario::passeador()->where("idFuncionario", "!=", $passeio->idPasseador)->get();
+        
         $data = [
             "passeio" => $passeio,
             "statusAgendamento" => AgendamentoStatus::getConstants(false),

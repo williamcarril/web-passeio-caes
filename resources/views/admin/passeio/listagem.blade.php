@@ -14,11 +14,11 @@
                 <label for="filtro-agendamento">Filtro por status:</label>
                 <select id="filtro-agendamento" class="form-control" name="status">
                     <option {!!empty($status) ? "selected" : ""!!} value="">Selecione uma opção</option>
-                    <option {!!$status == "EM_ANALISE" ? "selected" : ""!!} value="CANCELADO">Apenas em análise</option>
-                    <option {!!$status == "PENDENTE" ? "selected" : ""!!} value="FUNCIONARIO">Apenas pendentes</option>
-                    <option {!!$status == "EM_ANDAMENTO" ? "selected" : ""!!} value="CLIENTE">Apenas em andamento</option>
-                    <option {!!$status == "FEITO" ? "selected" : ""!!} value="FEITO">Apenas realizados</option>
-                    <option {!!$status == "CANCELADO" ? "selected" : ""!!} value="CANCELADO">Apenas cancelados</option>
+                    <option {!!$status == "em_analise" ? "selected" : ""!!} value="em_analise">Apenas em análise</option>
+                    <option {!!$status == "pendente" ? "selected" : ""!!} value="pendente">Apenas pendentes</option>
+                    <option {!!$status == "em_andamento" ? "selected" : ""!!} value="em_andamento">Apenas em andamento</option>
+                    <option {!!$status == "feito" ? "selected" : ""!!} value="feito">Apenas realizados</option>
+                    <option {!!$status == "cancelado" ? "selected" : ""!!} value="cancelado">Apenas cancelados</option>
                 </select>
             </div>
             <button class="btn btn-default" type="submit">Filtrar</button>

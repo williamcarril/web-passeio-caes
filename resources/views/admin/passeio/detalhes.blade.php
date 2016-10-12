@@ -183,17 +183,17 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($passeadoresAptos as $funcionario)
-                                <tr data-id="{{$funcionario->idFuncionario}}" class="_cursor-pointer" data-role="passeador">
-                                    <td><img src="{{$funcionario->thumbnail}}" alt="Foto"/></td>
-                                    <td>{{$funcionario->nome}}</td>
-                                    <td>{{$funcionario->cpfFormatado}}</td>
-                                    <td>{{$funcionario->rg}}</td>
-                                    <td>{{$funcionario->telefoneFormatado}}</td>
-                                    <td>{{$funcionario->email}}</td>
+                                @foreach($passeadoresAptos as $passeador)
+                                <tr data-id="{{$passeador->idFuncionario}}" class="_cursor-pointer" data-role="passeador">
+                                    <td><img src="{{$passeador->thumbnail}}" alt="Foto"/></td>
+                                    <td>{{$passeador->nome}}</td>
+                                    <td>{{$passeador->cpfFormatado}}</td>
+                                    <td>{{$passeador->rg}}</td>
+                                    <td>{{$passeador->telefoneFormatado}}</td>
+                                    <td>{{$passeador->email}}</td>
                                     <td>
                                         <div class="button-group">
-                                            <a href="{{route("admin.funcionario.passeador.alterar.get", ["id" => $funcionario->idFuncionario])}}" class="btn btn-default" target="_blank">
+                                            <a href="{{route("admin.funcionario.passeador.alterar.get", ["id" => $passeador->idFuncionario])}}" class="btn btn-default" target="_blank">
                                                 <i class="glyphicon glyphicon-search"></i>
                                                 Detalhes
                                             </a>
@@ -204,12 +204,12 @@
                                     <td>Disponibilidade:</td>
                                     <td colspan="6">
                                     <?php
-                                    $passeadorPasseios = $funcionario->obterPasseiosDaData($passeio->data);
+                                    $passeadorPasseios = $passeador->obterPasseiosDaData($passeio->data);
                                     $options = [
                                         "inicio" => $passeio->inicio,
                                         "fim" => $passeio->fim,
                                         "passeios" => $passeadorPasseios,
-                                        "classe" => $funcionario->conflitaComSeusPasseios($passeio) ? "_error-background" : "_success-background"
+                                        "classe" => $passeador->conflitaComSeusPasseios($passeio) ? "_error-background" : "_success-background"
                                     ];
                                     ?>
                                     @if($passeadorPasseios->count() === 0)
@@ -219,6 +219,38 @@
                                     @endif
                                     </td>
                                 </tr>
+                                @if($passeio->coletivo)
+                                <?php
+                                $limitePequenos = $passeador->getLimiteDeCaes("pequeno");
+                                $limiteMedios = $passeador->getLimiteDeCaes("medio");
+                                $limiteGrandes = $passeador->getLimiteDeCaes("grande");
+                                $indicativeClass = "";
+                                switch ($passeio->porte) {
+                                    case "pequeno":
+                                        $limiteVerificado = $limitePequenos;
+                                        break;
+                                    case "medio":
+                                        $limiteVerificado = $limiteMedios;
+                                        break;
+                                    case "grande":
+                                        $limiteVerificado = $limiteGrandes;
+                                        break;
+                                }
+                                if (is_null($limiteVerificado)) {
+                                    $indicativeClass .= "_warning-color";
+                                } elseif ($limiteVerificado < $passeio->caes->count()) {
+                                    $indicativeClass .= "_error-color";
+                                } else {
+                                    $indicativeClass .= "_success-color";
+                                }
+                                ?>
+                                <tr>
+                                    <td colspan="1"><b>Limite de cães:</b></td>
+                                    <td colspan='2' class="{{$passeio->porte === "pequeno" ? $indicativeClass : ""}}">Pequenos: {{!is_null($limitePequenos) ? $limitePequenos : "Não definido"}}</td>
+                                    <td colspan='2' class="{{$passeio->porte === "medio" ? $indicativeClass : ""}}">Médios: {{!is_null($limiteMedios) ? $limiteMedios : "Não definido"}}</td>
+                                    <td colspan='2' class="{{$passeio->porte === "grande" ? $indicativeClass : ""}}">Grandes: {{!is_null($limiteGrandes) ? $limiteGrandes : "Não definido"}}</td>
+                                </tr>
+                                @endif
                                 @endforeach
                             </tbody>
                         </table>
