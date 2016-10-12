@@ -64,7 +64,7 @@ $title = isset($title) ? $title : "Modalidade";
             </div>
             <div class="form-group">
                 <label class="control-label" for="modalidade-preco">Preço (por cão/hora) *</label>
-                <input pattern="[0-9]" tabindex="6" id="modalidade-preco" class="form-control" type="number" min="1" name="precoPorCaoPorHora" value="{{!empty($modalidade) ? $modalidade->precoPorCaoPorHora : ""}}"/>
+                <input pattern="[0-9]" tabindex="6" id="modalidade-preco" class="form-control" type="number" min="1" step="0.25" name="precoPorCaoPorHora" value="{{!empty($modalidade) ? $modalidade->precoPorCaoPorHora : ""}}"/>
             </div>
             <div class="form-group">
                 <label class="control-label" for="modalidade-coletivo">

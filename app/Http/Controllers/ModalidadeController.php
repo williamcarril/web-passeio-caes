@@ -89,7 +89,7 @@ class ModalidadeController extends Controller {
     public function route_postAdminModalidade(Request $req) {
         $id = $req->input("id");
         if (!is_null($id)) {
-            $modalidade = Modalidade::find($id);
+            $modalidade = Modalidade::withoutGlobalScopes()->find($id);
         } else {
             $modalidade = new Modalidade();
         }

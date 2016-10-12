@@ -13,7 +13,6 @@ class Passeio extends \WGPC\Eloquent\Model {
     protected $fillable = [
         "idLocal",
         "idPasseador",
-        "idPasseioOriginal",
         "inicio",
         "fim",
         "data",
@@ -24,7 +23,6 @@ class Passeio extends \WGPC\Eloquent\Model {
     protected static $rules = [
         "idLocal" => ["required", "exists:local,idLocal", "integer"],
         "idPasseador" => ["exists:funcionario,idFuncionario,tipo,passeador", "integer"],
-        "idPasseioOriginal" => ["exists:passeio,idPasseio", "integer"],
         "coletivo" => ["boolean", "required"],
         "inicio" => ["required", "date_format:H:i:s", "date_less_or_equal:fim"],
         "fim" => ["required", "date_format:H:i:s", "date_greater_or_equal:inicio"],
@@ -50,14 +48,6 @@ class Passeio extends \WGPC\Eloquent\Model {
 
     public function agendamentos() {
         return $this->belongsToMany("\App\Models\Eloquent\Agendamento", "a_agendamento_passeio", "idPasseio", "idAgendamento");
-    }
-
-    public function passeioOriginal() {
-        return $this->belongsTo("\App\Models\Eloquent\Passeio", "idPasseioOriginal", "idPasseio");
-    }
-
-    public function passeioRemarcado() {
-        return $this->hasOne("\App\Models\Eloquent\Passeio", "idPasseio", "idPasseioOriginal");
     }
 
     public function local() {
@@ -143,15 +133,7 @@ class Passeio extends \WGPC\Eloquent\Model {
                     $q->where("idCliente", $cliente->idCliente);
                 })->get();
     }
-
-    public function foiRemarcado() {
-        return $this->passeioRemarcado()->count() > 0;
-    }
-
-    public function foiOriginado() {
-        return $this->passeioOriginal()->count() > 0;
-    }
-
+    
     public function checarStatus($status) {
         if (!is_array($status)) {
             $status = [$status];
@@ -352,9 +334,6 @@ class Passeio extends \WGPC\Eloquent\Model {
     }
 
     public function getStatusFormatadoAttribute() {
-        if ($this->foiRemarcado()) {
-            return "Remarcado";
-        }
         return Status::format($this->status);
     }
 

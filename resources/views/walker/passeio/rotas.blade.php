@@ -9,7 +9,12 @@
     <p><b>Término:</b> {{$passeio->fimFormatado}}</p>
     <p><b>Tipo:</b> {{$passeio->tipo}}</p>
     <p><b>Porte:</b> {{$passeio->porteFormatado}}</p>
-    <p><b>Link para detalhes:</b> <a href="{{route("walker.passeio.detalhes.get", ["id" => $passeio->idPasseio])}}">{{route("walker.passeio.detalhes.get", ["id" => $passeio->idPasseio])}}</a></p>
+    <p>
+        <a class="btn btn-default" href="{{route("walker.passeio.detalhes.get", ["id" => $passeio->idPasseio])}}">
+            <i class="flaticon-back"></i>
+            Voltar
+        </a>
+    </p>
     <hr/>
     <section>
         <h2>Cães</h2>

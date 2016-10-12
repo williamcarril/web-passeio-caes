@@ -7040,38 +7040,41 @@ Creation date: 29/08/2016 18:46
   font-family: flaticon;
   font-style: normal;
 }
-.flaticon-calendar:before {
+.flaticon-back:before {
   content: "\f100";
 }
-.flaticon-dog:before {
+.flaticon-calendar:before {
   content: "\f101";
 }
-.flaticon-gps:before {
+.flaticon-dog:before {
   content: "\f102";
 }
-.flaticon-key:before {
+.flaticon-gps:before {
   content: "\f103";
 }
-.flaticon-medical:before {
+.flaticon-key:before {
   content: "\f104";
 }
-.flaticon-park:before {
+.flaticon-medical:before {
   content: "\f105";
 }
-.flaticon-paw-print:before {
+.flaticon-park:before {
   content: "\f106";
 }
-.flaticon-smile:before {
+.flaticon-paw-print:before {
   content: "\f107";
 }
-.flaticon-user:before {
+.flaticon-smile:before {
   content: "\f108";
 }
-.flaticon-walker:before {
+.flaticon-user:before {
   content: "\f109";
 }
-.flaticon-walking-dog:before {
+.flaticon-walker:before {
   content: "\f10a";
+}
+.flaticon-walking-dog:before {
+  content: "\f10b";
 }
 ._no-border {
   border: none !important;
