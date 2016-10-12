@@ -57,9 +57,6 @@
                             <button class="btn btn-success hidden" type="button" data-action="save-dog">
                                 <i class="glyphicon glyphicon-ok"></i>
                             </button>
-                            {{--<a href="{{route("cliente.caes.vacina.get", ["id" => $cao->idCao])}}" class="btn btn-default">
-                                <i class="flaticon-medical"></i>
-                            </a>--}}
                             <button class="btn btn-danger" type="button" data-action="delete-dog">
                                 <i class="glyphicon glyphicon-trash"></i>
                             </button>
@@ -174,9 +171,6 @@
                     <button class="btn btn-success hidden" type="button" data-action="save-dog">
                         <i class="glyphicon glyphicon-ok"></i>
                     </button>
-                    <a href="{{route("cliente.caes.vacina.get", ["id" => "!id"])}}" class="btn btn-default" data-role="vaccination-link">
-                        <i class="flaticon-medical"></i>
-                    </a>
                     <button class="btn btn-danger" type="button" data-action="delete-dog">
                         <i class="glyphicon glyphicon-trash"></i>
                     </button>

@@ -37,23 +37,6 @@ class ClienteController extends Controller {
         ];
         return response()->view("cliente.cao.manter", $data);
     }
-
-
-    /**
-     * @todo
-     */
-    public function route_getVacinacao(Request $req, $id) {
-        $cliente = $this->auth->guard("web")->user();
-        $cao = Cao::where("idCao", $id)->firstOrFail();
-        if (!$cliente->caes()->where("idCao", $id)->exists()) {
-            return abort(403);
-        }
-        $data = [
-            "cao" => $cao
-        ];
-        return response()->view("cliente.cao.vacinacoes", $data);
-    }
-
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Rotas GET que retornam JSON">
     public function route_getCheckEmail(Request $req) {
@@ -227,9 +210,6 @@ class ClienteController extends Controller {
                 $cao->ativo = false;
                 $result = $cao->save();
             } else {
-                if ($cao->vacinacoes()->exists()) {
-                    $result = $cao->vacinacoes()->delete();
-                }
                 //Guarda a referencia do arquivo para apagar caso tudo tenha corrido bem...
                 $imagem = $cao->imagem;
 
