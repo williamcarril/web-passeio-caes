@@ -12,11 +12,14 @@ class LocalController extends Controller {
 
     private $auth;
     private $imageController;
+    private $repository;
 
-    public function __construct(AuthFactory $auth, ImagemController $imageController) {
+    public function __construct(AuthFactory $auth, ImagemController $imageController, Repositorio $repository) {
         $this->auth = $auth;
         $this->imageController = $imageController;
+        $this->repository = $repository;
     }
+    
     // <editor-fold defaultstate="collapsed" desc="Rotas do passeador">
     public function route_getWalkerLocais() {
         $data = [
