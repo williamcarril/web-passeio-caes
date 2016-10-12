@@ -58,7 +58,7 @@
     </p>
 
     @if(!empty($customer) && $local->verificarServico($customer->lat, $customer->lng))
-    <a class="btn btn-success pull-right" href="#">
+    <a class="btn btn-success pull-right" href="{{route("passeio.agendamento.get") . "?idLocal=" . $local->idLocal}}">
         <i class="flaticon-calendar"></i>
         Agendar passeio
     </a>

@@ -74,7 +74,7 @@ class LocalController extends Controller {
 
         $local = Local::find($id);
         $arr = $local->toArray();
-        $arr["link"] = $local->link;
+        $arr["link"] = route("local.detalhes.get", ["slug" => $local->slug]);
         $arr["thumbnail"] = $local->thumbnail;
 
         if (!empty($fields)) {
