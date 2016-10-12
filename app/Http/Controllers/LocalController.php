@@ -50,7 +50,7 @@ class LocalController extends Controller {
                             ->addBinding($cliente->idCliente, "join")
                             ->orderBy("quantidade", "desc")
                             ->orderBy("nome", "asc")->get();
-            $locais->sortBy(function($local) use ($cliente) {
+            $locais = $locais->sortBy(function($local) use ($cliente) {
                 return $local->distanciaEntre($cliente->lat, $cliente->lng);
             });
         } else {
