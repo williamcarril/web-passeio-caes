@@ -55,14 +55,6 @@ class Cao extends \WGPC\Eloquent\Model {
         return $this->belongsToMany("\App\Models\Eloquent\Passeio", "a_cao_passeio", "idCao", "idPasseio");
     }
 
-    public function vacinacoes() {
-        return $this->hasMany("\App\Models\Eloquent\Vacinacao", "idCao", "idCao");
-    }
-
-    public function vacinas() {
-        return $this->hasManyThrough("\App\Models\Eloquent\Vacina", "\App\Models\Eloquent\Vacinacao", "idCao", "idVacina", "idCao");
-    }
-
     public static function getDefaultThumbnail() {
         return asset("img/dog.png");
     }
