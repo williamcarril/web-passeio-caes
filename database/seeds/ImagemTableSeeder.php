@@ -161,7 +161,7 @@ class ImagemTableSeeder extends Seeder {
                 "nome" => "Cão Pequeno (Pug)"
             ]
         ]);
-        $file = $this->repositorio->copy(public_path("img/mock/dog_medium_pug.png"));
+        $file = $this->repositorio->copy(public_path("img/mock/dog_pug.png"));
         \DB::table("imagem_arquivo")->insert([
             [
                 "idImagemArquivo" => 10,

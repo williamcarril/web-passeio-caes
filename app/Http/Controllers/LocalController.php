@@ -29,8 +29,10 @@ class LocalController extends Controller {
         return response()->view("walker.local.listagem", $data);
     }
     public function route_getWalkerLocal(Request $req, $id) {
+        $local = Local::findOrFail($id);
         $data = [
-            "local" => Local::findOrFail($id)
+            "local" => $local,
+            "imagens" => $local->imagens()->orderBy("ordem", "asc")->get()
         ];
         return response()->view("walker.local.detalhes", $data);
     }
@@ -265,7 +267,7 @@ class LocalController extends Controller {
 
     // </editor-fold>
     // </editor-fold>
-    // <editor-fold defaultstate="collapsed" desc="Métodos públicos">
+    // <editor-fold defaultstate="collapsed" desc="Outros métodos">
     public function getLocaisAtuantesParaCliente(\App\Models\Eloquent\Cliente $cliente) {
         $locais = Local::all();
         $locais = $locais->filter(function($local) use ($cliente) {
@@ -274,8 +276,6 @@ class LocalController extends Controller {
         return $locais;
     }
 
-    // </editor-fold>
-    // <editor-fold defaultstate="collapsed" desc="Métodos privados">
     private function salvarFoto($id, $local, $arquivoMobile, $arquivoDesktop) {
         $arquivos = [];
         if (!empty($arquivoMobile)) {
