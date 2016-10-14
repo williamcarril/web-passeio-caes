@@ -1,5 +1,6 @@
 <?php
 $title = isset($title) ? $title : "Funcionário";
+$tabindex = 1;
 ?>    
 
 @extends("admin.layouts.default", ["hasMap" => true])
@@ -26,19 +27,19 @@ $title = isset($title) ? $title : "Funcionário";
             </div>
             <div class="form-group">
                 <label class="control-label" for="funcionario-nome">Nome *</label>
-                <input tabindex="1" value="{{!empty($funcionario->nome) ? $funcionario->nome : ""}}" required name="nome" id="funcionario-nome" type="text" class="form-control" placeholder="Informe seu nome completo">
+                <input tabindex="{{post_increment($tabindex)}}" value="{{!empty($funcionario->nome) ? $funcionario->nome : ""}}" required name="nome" id="funcionario-nome" type="text" class="form-control" placeholder="Informe seu nome completo">
             </div>
             <div class="form-group">
                 <label class="control-label" for="funcionario-cpf">CPF *</label>
-                <input tabindex='2' value="{{!empty($funcionario->cpf) ? $funcionario->cpf : ""}}" required name="cpf" data-inputmask="'mask': '999.999.999-99'" type="text" id="funcionario-cpf" class="form-control" placeholder="Informe seu CPF">
+                <input tabindex='{{post_increment($tabindex)}}' value="{{!empty($funcionario->cpf) ? $funcionario->cpf : ""}}" required name="cpf" data-inputmask="'mask': '999.999.999-99'" type="text" id="funcionario-cpf" class="form-control" placeholder="Informe seu CPF">
             </div>
             <div class="form-group">
                 <label class="control-label" for="funcionario-rg">RG *</label>
-                <input tabindex='3' value="{{!empty($funcionario->rg) ? $funcionario->rg : ""}}" required name="rg" type="number" id="funcionario-rg" class="form-control -no-spin" placeholder="Informe seu RG">
+                <input tabindex='{{post_increment($tabindex)}}' value="{{!empty($funcionario->rg) ? $funcionario->rg : ""}}" required name="rg" type="number" id="funcionario-rg" class="form-control -no-spin" placeholder="Informe seu RG">
             </div>
             <div class="form-group">
                 <label class="control-label" for="funcionario-telefone">Telefone *</label>
-                <input tabindex='4' value="{{!empty($funcionario->telefone) ? $funcionario->telefone : ""}}" required name="telefone" data-inputmask="'mask': '(99) 9999[9]-9999', 'greedy': false" id="funcionario-telefone" type="tel" class="form-control" placeholder="Informe seu telefone">
+                <input tabindex='{{post_increment($tabindex)}}' value="{{!empty($funcionario->telefone) ? $funcionario->telefone : ""}}" required name="telefone" data-inputmask="'mask': '(99) 9999[9]-9999', 'greedy': false" id="funcionario-telefone" type="tel" class="form-control" placeholder="Informe seu telefone">
             </div>
         </fieldset>
         @if(!empty($portes))
@@ -47,11 +48,15 @@ $title = isset($title) ? $title : "Funcionário";
             <p>Limite de cães por porte</p>
             @foreach($portes as $porte)
             <?php 
-            $limite = $funcionario->limiteDeCaes->where("porte", $porte["value"])->first();
+            if(!empty($funcionario)) {
+                $limite = $funcionario->limiteDeCaes->where("porte", $porte["value"])->first();
+            } else {
+                $limite = null;
+            }
             ?>
             <div class="form-group">
                 <label class="control-label" for="funcionario-{{$porte["value"]}}">{{$porte["text"]}}</label>
-                <input class="form-control" type="number" value="{{!empty($limite) ? $limite->limite : ""}}" name="limite[{{$porte["value"]}}]">
+                <input tabindex="{{post_increment($tabindex)}}" class="form-control" type="number" value="{{!empty($limite) ? $limite->limite : ""}}" name="limite[{{$porte["value"]}}]">
             </div>
             @endforeach
         </fieldset>
@@ -60,26 +65,26 @@ $title = isset($title) ? $title : "Funcionário";
             <legend>Informações de acesso</legend>
             <div class="form-group">
                 <label class="control-label" for="funcionario-email">E-mail *</label>
-                <input tabindex='5' value="{{!empty($funcionario->email) ? $funcionario->email : ""}}" required name="email" id="funcionario-email" type="email" class="form-control" placeholder="Informe seu e-mail">
+                <input tabindex='{{post_increment($tabindex)}}' value="{{!empty($funcionario->email) ? $funcionario->email : ""}}" required name="email" id="funcionario-email" type="email" class="form-control" placeholder="Informe seu e-mail">
             </div>
             <div class="form-group">
                 <label class="control-label" for="funcionario-senha">Senha *</label>
-                <input tabindex="6" {{!empty($funcionario) ? "" : "required"}} name="senha" id="funcionario-senha" type="password" class="form-control" placeholder="Informe sua senha">
+                <input tabindex="{{post_increment($tabindex)}}" {{!empty($funcionario) ? "" : "required"}} name="senha" id="funcionario-senha" type="password" class="form-control" placeholder="Informe sua senha">
             </div>
             <div class="form-group">
                 <label class="control-label" for="funcionario-senha2">Confirme sua senha *</label>
-                <input tabindex='7' {{!empty($funcionario) ? "" : "required"}}  name="senha2" id="funcionario-senha2" type="password" class="form-control" placeholder="Confirme sua senha">
+                <input tabindex='{{post_increment($tabindex)}}' {{!empty($funcionario) ? "" : "required"}}  name="senha2" id="funcionario-senha2" type="password" class="form-control" placeholder="Confirme sua senha">
             </div>
         </fieldset>
         <?php 
         $mapFieldsetData = [
             "idPrefix" => "funcionario",
             "values" => !empty($funcionario) ? $funcionario : null,
-            "tabIndex" => 8
+            "tabIndex" => $tabindex
         ];
         ?>
         @include("includes.form.map-fieldset", $mapFieldsetData)
-        <button tabindex='13' type="submit" class="btn btn-default btn-lg pull-right">Salvar</button>
+        <button tabindex='{{post_increment($tabindex)}}' type="submit" class="btn btn-default btn-lg pull-right">Salvar</button>
     </form>
 </section>
 @endsection

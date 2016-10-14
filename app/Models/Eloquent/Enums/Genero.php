@@ -13,4 +13,13 @@ abstract class Genero extends Enum {
     const MACHO = "macho";
     const FEMEA = "femea";
 
+    public static function format($const) {
+        switch ($const) {
+            case static::MACHO:
+                return "Macho";
+            case static::FEMEA:
+                return "Fêmea";
+        }
+    }
+
 }

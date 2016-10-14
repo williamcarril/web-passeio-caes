@@ -82,6 +82,7 @@ class FuncionarioController extends Controller {
         $data["portes"] = array_map(function($porte) {
             return ["value" => $porte, "text" => Porte::format($porte)];
         }, Porte::getConstants());
+        
         return response()->view("admin.funcionario.salvar", $data);
     }
 

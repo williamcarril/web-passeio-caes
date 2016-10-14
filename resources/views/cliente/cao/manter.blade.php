@@ -325,11 +325,6 @@
                         $image.imageUploader("preview", dog.thumbnail);
                         $image.imageUploader("id", uniqid());
 
-                        $dogHtml.find("[data-role='vaccination-link']").attr("href", function () {
-                            var $this = $(this);
-                            return $this.attr("href").replace("!id", dog.idCao);
-                        });
-
                         $dogHtml.removeAttr("data-template");
                         $newDogHtml.removeAttr("data-template");
                         $dog.remove();

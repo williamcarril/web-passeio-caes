@@ -288,8 +288,8 @@ class PasseioController extends Controller {
         if (is_null($passeio)) {
             return $this->defaultJsonResponse(false, trans("alert.error.generic", ["message" => "marcar o passeio como feito"]));
         }
-        if ($passeio->status !== PasseioStatus::PENDENTE) {
-            return $this->defaultJsonResponse(false, "Apenas passeios pendentes podem ser marcados como feitos.");
+        if (!$passeio->checarStatus([PasseioStatus::PENDENTE, PasseioStatus::EM_ANDAMENTO])) {
+            return $this->defaultJsonResponse(false, "Apenas passeios pendentes ou em andamento podem ser marcados como feitos.");
         }
         if (strtotime($passeio->data) >= strtotime(date("Y-m-d"))) {
             return $this->defaultJsonResponse(false, "Apenas passeios cujas datas são anteriores a de hoje podem ser marcados como feitos.");

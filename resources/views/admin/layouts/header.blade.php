@@ -37,6 +37,11 @@
                     </a>
                 </li>
                 <li>
+                    <a href="{{route("admin.cliente.listagem.get")}}">
+                        Clientes
+                    </a>
+                </li>
+                <li>
                     <a href="{{route("admin.funcionario.passeador.listagem.get")}}">
                         Passeadores
                     </a>

@@ -15,7 +15,12 @@ abstract class Porte extends Enum {
     const GRANDE = "grande";
 
     public static function format($const) {
-        return ucfirst($const);
+        switch($const) {
+            case static::MEDIO:
+                return "Médio";
+            default:
+                return ucfirst($const);
+        }
     }
 
 }

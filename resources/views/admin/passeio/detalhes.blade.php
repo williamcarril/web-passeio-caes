@@ -129,10 +129,10 @@
     </section>
     <hr/>
     <div class="button-group pull-right">
-        @if($passeio->status !== $statusPasseio["CANCELADO"] && $passeio->status !== $statusPasseio["FEITO"])
+        @if(!$passeio->checarStatus([$statusPasseio["CANCELADO"], $statusPasseio["FEITO"]]))
         <a class="btn btn-danger btn-sm" data-toggle="modal" data-target="#cancelamento-modal">Cancelar passeio</a>
         @endif
-        @if($passeio->status === $statusPasseio["PENDENTE"] && strtotime(date("Y-m-d")) > strtotime($passeio->data))
+        @if($passeio->checarStatus([$statusPasseio["PENDENTE"], $statusPasseio["EM_ANDAMENTO"]]) && strtotime(date("Y-m-d")) > strtotime($passeio->data))
         <button class="btn btn-warning" data-action="marcar-feito">Marcar como feito</button>
         @endif
     </div>

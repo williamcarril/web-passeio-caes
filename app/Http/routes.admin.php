@@ -65,12 +65,30 @@ Route::group(["middleware" => "auth.admin"], function() {
         Route::post("/{id}/cancelar", ["as" => "admin.passeio.cancelar.post", "uses" => "PasseioController@route_postAdminCancelarPasseio"])
                 ->where('id', '[0-9]+');
     });
-    
+
     Route::group(["prefix" => "cancelamento"], function() {
         Route::get("/", ["as" => "admin.cancelamento.listagem.get", "uses" => "CancelamentoController@route_getAdminCancelamentos"]);
         Route::get("/{id}", ["as" => "admin.cancelamento.detalhes.get", "uses" => "CancelamentoController@route_getAdminCancelamento"])
                 ->where("id", "[0-9]+");
         Route::post("/{id}/visto", ["as" => "admin.cancelamento.visto.post", "uses" => "CancelamentoController@route_postAdminMarcarVisto"]);
     });
-    
+
+    Route::group(["prefix" => "cliente"], function() {
+        Route::get("/", ["as" => "admin.cliente.listagem.get", "uses" => "ClienteController@route_getAdminClientes"]);
+        Route::get("/{id}/alterar", ["as" => "admin.cliente.alterar.get", "uses" => "ClienteController@route_getAdminCliente"])
+                ->where("id", "[0-9]+");
+        Route::post("/{id}/alterar", ["as" => "admin.cliente.alterar.post", "uses" => "ClienteController@route_postAdminCliente"])
+                ->where("id", "[0-9]+");
+        
+        Route::get("/check/email", ["as" => "admin.cliente.check.email.get", "uses" => "ClienteController@route_getAdminCheckEmail"]);
+        Route::get("/check/cpf", ["as" => "admin.cliente.check.cpf.get", "uses" => "ClienteController@route_getAdminCheckCpf"]);
+        Route::post("/alterarStatus", ["as" => "admin.cliente.status.post", "uses" => "ClienteController@route_postAdminAlterarStatus"]);
+
+        Route::get("/{id}/caes", ["as" => "admin.cliente.caes.manter.get", "uses" => "ClienteController@route_getAdminCaes"])
+                ->where("id", "[0-9]+");
+        Route::post("/{id}/caes/alterarStatus", ["as" => "admin.cliente.caes.status.post", "uses" => "ClienteController@route_postAdminAlterarStatusCao"])
+                ->where("id", "[0-9]+");
+        Route::post("/{id}/caes/salvar", ["as" => "admin.cliente.caes.salvar.post", "uses" => "ClienteController@route_postAdminSalvarCao"])
+                ->where("id", "[0-9]+");
+    });
 });

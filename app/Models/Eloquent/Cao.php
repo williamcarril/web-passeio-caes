@@ -7,7 +7,8 @@ use App\Models\Eloquent\Enums\Porte;
 
 class Cao extends \WGPC\Eloquent\Model {
 
-    use Traits\Thumbnailable;
+    use Traits\Thumbnailable,
+        Traits\Ativavel;
 
     protected $primaryKey = "idCao";
     protected $table = 'cao';
@@ -36,9 +37,7 @@ class Cao extends \WGPC\Eloquent\Model {
 
     public static function boot() {
         parent::boot();
-        static::addGlobalScope("ativo", function(\Illuminate\Database\Eloquent\Builder $builder) {
-            $builder->where("ativo", true);
-        });
+        static::setStatusGlobalScope();
         static::$rules["genero"][] = "in:" . implode(",", Genero::getConstants());
         static::$rules["porte"][] = "in:" . implode(",", Porte::getConstants());
     }
@@ -69,10 +68,10 @@ class Cao extends \WGPC\Eloquent\Model {
     }
 
     public function getPorteFormatadoAttribute() {
-        return ucfirst($this->porte);
+        return Porte::format($this->porte);
     }
 
     public function getGeneroFormatadoAttribute() {
-        return ucfirst($this->genero);
+        return Genero::format($this->genero);
     }
 }

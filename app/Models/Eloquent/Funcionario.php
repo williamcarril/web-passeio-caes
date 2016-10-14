@@ -11,14 +11,6 @@ class Funcionario extends Pessoa {
     protected $primaryKey = "idFuncionario";
     protected $table = 'funcionario';
 
-    public static function boot() {
-        parent::boot();
-
-        static::$rules["idImagem"] = ["exists:imagem,idImagem", "required", "integer"];
-        static::$rules["rg"] = ["required", "string"];
-        static::$rules["tipo"] = ["required", "in:" . implode(",", FuncionarioTipo::getConstants()), "string"];
-    }
-
     public function __construct(array $attributes = array()) {
         parent::__construct($attributes);
 
@@ -50,9 +42,12 @@ class Funcionario extends Pessoa {
     }
 
     protected function overrideNormalRules($rules) {
+        $rules["rg"] = ["required", "string", "unique:funcionario,rg,{$this->idFuncionario},idFuncionario"];
+        $rules["idImagem"] = ["exists:imagem,idImagem", "required", "integer"];
+        $rules["tipo"] = ["required", "in:" . implode(",", FuncionarioTipo::getConstants()), "string"];
+        
         $rules["email"][] = "unique:funcionario,email,{$this->idFuncionario},idFuncionario";
         $rules["cpf"][] = "unique:funcionario,cpf,{$this->idFuncionario},idFuncionario";
-        $rules["rg"][] = "unique:funcionario,rg,{$this->idFuncionario},idFuncionario";
         return $rules;
     }
 
@@ -84,7 +79,7 @@ class Funcionario extends Pessoa {
 
     public function conflitaComSeusPasseios($passeioChecado) {
         $passeios = $this->obterPasseiosDaData($passeioChecado->data);
-        if($passeios->count() === 0) {
+        if ($passeios->count() === 0) {
             return false;
         }
         foreach ($passeios as $passeio) {
@@ -97,10 +92,10 @@ class Funcionario extends Pessoa {
         }
         return false;
     }
-    
+
     public function getLimiteDeCaes($porte) {
         $limiteDeCaes = $this->limiteDeCaes()->where("porte", $porte)->first();
-        if(is_null($limiteDeCaes)) {
+        if (is_null($limiteDeCaes)) {
             return null;
         }
         return $limiteDeCaes->limite;
