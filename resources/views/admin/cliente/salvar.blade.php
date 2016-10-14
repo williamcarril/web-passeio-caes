@@ -37,17 +37,21 @@
                 <input tabindex="6" {{!empty($customer) ? "" : "required"}} name="senha2" id="cliente-senha2" type="password" class="form-control" placeholder="Confirme sua senha">
             </div>
         </fieldset>
-        <?php 
-            $mapFieldsetData = [
-                "alertOnPin" => true,
-                "idPrefix" => "cliente",
-                "possessivePlaceholders" => true,
-                "values" => !empty($customer) ? $customer : null,
-                "customMarker" => asset("img/markers/user.png"),
-                "tabIndex" => 7
-            ];
+        <?php
+        $mapFieldsetData = [
+            "alertOnPin" => true,
+            "idPrefix" => "cliente",
+            "possessivePlaceholders" => true,
+            "values" => !empty($customer) ? $customer : null,
+            "customMarker" => asset("img/markers/user.png"),
+            "tabIndex" => 7
+        ];
         ?>
         @include("includes.form.map-fieldset", $mapFieldsetData)
+        <a href="{{route("admin.cliente.caes.manter.get", ["id" => $customer->idCliente])}}" class="btn btn-default">
+            <i class="flaticon-dog"></i>
+            Manter cães
+        </a>
         <button tabindex="12" type="submit" class="btn btn-default btn-lg pull-right">{{!empty($customer) ? "Salvar" : "Cadastrar"}}</button>
     </form>
 </section>
@@ -57,58 +61,51 @@
 @parent
 <script type="text/javascript">
     (function () {
-        @if(!empty($ignoreOnChecks))
+    @if (!empty($ignoreOnChecks))
             var ignoreOnChecks = $.parseJSON('{!! json_encode($ignoreOnChecks) !!}');
-        @else
+    @ else
             var ignoreOnChecks = {};
-        @endif
-        var $form = $("#form-cadastro-cliente");
-
-        $form.find("input[name='nome']").validate("empty", null, "blur");
-
-        $form.find("input[name='telefone']").validate("phone", null, "blur");
-
-        $form.find("input[name='cpf']").on("blur", function () {
-            var $this = $(this);
-            var cpf = $this.val();
-            if (!validate.cpf(cpf)) {
-                setInputStatus($this, "error");
-                return;
-            }
-            $this.ajaxValidation(
-                "{!! route('admin.cliente.check.cpf.get') !!}",
-                "GET",
-                {"cpf": cpf, "ignore": ignoreOnChecks.cpf},
-                "O CPF informado já está sendo utilizado."
+    @endif
+            var $form = $("#form-cadastro-cliente");
+    $form.find("input[name='nome']").validate("empty", null, "blur");
+    $form.find("input[name='telefone']").validate("phone", null, "blur");
+    $form.find("input[name='cpf']").on("blur", function () {
+    var $this = $(this);
+    var cpf = $this.val();
+    if (!validate.cpf(cpf)) {
+    setInputStatus($this, "error");
+    return;
+    }
+    $this.ajaxValidation(
+            "{!! route('admin.cliente.check.cpf.get') !!}",
+            "GET",
+    {"cpf": cpf, "ignore": ignoreOnChecks.cpf},
+            "O CPF informado já está sendo utilizado."
             );
-        });
-
-        $form.find("input[name='email']").on("blur", function () {
-            var $this = $(this);
-            var email = $this.val();
-            if (!validate.email(email)) {
-                setInputStatus($this, "error");
-                return;
-            }
-            $this.ajaxValidation(
-                "{!! route('admin.cliente.check.email.get') !!}",
-                "GET",
-                {"email": email, "ignore": ignoreOnChecks.email},
-                "O e-mail informado já está sendo utilizado."
+    });
+    $form.find("input[name='email']").on("blur", function () {
+    var $this = $(this);
+    var email = $this.val();
+    if (!validate.email(email)) {
+    setInputStatus($this, "error");
+    return;
+    }
+    $this.ajaxValidation(
+            "{!! route('admin.cliente.check.email.get') !!}",
+            "GET",
+    {"email": email, "ignore": ignoreOnChecks.email},
+            "O e-mail informado já está sendo utilizado."
             );
-        });
-
-        $form.find("input[name='senha'],input[name='senha2']").on("blur", function () {
-            var $senha = $form.find("input[name='senha']");
-            var $senha2 = $form.find("input[name='senha2']");
-
-            if (validate.empty($senha.val())) {
-                return;
-            }
-            $senha.validate("equals", $senha2);
-        });
-        
-        $form.defaultAjaxSubmit("{!! route('admin.cliente.listagem.get') !!}");
+    });
+    $form.find("input[name='senha'],input[name='senha2']").on("blur", function () {
+    var $senha = $form.find("input[name='senha']");
+    var $senha2 = $form.find("input[name='senha2']");
+    if (validate.empty($senha.val())) {
+    return;
+    }
+    $senha.validate("equals", $senha2);
+    });
+    $form.defaultAjaxSubmit("{!! route('admin.cliente.listagem.get') !!}");
     })();
 </script>
 @endsection
