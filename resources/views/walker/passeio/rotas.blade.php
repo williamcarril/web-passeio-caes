@@ -35,7 +35,7 @@
     </section>
     <hr/>
     <section data-role="local">
-        <input type="hidden" name="origin" value="">
+        <input type="hidden" name="localizacaoMarcada" value="">
         <h2>Local</h2>
         <p><b>Nome: </b>{{$local->nome}}</p>
         <p><b>Endereço: </b>{{$local->getEndereco()}}</p>
@@ -44,6 +44,13 @@
             <select class="form-control" id="forma-trajeto" name="locomocao">
                 <option selected value="car">Carro</option>
                 <option value="walking">A pé</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="sentido-trajeto">Objetivo</label>
+            <select class="form-control" id="sentido-trajeto" name="sentido">
+                <option selected value="forward">Coleta de cães para passeio</option>
+                <option value="backward">Entrega de cães pós-passeio</option>
             </select>
         </div>
         <p>Marque sua localização atual no mapa para que uma rota possa ser gerada.</p>
@@ -60,9 +67,9 @@
 @endsection
 
 @section("templates")
-    @foreach($clientesConfirmados as $cliente)
-    @include("includes.templates.gmap-passeio-cliente-tooltip", ["cliente" => $cliente, "passeio" => $passeio, "dataTemplate" => "cliente-infowindow-{$cliente->idCliente}"]);
-    @endforeach
+@foreach($clientesConfirmados as $cliente)
+@include("includes.templates.gmap-passeio-cliente-tooltip", ["cliente" => $cliente, "passeio" => $passeio, "dataTemplate" => "cliente-infowindow-{$cliente->idCliente}"]);
+@endforeach
 @endsection
 
 @section("scripts")
@@ -70,17 +77,17 @@
 <script type="text/javascript">
     (function () {
         var $local = $("[data-role='local']");
-        var $origin = $local.find("[name='origin']");
+        var $localizacaoMarcada = $local.find("[name='localizacaoMarcada']");
         var $duracaoEstimada = $local.find("[data-name='duracaoEstimada']")
         var $locomocao = $local.find("select[name='locomocao']");
         var $wayPoints = $("[data-role='cao']").find("input[type='checkbox']");
-        
+        var $sentido = $local.find("select[name='sentido']");
 
         window.bootstrapListeners = function (map, searchBox) {
             $wayPoints.on("change", function () {
                 var $this = $(this);
                 var $parent = $this.parents("[data-role='cao']");
-                if($wayPoints.filter(":checked").length === 0) {
+                if ($wayPoints.filter(":checked").length === 0) {
                     $this.prop("checked", true);
                     return;
                 }
@@ -92,10 +99,14 @@
                 calcularEExibirRota();
             });
 
-            $locomocao.on("change", function() {
+            $sentido.on("change", function () {
                 calcularEExibirRota();
             });
-            
+
+            $locomocao.on("change", function () {
+                calcularEExibirRota();
+            });
+
             var directionsService = new google.maps.DirectionsService;
             var directionsDisplay = new google.maps.DirectionsRenderer({"suppressMarkers": true});
 
@@ -107,10 +118,17 @@
                 var markerData = {
                     position: event.latLng,
                     map: map,
-                    icon: "{!!asset('img/markers/walker.png')!!}"
                 };
+                switch ($sentido.val()) {
+                    case "forward":
+                        markerData.icon = "{!!asset('img/markers/walker.png')!!}";
+                        break;
+                    case "backward":
+                        break;
+                }
+
                 map.markers.push(new google.maps.Marker(markerData));
-                $origin.val(event.latLng.lat() + "," + event.latLng.lng());
+                $localizacaoMarcada.val(event.latLng.lat() + "," + event.latLng.lng());
                 calcularEExibirRota();
             });
 
@@ -131,15 +149,15 @@
                     icon: "{!!asset('img/markers/walker.png')!!}"
                 };
                 map.markers.push(new google.maps.Marker(markerData));
-               
-                $origin.val(place.geometry.location.lat() + "," + place.geometry.location.lng());
+
+                $localizacaoMarcada.val(place.geometry.location.lat() + "," + place.geometry.location.lng());
                 calcularEExibirRota();
             });
 
-            function calcularEExibirRota(origin, travelMode) {
-                travelMode = travelMode || $locomocao.val();
-                origin = origin || $origin.val();
-                if(!origin) {
+            function calcularEExibirRota() {
+                var travelMode = $locomocao.val();
+                var localizacaoMarcada = $localizacaoMarcada.val();
+                if (!localizacaoMarcada) {
                     return;
                 }
                 var waypts = [];
@@ -166,9 +184,22 @@
                         travelMode = google.maps.TravelMode.DRIVING;
                         break;
                 }
+                var origem, destino;
+                switch ($sentido.val()) {
+                    case "forward":
+                        origem = localizacaoMarcada;
+                        destino = "{!!$local->lat!!},{!!$local->lng!!}";
+                        break;
+                    case "backward":
+                        origem = "{!!$local->lat!!},{!!$local->lng!!}";
+                        destino = localizacaoMarcada;
+                        break;
+                }
+                console.log(origem);
+                console.log(destino);
                 directionsService.route({
-                    origin: origin,
-                    destination: "{!!$local->lat!!},{!!$local->lng!!}",
+                    origin: origem,
+                    destination: destino,
                     waypoints: waypts,
                     optimizeWaypoints: true,
                     travelMode: travelMode
@@ -178,43 +209,60 @@
                         directionsDisplay.setDirections(response);
                         var leg = response.routes[0].legs[0];
                         $duracaoEstimada.text(leg.duration.text);
-                        var walkerMarker = makeMarkerWithInfowindow(
-                                map, 
-                                leg.start_location, 
-                                "<p>Você</p>", 
-                                "{!!asset('img/markers/walker.png')!!}");
-                        map.markers.push(walkerMarker);
-                        
-                        var placeMarker = makeMarkerWithInfowindow(
-                                map,
-                                {
-                                    "lat": parseFloat("{!!$local->lat!!}"),
-                                    "lng": parseFloat("{!!$local->lng!!}")
-                                },
-                                "<p>{!! $local->nome !!}</p>", 
-                                "{!!asset('img/markers/place.png')!!}");
-                        map.markers.push(placeMarker);
-                        
-                        for(var i = 0; i < clientes.length; i++) {
-                            var location = clientes[i].location.split(",");
-                            console.log(location);
-                            map.markers.push(makeMarkerWithInfowindow(
-                                map,
-                                {
-                                    "lat": parseFloat(location[0]),
-                                    "lng": parseFloat(location[1])
-                                },
-                                globals.templates.find("[data-template='cliente-infowindow-" + clientes[i].id + "']").html(),
-                                "{!!asset('img/markers/user.png')!!}"
-                            ));
+                        console.log(response);
+                        var startMarker, endMarker;
+                        startMarker = makeMarkerWithInfowindow(
+                            map,
+                            {
+                                "lat": parseFloat(origem.split(",")[0]),
+                                "lng": parseFloat(origem.split(",")[1])
+                            },
+                            "<p>Você</p>",
+                            "{!! asset('img/markers/walker.png') !!}"
+                        );
+                        var endInfowindow, endIcon;
+                        switch ($sentido.val()) {
+                            case "backward":
+                                endInfowindow = "<p>Destino</p>";
+                                endIcon = null;
+                                break;
+                            case "forward":
+                                endInfowindow = "<p>{!! $local->nome !!}</p>";
+                                endIcon = "{!!asset('img/markers/place.png')!!}";
+                                break;
                         }
-                        
+                        endMarker = makeMarkerWithInfowindow(
+                                map,
+                                {
+                                    "lat": parseFloat(destino.split(",")[0]),
+                                    "lng": parseFloat(destino.split(",")[1])
+                                },
+                                endInfowindow,
+                                endIcon
+                                );
+                        map.markers.push(startMarker);
+                        map.markers.push(endMarker);
+
+                        for (var i = 0; i < clientes.length; i++) {
+                            var location = clientes[i].location.split(",");
+                            map.markers.push(makeMarkerWithInfowindow(
+                                    map,
+                                    {
+                                        "lat": parseFloat(location[0]),
+                                        "lng": parseFloat(location[1])
+                                    },
+                                    globals.templates.find("[data-template='cliente-infowindow-" + clientes[i].id + "']").html(),
+                                    "{!!asset('img/markers/user.png')!!}"
+                                    ));
+                        }
+
                     } else {
                         showAlert("Ocorreu um erro ao carregar a rota: " + status);
                     }
-                });
+                }
+                );
             }
-            
+
             function clearMarkers() {
                 map.markers.forEach(function (marker) {
                     marker.setMap(null);

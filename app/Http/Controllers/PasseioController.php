@@ -58,7 +58,7 @@ class PasseioController extends Controller {
         ];
         return response()->view("walker.passeio.rotas", $data);
     }
-    
+
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Rotas POST que retornam JSON">
     public function route_postWalkerCancelarPasseio(Request $req, $id) {
@@ -81,6 +81,7 @@ class PasseioController extends Controller {
             return $this->defaultJsonResponse(false, $ex->getMessage());
         }
     }
+
     public function route_postWalkerIniciarPasseio(Request $req, $id) {
         $passeador = $this->auth->guard("walker")->user();
         $passeio = $passeador->passeios()->where("idPasseio", $id)->first();
@@ -100,6 +101,7 @@ class PasseioController extends Controller {
             return $this->defaultJsonResponse(false, $ex->getMessage());
         }
     }
+
     public function route_postWalkerFinalizarPasseio(Request $req, $id) {
         $passeador = $this->auth->guard("walker")->user();
         $passeio = $passeador->passeios()->where("idPasseio", $id)->first();
@@ -119,6 +121,7 @@ class PasseioController extends Controller {
             return $this->defaultJsonResponse(false, $ex->getMessage());
         }
     }
+
     // </editor-fold>
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Rotas do site">
@@ -169,7 +172,7 @@ class PasseioController extends Controller {
             unset($arr["idPasseioReagendado"]);
             unset($arr["precoPorCaoPorHora"]);
             $arr["tipo"] = $model->tipo;
-            if(!$discriminarLocalPorPorte) {
+            if (!$discriminarLocalPorPorte) {
                 $locais[$model->local->idLocal] = $model->local->nome;
                 $arr["local"] = $model->local->nome;
             } else {
@@ -191,6 +194,7 @@ class PasseioController extends Controller {
         $passeio = Passeio::find($id);
         return $this->defaultJsonResponse(true, null, $passeio);
     }
+
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Rotas POST que retornam JSON">
     public function route_postCancelarPasseio(Request $req, $id) {
@@ -213,15 +217,15 @@ class PasseioController extends Controller {
             return $this->defaultJsonResponse(false, $ex->getMessage());
         }
     }
-    // </editor-fold>
 
+    // </editor-fold>
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Rotas administrativas">
     // <editor-fold defaultstate="collapsed" desc="Rotas que retornam Views">
     public function route_getAdminPasseio(Request $req, $id) {
         $passeio = Passeio::findOrFail($id);
         $passeadoresAptos = Funcionario::passeador()->where("idFuncionario", "!=", $passeio->idPasseador)->get();
-        
+
         $data = [
             "passeio" => $passeio,
             "statusAgendamento" => AgendamentoStatus::getConstants(false),
@@ -307,8 +311,8 @@ class PasseioController extends Controller {
         if (is_null($passeio)) {
             return $this->defaultJsonResponse(false, trans("alert.error.generic", ["message" => "alocar o passeador"]));
         }
-        
-        if($passeio->status !== PasseioStatus::PENDENTE) {
+
+        if ($passeio->status !== PasseioStatus::PENDENTE) {
             return $this->defaultJsonResponse(false, "Somente um passeio pendente pode alocar/realocar/remover seu passeador.");
         }
 
@@ -321,7 +325,7 @@ class PasseioController extends Controller {
         }
 
         $passeador = Funcionario::passeador()->where("idFuncionario", $idPasseador)->first();
-        if($passeador->conflitaComSeusPasseios($passeio)) {
+        if ($passeador->conflitaComSeusPasseios($passeio)) {
             return $this->defaultJsonResponse(false, "O passeio em questão possui conflito de horário com os passeios do passeador.");
         }
         $passeio->idPasseador = $passeador->idFuncionario;
@@ -349,7 +353,7 @@ class PasseioController extends Controller {
                 \DB::rollBack();
                 return $this->defaultJsonResponse(false, $passeio->getErrors());
             }
-            foreach($passeio->getClientesConfirmados() as $cliente) {
+            foreach ($passeio->getClientesConfirmados() as $cliente) {
                 \Mail::send("emails.cliente.passeio.cancelamento", [
                     'passeio' => $passeio,
                     "cliente" => $cliente
@@ -372,22 +376,23 @@ class PasseioController extends Controller {
         $agora = strtotime(date("Y-m-d H:i:s"));
         $inicio = strtotime("$passeio->data $passeio->inicio");
         $fim = strtotime("$passeio->data $passeio->fim");
-        if($inicio > $agora || $fim < $agora) {
+        if ($inicio > $agora || $fim < $agora) {
             $passeio->putErrors(["Este passeio só pode ser iniciado no dia {$passeio->dataFormatada} entre {$passeio->inicioFormatado} e {$passeio->fimFormatado}."]);
             return false;
         }
         $passeio->status = PasseioStatus::EM_ANDAMENTO;
         return $passeio->save();
     }
+
     public function finalizarPasseio(Passeio $passeio) {
-        if($passeio->status !== PasseioStatus::EM_ANDAMENTO) {
+        if ($passeio->status !== PasseioStatus::EM_ANDAMENTO) {
             $passeio->putErrors(["Este passeio só pode ser finalizado caso esteja em andamento."]);
             return false;
         }
         $passeio->status = PasseioStatus::FEITO;
         return $passeio->save();
     }
-    
+
     public function cancelarPasseio($passeio, $solicitante, $motivo, $agendamento = null) {
         //Se o passeio não estiver pendente de alguma forma, ou ele já foi cancelado, ou já foi concluído
         //ou já iniciado. Portanto, o cancelamento é impossível.

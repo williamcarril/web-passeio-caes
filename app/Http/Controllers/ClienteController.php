@@ -5,11 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Eloquent\Cliente;
 use App\Models\Eloquent\Cao;
-use App\Models\Eloquent\Passeio;
 use Illuminate\Contracts\Auth\Factory as AuthFactory;
 use App\Models\File\Repositorio;
-use App\Models\Eloquent\Enums\AgendamentoStatus;
-use App\Models\Eloquent\Enums\PasseioStatus;
 
 class ClienteController extends Controller {
 
@@ -450,12 +447,6 @@ class ClienteController extends Controller {
     }
 
     public function salvarCliente($cliente, $dados = []) {
-        if (is_null($idCliente)) {
-            
-        } else {
-            
-        }
-
         if ($req->input("senha") !== $req->input("senha2")) {
             return $this->defaultJsonResponse(false, "Os campos de senha devem ser iguais.");
         }

@@ -5,7 +5,7 @@ namespace App\Models\Eloquent;
 use App\Models\Eloquent\Enums\Servico;
 use App\Models\Eloquent\Enums\Periodo;
 use App\Models\Eloquent\Enums\Frequencia;
-use App\Models\Eloquent\Enums\Ids\Modalidade as ModalidadesBase;
+use App\Models\Eloquent\Enums\Ids\ModalidadesBase;
 
 class Modalidade extends \WGPC\Eloquent\Model {
 

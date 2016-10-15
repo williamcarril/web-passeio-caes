@@ -11,19 +11,15 @@ class Repositorio {
     const DEFAULT_IMAGE_QUALITY = 60;
 
     private $path;
-    private $rules;
-    private $complexRules;
     private $storage;
     private $imageManager;
 
-    public function __construct(FilesystemManager $storage, ImageManager $imageManager, $path = null, $rules = [], $complexRules = []) {
+    public function __construct(FilesystemManager $storage, ImageManager $imageManager, $path = null) {
         if (is_null($path)) {
             $path = config("path.repository");
         }
         $this->storage = $storage;
         $this->imageManager = $imageManager;
-        $this->setRules($rules);
-        $this->setComplexRules($complexRules);
         $this->setPath($path);
     }
 
@@ -35,31 +31,6 @@ class Repositorio {
         return $this->path;
     }
 
-    public function getRules() {
-        return $this->rules;
-    }
-
-    public function setRules($rules) {
-        if (is_null($rules)) {
-            $rules = [];
-        }
-        $this->rules = $rules;
-    }
-
-    public function getComplexRules() {
-        return $this->complexRules;
-    }
-
-    public function setComplexRules($complexRules) {
-        if (is_null($complexRules)) {
-            $complexRules = [];
-        }
-        $this->complexRules = $complexRules;
-    }
-
-    /**
-     * @todo
-     */
     public function saveImage($source, $width = null, $height = null, $to = null) {
         try {
             $image = $this->imageManager->make($source);
@@ -103,18 +74,6 @@ class Repositorio {
     public function copy($source, $to = null) {
         if (is_string($source)) {
             $source = new \SplFileInfo($source);
-        }
-
-        $validatorKey = "source";
-        $validator = validator(["$validatorKey" => $source], ["$validatorKey" => $this->rules]);
-        foreach ($this->complexRules as $validation) {
-            $rules = $validation["rules"];
-            $check = $validation["check"];
-            $validator->sometimes("$validatorKey", $rules, $check);
-        }
-
-        if ($validator->fails()) {
-            return false;
         }
 
         if (is_null($to)) {

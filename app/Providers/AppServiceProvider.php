@@ -47,11 +47,6 @@ class AppServiceProvider extends ServiceProvider {
             $repository = new \App\Models\File\Repositorio($app["filesystem"], $app->make(\Intervention\Image\ImageManager::class));
             return $repository;
         });
-
-        $this->app->singleton(\App\Models\Address\CepResearcher::class, function($app) {
-            $researcher = new \App\Models\Address\ViaCep();
-            return $researcher;
-        });
     }
 
 }

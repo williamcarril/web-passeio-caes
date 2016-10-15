@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Http\Requests;
 use App\Models\Eloquent\Local;
 use App\Models\Eloquent\Enums\ImagemTamanho;
 use Illuminate\Contracts\Auth\Factory as AuthFactory;
+use App\Models\Eloquent\Cliente;
 use App\Models\File\Repositorio;
 
 class LocalController extends Controller {
@@ -20,14 +20,16 @@ class LocalController extends Controller {
         $this->imageController = $imageController;
         $this->repository = $repository;
     }
-    
+
     // <editor-fold defaultstate="collapsed" desc="Rotas do passeador">
+    // <editor-fold defaultstate="collapsed" desc="Rotas que retornam Views">
     public function route_getWalkerLocais() {
         $data = [
             "locais" => Local::all()
         ];
         return response()->view("walker.local.listagem", $data);
     }
+
     public function route_getWalkerLocal(Request $req, $id) {
         $local = Local::findOrFail($id);
         $data = [
@@ -36,6 +38,8 @@ class LocalController extends Controller {
         ];
         return response()->view("walker.local.detalhes", $data);
     }
+
+    // </editor-fold>
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Rotas do site">
     // <editor-fold defaultstate="collapsed" desc="Rotas que retornam Views">
@@ -54,8 +58,8 @@ class LocalController extends Controller {
                             ->orderBy("nome", "asc")->get();
             $locais = $locais->sortBy(function($local) use ($cliente) {
                 $distancia = $local->distanciaEntre($cliente->lat, $cliente->lng);
-            
-                if($distancia <= $local->raioAtuacao) {
+
+                if ($distancia <= $local->raioAtuacao) {
                     return $distancia / 1000000;
                 }
                 return $distancia;
@@ -69,7 +73,7 @@ class LocalController extends Controller {
         return response()->view("local.listagem", $data);
     }
 
-    public function route_getLocal($slug) {
+    public function route_getLocal(Request $req, $slug) {
         $local = Local::where("slug", $slug)->firstOrFail();
         $data = [
             "local" => $local,
@@ -168,7 +172,6 @@ class LocalController extends Controller {
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Rotas POST que retornam JSON">
     public function route_postAdminLocal(Request $req) {
-//        return $this->defaultJsonResponse(false, null, $req->file("imagemMobile")[1]->getBasename());
         $id = $req->input("id");
         if (!is_null($id)) {
             $local = Local::find($id);
@@ -268,7 +271,7 @@ class LocalController extends Controller {
     // </editor-fold>
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Outros métodos">
-    public function getLocaisAtuantesParaCliente(\App\Models\Eloquent\Cliente $cliente) {
+    public function getLocaisAtuantesParaCliente(Cliente $cliente) {
         $locais = Local::all();
         $locais = $locais->filter(function($local) use ($cliente) {
             return $local->verificarServico($cliente->lat, $cliente->lng);

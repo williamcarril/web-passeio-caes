@@ -14,7 +14,7 @@ use App\Models\Eloquent\Modalidade;
 use App\Models\Eloquent\Enums\AgendamentoStatus;
 use App\Models\Eloquent\Enums\PasseioStatus;
 use App\Models\Eloquent\Enums\Servico;
-use App\Models\Eloquent\Enums\Ids\Modalidade as ModalidadeIds;
+use App\Models\Eloquent\Enums\Ids\ModalidadesBase as ModalidadeIds;
 use App\Models\Eloquent\Dia;
 use Carbon\Carbon;
 use Illuminate\Contracts\Auth\Factory as AuthFactory;
