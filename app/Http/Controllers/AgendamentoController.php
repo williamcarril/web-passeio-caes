@@ -535,8 +535,7 @@ class AgendamentoController extends Controller {
             "idModalidade" => $modalidade->idModalidade,
             "idCliente" => $cliente->idCliente,
             "status" => $statusAgendamento,
-            "precoPorCaoPorHora" => $modalidade->precoPorCaoPorHora,
-            ""
+            "precoPorCaoPorHora" => $modalidade->precoPorCaoPorHora
         ]);
         if ($agendamento->hasErrors()) {
             return $agendamento;
