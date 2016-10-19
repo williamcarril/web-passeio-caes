@@ -72,25 +72,12 @@ class Funcionario extends Pessoa {
         return $query->where('tipo', "administrador");
     }
 
-    public function obterPasseiosDaData($data, $direcaoOrdemData = "asc") {
-        $data = date("Y-m-d", strtotime(str_replace("/", "-", $data)));
-        return $this->passeios()->where("data", $data)->orderBy("data", $direcaoOrdemData)->get();
-    }
-
     public function conflitaComSeusPasseios($passeioChecado) {
-        $passeios = $this->obterPasseiosDaData($passeioChecado->data);
+        $passeios = $this->passeios()->daData($passeioChecado->data)->get();
         if ($passeios->count() === 0) {
             return false;
         }
-        foreach ($passeios as $passeio) {
-            $inicio = "$passeio->data $passeio->inicio";
-            $fim = "$passeio->data $passeio->fim";
-
-            if ($passeioChecado->ocorreriaEntre($inicio, $fim)) {
-                return true;
-            }
-        }
-        return false;
+        return $passeioChecado->conflitaCom($passeios);
     }
 
     public function getLimiteDeCaes($porte) {

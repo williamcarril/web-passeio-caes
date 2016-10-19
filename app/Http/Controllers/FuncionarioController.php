@@ -124,7 +124,7 @@ class FuncionarioController extends Controller {
     public function route_postAdminFuncionario(Request $req) {
         $id = $req->input("id");
         if (!is_null($id)) {
-            $funcionario = Funcionario::find($id);
+            $funcionario = Funcionario::withoutGlobalScopes()->find($id);
         } else {
             $funcionario = new Funcionario();
             $funcionario->tipo = "passeador";

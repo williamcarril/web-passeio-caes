@@ -349,11 +349,12 @@ class PasseioController extends Controller {
         }
         \DB::beginTransaction();
         try {
+            $clientesConfirmados = $passeio->getClientesConfirmados();
             if (!$this->cancelarPasseio($passeio, $administrador, $motivo)) {
                 \DB::rollBack();
                 return $this->defaultJsonResponse(false, $passeio->getErrors());
             }
-            foreach ($passeio->getClientesConfirmados() as $cliente) {
+            foreach ($clientesConfirmados as $cliente) {
                 \Mail::send("emails.cliente.passeio.cancelamento", [
                     'passeio' => $passeio,
                     "cliente" => $cliente

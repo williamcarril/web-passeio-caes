@@ -61,51 +61,51 @@
 @parent
 <script type="text/javascript">
     (function () {
-    @if (!empty($ignoreOnChecks))
+        @if(!empty($ignoreOnChecks))
             var ignoreOnChecks = $.parseJSON('{!! json_encode($ignoreOnChecks) !!}');
-    @ else
+        @else
             var ignoreOnChecks = {};
-    @endif
-            var $form = $("#form-cadastro-cliente");
-    $form.find("input[name='nome']").validate("empty", null, "blur");
-    $form.find("input[name='telefone']").validate("phone", null, "blur");
-    $form.find("input[name='cpf']").on("blur", function () {
-    var $this = $(this);
-    var cpf = $this.val();
-    if (!validate.cpf(cpf)) {
-    setInputStatus($this, "error");
-    return;
-    }
-    $this.ajaxValidation(
-            "{!! route('admin.cliente.check.cpf.get') !!}",
-            "GET",
-    {"cpf": cpf, "ignore": ignoreOnChecks.cpf},
-            "O CPF informado já está sendo utilizado."
+        @endif
+        var $form = $("#form-cadastro-cliente");
+        $form.find("input[name='nome']").validate("empty", null, "blur");
+        $form.find("input[name='telefone']").validate("phone", null, "blur");
+        $form.find("input[name='cpf']").on("blur", function () {
+            var $this = $(this);
+            var cpf = $this.val();
+            if (!validate.cpf(cpf)) {
+                setInputStatus($this, "error");
+                return;
+            }
+            $this.ajaxValidation(
+                "{!! route('admin.cliente.check.cpf.get') !!}",
+                "GET",
+                {"cpf": cpf, "ignore": ignoreOnChecks.cpf},
+                "O CPF informado já está sendo utilizado."
             );
-    });
-    $form.find("input[name='email']").on("blur", function () {
-    var $this = $(this);
-    var email = $this.val();
-    if (!validate.email(email)) {
-    setInputStatus($this, "error");
-    return;
-    }
-    $this.ajaxValidation(
-            "{!! route('admin.cliente.check.email.get') !!}",
-            "GET",
-    {"email": email, "ignore": ignoreOnChecks.email},
-            "O e-mail informado já está sendo utilizado."
+        });
+        $form.find("input[name='email']").on("blur", function () {
+            var $this = $(this);
+            var email = $this.val();
+            if (!validate.email(email)) {
+                setInputStatus($this, "error");
+                return;
+            }
+            $this.ajaxValidation(
+                "{!! route('admin.cliente.check.email.get') !!}",
+                "GET",
+                {"email": email, "ignore": ignoreOnChecks.email},
+                "O e-mail informado já está sendo utilizado."
             );
-    });
-    $form.find("input[name='senha'],input[name='senha2']").on("blur", function () {
-    var $senha = $form.find("input[name='senha']");
-    var $senha2 = $form.find("input[name='senha2']");
-    if (validate.empty($senha.val())) {
-    return;
-    }
-    $senha.validate("equals", $senha2);
-    });
-    $form.defaultAjaxSubmit("{!! route('admin.cliente.listagem.get') !!}");
+        });
+        $form.find("input[name='senha'],input[name='senha2']").on("blur", function () {
+            var $senha = $form.find("input[name='senha']");
+            var $senha2 = $form.find("input[name='senha2']");
+            if (validate.empty($senha.val())) {
+                return;
+            }
+            $senha.validate("equals", $senha2);
+        });
+        $form.defaultAjaxSubmit("{!! route('admin.cliente.listagem.get') !!}");
     })();
 </script>
 @endsection

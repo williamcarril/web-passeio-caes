@@ -51,11 +51,11 @@ class Passeio extends \WGPC\Eloquent\Model {
     }
 
     public function local() {
-        return $this->belongsTo("\App\Models\Eloquent\Local", "idLocal", "idLocal");
+        return $this->belongsTo("\App\Models\Eloquent\Local", "idLocal", "idLocal")->withoutGlobalScope("ativo");
     }
 
     public function passeador() {
-        return $this->belongsTo("\App\Models\Eloquent\Funcionario", "idPasseador", "idFuncionario");
+        return $this->belongsTo("\App\Models\Eloquent\Funcionario", "idPasseador", "idFuncionario")->withoutGlobalScope("ativo");
     }
 
     public function cancelamentos() {
@@ -133,7 +133,7 @@ class Passeio extends \WGPC\Eloquent\Model {
                     $q->where("idCliente", $cliente->idCliente);
                 })->get();
     }
-    
+
     public function checarStatus($status) {
         if (!is_array($status)) {
             $status = [$status];
@@ -159,30 +159,42 @@ class Passeio extends \WGPC\Eloquent\Model {
 
         return (strtotime("$this->data $this->inicio") <= $data) && (strtotime("$this->data $this->fim") >= $data);
     }
-    
+
     public function ocorreriaEntre($inicio, $fim) {
         $inicioPasseio = strtotime("$this->data $this->inicio");
         $fimPasseio = strtotime("$this->data $this->fim");
-        
+
         $inicio = strtotime(str_replace("/", "-", $inicio));
         $fim = strtotime(str_replace("/", "-", $fim));
         //Verifica se o passeio está compreendido entre o intervalo informado
-        if($inicioPasseio >= $inicio && $inicioPasseio <= $fim) {
+        if ($inicioPasseio >= $inicio && $inicioPasseio <= $fim) {
             return true;
         }
-        if($fimPasseio >= $inicio && $fimPasseio >= $fim) {
+        if ($fimPasseio >= $inicio && $fimPasseio >= $fim) {
             return true;
         }
         //Verifica se o intervalo informado está compreendido entre o intervalo do passeio
-        if($inicio >= $inicioPasseio && $inicio <= $fimPasseio) {
+        if ($inicio >= $inicioPasseio && $inicio <= $fimPasseio) {
             return true;
         }
-        if($fim >= $inicioPasseio && $fim <= $fimPasseio) {
+        if ($fim >= $inicioPasseio && $fim <= $fimPasseio) {
             return true;
         }
         return false;
     }
-    
+
+    public function conflitaCom($passeios) {
+        foreach ($passeios as $passeio) {
+            $inicio = "$passeio->data $passeio->inicio";
+            $fim = "$passeio->data $passeio->fim";
+
+            if ($this->ocorreriaEntre($inicio, $fim)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public function getAgendamentoDoCliente($cliente) {
         if (is_numeric($cliente)) {
             $cliente = (object) [
@@ -319,6 +331,11 @@ class Passeio extends \WGPC\Eloquent\Model {
 
     public function scopeSemPasseador($query) {
         return $query->where("idPasseador", null);
+    }
+
+    public function scopeDaData($query, $data) {
+        $data = date("Y-m-d", strtotime(str_replace("/", "-", $data)));
+        return $query->where("data", $data);
     }
 
     public function getDataFormatadaAttribute() {

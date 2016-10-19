@@ -174,7 +174,7 @@ class LocalController extends Controller {
     public function route_postAdminLocal(Request $req) {
         $id = $req->input("id");
         if (!is_null($id)) {
-            $local = Local::find($id);
+            $local = Local::withoutGlobalScopes()->find($id);
         } else {
             $local = new Local();
         }

@@ -30,7 +30,7 @@ class ClienteController extends Controller {
     }
 
     public function route_getAdminCliente(Request $req, $id) {
-        $cliente = Cliente::findOrFail($id);
+        $cliente = Cliente::withoutGlobalScopes()->findOrFail($id);
         $data = [
             "customer" => $cliente,
             "ignoreOnChecks" => [
@@ -56,7 +56,7 @@ class ClienteController extends Controller {
         $email = $req->input("email");
         $ignore = $req->input("ignore");
 
-        $check = Cliente::where("email", $email);
+        $check = Cliente::withoutGlobalScopes()->where("email", $email);
         if (!is_null($ignore)) {
             $check->where("email", "!=", $ignore);
         }
@@ -68,7 +68,7 @@ class ClienteController extends Controller {
         $cpf = preg_replace('/[^0-9]/', '', $req->input("cpf"));
         $ignore = $req->input("ignore");
 
-        $check = Cliente::where("cpf", $cpf);
+        $check = Cliente::withoutGlobalScopes()->where("cpf", $cpf);
         if (!is_null($ignore)) {
             $ignore = preg_replace('/[^0-9]/', '', $ignore);
             $check->where("cpf", "!=", $ignore);
@@ -232,7 +232,7 @@ class ClienteController extends Controller {
         $email = $req->input("email");
         $cliente = $this->auth->guard("web")->user();
 
-        $check = Cliente::where("email", $email);
+        $check = Cliente::withoutGlobalScopes()->where("email", $email);
         if (!is_null($cliente)) {
             $check->where("idCliente", "!=", $cliente->idCliente);
         }
@@ -245,7 +245,7 @@ class ClienteController extends Controller {
 
         $cliente = $this->auth->guard("web")->user();
 
-        $check = Cliente::where("cpf", $cpf);
+        $check = Cliente::withoutGlobalScopes()->where("cpf", $cpf);
         if (!is_null($cliente)) {
             $check->where("idCliente", "!=", $cliente->idCliente);
         }

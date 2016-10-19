@@ -50,15 +50,15 @@ class Agendamento extends \WGPC\Eloquent\Model {
     }
 
     public function caes() {
-        return $this->belongsToMany("\App\Models\Eloquent\Cao", "a_agendamento_cao", "idAgendamento", "idCao");
+        return $this->belongsToMany("\App\Models\Eloquent\Cao", "a_agendamento_cao", "idAgendamento", "idCao")->withoutGlobalScope("ativo");
     }
 
     public function modalidade() {
-        return $this->belongsTo("\App\Models\Eloquent\Modalidade", "idModalidade", "idModalidade");
+        return $this->belongsTo("\App\Models\Eloquent\Modalidade", "idModalidade", "idModalidade")->withoutGlobalScope("ativo");
     }
 
     public function cliente() {
-        return $this->belongsTo("\App\Models\Eloquent\Cliente", "idCliente", "idCliente");
+        return $this->belongsTo("\App\Models\Eloquent\Cliente", "idCliente", "idCliente")->withoutGlobalScope("ativo");
     }
 
     public function getStatusFormatadoAttribute() {

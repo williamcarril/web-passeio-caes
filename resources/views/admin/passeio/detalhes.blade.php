@@ -201,7 +201,7 @@
                                     <td>Disponibilidade:</td>
                                     <td colspan="6">
                                     <?php
-                                    $passeadorPasseios = $passeador->obterPasseiosDaData($passeio->data);
+                                    $passeadorPasseios = $passeador->passeios()->daData($passeio->data)->get();
                                     $options = [
                                         "inicio" => $passeio->inicio,
                                         "fim" => $passeio->fim,

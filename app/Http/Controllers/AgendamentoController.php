@@ -175,7 +175,7 @@ class AgendamentoController extends Controller {
         \DB::beginTransaction();
         try {
             $razaoDoCancelamento = "";
-            switch($agendamento->status) {
+            switch ($agendamento->status) {
                 case AgendamentoStatus::FUNCIONARIO:
                     $razaoDoCancelamento = "recusa";
                     break;
@@ -188,10 +188,10 @@ class AgendamentoController extends Controller {
                 return $this->defaultJsonResponse(false, $agendamento->getErrors());
             }
             $cliente = $agendamento->cliente;
-            
+
             $emailView = "";
             $emailTitle = "";
-            switch($razaoDoCancelamento) {
+            switch ($razaoDoCancelamento) {
                 case "imprevisto":
                     $emailView = "emails.cliente.agendamento.cancelamento.imprevisto";
                     $emailTitle = "Cancelamento de agendamento";
@@ -259,7 +259,7 @@ class AgendamentoController extends Controller {
                 \DB::rollBack();
                 return $this->defaultJsonResponse(false, $agendamento->getErrors());
             }
-            
+
             \Mail::send('emails.cliente.agendamento.cancelamento.reagendamento', [
                 'agendamento' => $agendamento,
                 "cliente" => $cliente,

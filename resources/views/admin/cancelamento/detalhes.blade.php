@@ -54,11 +54,6 @@
     <hr/>
     <section>
         <h2>Passeio</h2>
-        <p><b>Link para detalhes: </b> 
-            <a target='_blank' href='{!!route("admin.passeio.detalhes.get", ["id" => $passeio->idPasseio])!!}'>
-                {!!route("admin.passeio.detalhes.get", ["id" => $passeio->idPasseio])!!}
-            </a>
-        </p>
         <p><b>Data:</b> {{$passeio->dataFormatada}}</p>
         <p><b>Início:</b> {{$passeio->inicioFormatado}}</p>
         <p><b>Término:</b> {{$passeio->fimFormatado}}</p>
@@ -84,6 +79,12 @@
         }
         ?>
         <p><b>Status:</b> <span class="{{$statusClass}}">{{$passeio->statusFormatado}}</span></p>
+        <p>
+            <a class="btn btn-default" target='_blank' href='{!!route("admin.passeio.detalhes.get", ["id" => $passeio->idPasseio])!!}'>
+                <i class="glyphicon glyphicon-search"></i>
+                Detalhes
+            </a>
+        </p>
         <section>
             <h3>Passeador</h3>
             <div id="passeador-wrapper" class="row">

@@ -173,10 +173,12 @@ foreach ($passeios as $passeio) {
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="control-label col-sm-2">Link para detalhes</label>
+                            <label class="control-label col-sm-2"></label>
                             <div class="col-sm-3">
                                 <p class="form-control-static">
-                                    <a data-name="link" href="#" target="_blank">
+                                    <a class="btn btn-default" data-name="link" href="#" target="_blank">
+                                        <i class="glyphicon glyphicon-search"></i>
+                                        Detalhes
                                     </a>
                                 </p>
                             </div>
@@ -777,7 +779,7 @@ foreach ($passeios as $passeio) {
                     var local = response.data;
 
                     $localInformation.find("[data-name='imagem']").attr("src", local.thumbnail).attr("alt", local.nome);
-                    $localInformation.find("[data-name='link']").attr("href", local.link).text(local.link);
+                    $localInformation.find("[data-name='link']").attr("href", local.link);
 
                     $localInformation.removeClass("hidden");
                     if (scrollView) {
