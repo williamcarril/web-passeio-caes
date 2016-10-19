@@ -39,3 +39,30 @@ if (!function_exists("str_lreplace")) {
     }
 
 }
+
+if (!function_exists("str_fix_article")) {
+
+    function fix_article($text, $gender, $upperCase = false, $articleMark = "!{a}") {
+        $article = "o(a)";
+        switch ($gender) {
+            case 0:
+            case "male":
+            case "macho":
+                $article = "o";
+                break;
+            case 1:
+            case "femea":
+            case "fêmea":
+            case "female":
+                $article = "a";
+                break;
+            default:
+                break;
+        }
+        if ($upperCase) {
+            $article = strtoupper($article);
+        }
+        return preg_replace("/$articleMark/m", $article, $text);
+    }
+
+}

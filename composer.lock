@@ -603,20 +603,20 @@
         },
         {
             "name": "league/flysystem",
-            "version": "1.0.28",
+            "version": "1.0.32",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/flysystem.git",
-                "reference": "a9663643ff2d16d7f66ed1e0d3212c5491bc9044"
+                "reference": "1b5c4a0031697f46e779a9d1b309c2e1b24daeab"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/a9663643ff2d16d7f66ed1e0d3212c5491bc9044",
-                "reference": "a9663643ff2d16d7f66ed1e0d3212c5491bc9044",
+                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/1b5c4a0031697f46e779a9d1b309c2e1b24daeab",
+                "reference": "1b5c4a0031697f46e779a9d1b309c2e1b24daeab",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.4.0"
+                "php": ">=5.5.9"
             },
             "conflict": {
                 "league/flysystem-sftp": "<1.0.6"
@@ -682,7 +682,7 @@
                 "sftp",
                 "storage"
             ],
-            "time": "2016-10-07 12:20:37"
+            "time": "2016-10-19 20:38:46"
         },
         {
             "name": "monolog/monolog",
@@ -2009,12 +2009,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/williamcarril/model-validation.git",
-                "reference": "52940678e93af0967148e776e192e485e1730628"
+                "reference": "a6008d04c3ee7e54b87160f471c445d183d41367"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/williamcarril/model-validation/zipball/52940678e93af0967148e776e192e485e1730628",
-                "reference": "52940678e93af0967148e776e192e485e1730628",
+                "url": "https://api.github.com/repos/williamcarril/model-validation/zipball/a6008d04c3ee7e54b87160f471c445d183d41367",
+                "reference": "a6008d04c3ee7e54b87160f471c445d183d41367",
                 "shasum": ""
             },
             "require": {
@@ -2040,7 +2040,7 @@
                 }
             ],
             "description": "Eloquent model validation for Laravel",
-            "time": "2016-10-02 21:55:22"
+            "time": "2016-10-19 23:05:36"
         }
     ],
     "packages-dev": [

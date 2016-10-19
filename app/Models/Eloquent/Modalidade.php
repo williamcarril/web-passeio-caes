@@ -6,6 +6,8 @@ use App\Models\Eloquent\Enums\Servico;
 use App\Models\Eloquent\Enums\Periodo;
 use App\Models\Eloquent\Enums\Frequencia;
 use App\Models\Eloquent\Enums\Ids\ModalidadesBase;
+use App\Models\Eloquent\Dia;
+use Carbon\Carbon;
 
 class Modalidade extends \WGPC\Eloquent\Model {
 
@@ -69,6 +71,7 @@ class Modalidade extends \WGPC\Eloquent\Model {
                 return $this->frequenciaNumericaPorSemana * $this->periodoNumericoPorMes * 4;
         }
     }
+
     public function getTipoFormatadoAttribute() {
         return Servico::format($this->tipo);
     }
@@ -157,6 +160,30 @@ class Modalidade extends \WGPC\Eloquent\Model {
             return;
         }
         $this->attributes["coletivo"] = $value;
+    }
+
+    public function gerarDatasDePasseios($dataInicial, $dias = []) {
+        $datas = [];
+        switch ($this->tipo) {
+            case Servico::PACOTE:
+                $dataAnterior = $dataInicial;
+                if(empty($dias)) {
+                    throw new \Exception("Não é possível gerar as datas de um pacote de passeios sem definir os dias em que os passeios ocorrerão.");
+                }
+                for ($i = 0; $i < $this->quantidadeDePasseios; $i += $dias->count()) {
+                    for ($j = 0; $j < $dias->count(); $j++) {
+                        $dia = $dias[$j];
+                        $proximaData = Carbon::parse($dataAnterior)->modify("next " . $dia->getCarbonName());
+                        $datas[] = $proximaData->format("Y-m-d");
+                        $dataAnterior = $proximaData->format("Y-m-d");
+                    }
+                }
+                break;
+            case Servico::UNITARIO:
+                $datas[] = $dataInicial;
+                break;
+        }
+        return $datas;
     }
 
 }

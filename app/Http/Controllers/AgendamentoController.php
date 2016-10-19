@@ -546,6 +546,12 @@ class AgendamentoController extends Controller {
                 $agendamento->putErrors(["Todos os cães devem ter o mesmo porte ($porte) em um passeio coletivo."]);
                 return $agendamento;
             }
+            if ($cao->passeios()->daData($passeioColetivo->data)->count() > 0) {
+                $dataFormatada = date("d/m/Y", strtotime($passeioColetivo->data));
+                $message = \fix_article("O agendamento não pôde ser efetuado porque !{a} $cao->nome já possui um passeio marcado para o dia $dataFormatada.", $cao->genero);
+                $agendamento->putErrors([\ucfirst($message)]);
+                return $agendamento;
+            }
             $agendamento->caes()->attach($cao->idCao);
         }
 
@@ -573,7 +579,13 @@ class AgendamentoController extends Controller {
             $agendamento->caes()->attach($cao->idCao);
         }
 
-        if ($modalidade->tipo === Servico::UNITARIO) {
+        if ($modalidade->tipo === Servico::PACOTE) {
+            foreach ($dias as $dia) {
+                $agendamento->dias()->attach($dia->idDia);
+            }
+        }
+        $datasDePasseios = $modalidade->gerarDatasDePasseios($data, $dias);
+        foreach ($datasDePasseios as $data) {
             $passeio = $this->passeioController->salvarPasseio(null, [
                 "idLocal" => $local->idLocal,
                 "inicio" => $inicio,
@@ -587,37 +599,16 @@ class AgendamentoController extends Controller {
                 return $agendamento;
             }
             foreach ($caes as $cao) {
+                //Verifica se o cão já possui algum passeio marcado para a data selecionada...
+                if ($cao->passeios()->daData($data)->count() > 0) {
+                    $dataFormatada = date("d/m/Y", strtotime($data));
+                    $message = \fix_article("O agendamento não pôde ser efetuado porque !{a} $cao->nome já possui um passeio marcado para o dia $dataFormatada.", $cao->genero);
+                    $agendamento->putErrors([\ucfirst($message)]);
+                    return $agendamento;
+                }
                 $passeio->caes()->attach($cao->idCao);
             }
             $agendamento->passeios()->attach($passeio->idPasseio);
-        } else {
-            $dataAnterior = $data;
-            foreach ($dias as $dia) {
-                $agendamento->dias()->attach($dia->idDia);
-            }
-            for ($i = 0; $i < $modalidade->quantidadeDePasseios; $i += $dias->count()) {
-                for ($j = 0; $j < $dias->count(); $j++) {
-                    $dia = $dias[$j];
-                    $proximaData = Carbon::parse($dataAnterior)->modify("next " . $dia->getCarbonName());
-                    $passeio = $this->passeioController->salvarPasseio(null, [
-                        "idLocal" => $local->idLocal,
-                        "inicio" => $inicio,
-                        "fim" => $fim,
-                        "data" => $proximaData->format("Y-m-d"),
-                        "coletivo" => $modalidade->coletivo,
-                        "porte" => $modalidade->coletivo ? $porte : null
-                    ]);
-                    if ($passeio->hasErrors()) {
-                        $agendamento->putErrors(["Ocorreu um erro ao solicitar o agendamento. Por favor, tente novamente mais tarde."]);
-                        return $agendamento;
-                    }
-                    foreach ($caes as $cao) {
-                        $passeio->caes()->attach($cao->idCao);
-                    }
-                    $agendamento->passeios()->attach($passeio->idPasseio);
-                    $dataAnterior = $proximaData->format("Y-m-d");
-                }
-            }
         }
         return $agendamento;
     }

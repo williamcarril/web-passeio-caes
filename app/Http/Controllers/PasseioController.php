@@ -176,8 +176,26 @@ class PasseioController extends Controller {
                 $locais[$model->local->idLocal] = $model->local->nome;
                 $arr["local"] = $model->local->nome;
             } else {
-                $locais["{$model->local->idLocal}{$model->porte}"] = "{$model->local->nome} ({$model->porteFormatado})";
-                $arr["local"] = "{$model->local->nome} ({$model->porteFormatado})";
+                $key = "{$model->local->idLocal}{$model->porte}";
+                //Caso já existam locais para passeios deste determinado porte, 
+                //é adicionado o numeral X onde X é a quantidade de ocorrências de 
+                //passeios para este local para determinado porte
+                $i = null;
+                while (isset($locais[$key])) {
+                    if(is_null($i)) {
+                        $i = 2;
+                    } else {
+                        $i++;
+                    }
+                    $key = "{$model->local->idLocal}{$model->porte}{$i}";
+                }
+                if(is_null($i)) {
+                    $localText = "{$model->local->nome} ({$model->porteFormatado})";
+                } else {
+                    $localText = "{$model->local->nome} ({$model->porteFormatado} $i)";
+                }
+                $locais[$key] = $localText;
+                $arr["local"] = $localText;
             }
 
             return $arr;
