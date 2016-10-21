@@ -4,11 +4,11 @@
     </center>
     Olá, {{$administrator->nome}}.
     <section>
-        <a href="{{route("admin.funcionario.salvar.get")}}">
+<!--        <a href="{{route("admin.funcionario.salvar.get")}}">
             <i class="glyphicon glyphicon-edit"></i>
             Alterar cadastro
         </a>
-        <br/>
+        <br/>-->
         <a href="{{route("admin.logout.get")}}">
             <i class="glyphicon glyphicon-off"></i>
             Sair
