@@ -23,7 +23,12 @@ $local = $agendamento->passeios()->first()->local;
     <h1>Reagendamento - {{$agendamento->idAgendamento}}</h1>
     <p><b>Data da solicitação:</b> {{$agendamento->dataFormatada}}</p>
     <p><b>Hora da solicitação:</b> {{$agendamento->horaFormatada}}</p>
-    <p><b>Link para detalhes: </b><a href='{{route("admin.agendamento.detalhes.get", ["id" => $agendamento->idAgendamento])}}' target='_blank'>{{route("admin.agendamento.detalhes.get", ["id" => $agendamento->idAgendamento])}}</a></p>
+    <p>
+        <a class="btn btn-default" href='{{route("admin.agendamento.detalhes.get", ["id" => $agendamento->idAgendamento])}}' target='_blank'>
+            <i class="glyphicon glyphicon-search"></i>
+            Detalhes    
+        </a>
+    </p>
     <hr/>
     <section>
         <h2>Informações relativas ao reagendamento</h2>
