@@ -25,10 +25,6 @@
         case $statusPasseio["EM_ANALISE"]:
             $statusClass = "_warning-color";
             break;
-        default:
-            if ($passeio->foiRemarcado()) {
-                $statusClass = "_warning-color";
-            }
     }
     ?>
     <p><b>Status:</b> <span class="{{$statusClass}}">{{$passeio->statusFormatado}}</span></p>
