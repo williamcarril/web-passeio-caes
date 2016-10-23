@@ -3,4 +3,10 @@
 // -------------------------
 .table tbody > tr > td {
     vertical-align: middle;
+    
+    &.image {
+        @media @smartphones {
+            .rem("min-width", 100px);
+        }
+    }
 }

@@ -75,10 +75,9 @@
                     $lng = $cao->cliente->lng;
                     ?>
                     <tr>
-                        <td>
+                        <td class="image">
                             <img width="100px" height="100px" src='{{$cao->thumbnail}}' />
                         </td>
-
                         <td data-name="nome">
                             {{$cao->nome}}
                         </td>

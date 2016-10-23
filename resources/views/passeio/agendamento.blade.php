@@ -186,12 +186,12 @@ foreach ($passeios as $passeio) {
                     </div>
                 </div>
             </fieldset>
-            <fieldset data-role="caes">
+            <fieldset data-role="caes" style="display:table-cell; width: 100%">
                 <legend  class="_cursor-pointer" data-toggle="collapse" data-target="#cao-collapsable">
                     Cachorros
                     <i class="indicator glyphicon glyphicon-chevron-down"></i>
                 </legend>
-                <div id="cao-collapsable" class="collapse in table-responsive">
+                <div id="cao-collapsable" class="collapse in">
                     <p class="hidden" data-role="porteDoPasseioWrapper"><b>Porte do passeio: </b><span data-role="porteDoPasseio"></span></p>
                     <p>Selecione quais de seus cachorros participarão do(s) passeio(s) agendado(s):</p>
                     <div class="table-responsive">
@@ -208,7 +208,7 @@ foreach ($passeios as $passeio) {
                             <tbody>
                                 @foreach($caes as $cao)
                                 <tr data-id="{{$cao->idCao}}" data-role="cao" class="_error-color">
-                                    <td>
+                                    <td class="image">
                                         <img width="100px" height="100px" src='{{$cao->thumbnail}}' />
                                     </td>
                                     <td data-name="nome">

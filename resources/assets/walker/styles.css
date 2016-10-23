@@ -471,3 +471,9 @@ fieldset > legend > .indicator {
 .table tbody > tr > td {
   vertical-align: middle;
 }
+@media only screen and (max-width: 767px) {
+  .table tbody > tr > td.image {
+    Ignore: a;min-width:100px;
+    Ignore: a;min-width:6.25rem;
+  }
+}

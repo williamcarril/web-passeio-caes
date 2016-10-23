@@ -179,7 +179,7 @@ $local = $agendamento->passeios()->first()->local;
                         </div>
                     </div>
                 </fieldset>
-                <fieldset data-role="caes">
+                <fieldset data-role="caes" style="display:table-cell; width: 100%">
                     <legend  class="_cursor-pointer" data-toggle="collapse" data-target="#cao-collapsable">
                         Cachorros
                         <i class="indicator glyphicon glyphicon-chevron-down"></i>
@@ -200,7 +200,7 @@ $local = $agendamento->passeios()->first()->local;
                             <tbody>
                                 @foreach($caes as $cao)
                                 <tr data-id="{{$cao->idCao}}" data-role="cao" class="_error-color">
-                                    <td>
+                                    <td class="image">
                                         <img width="100px" height="100px" src='{{$cao->thumbnail}}' />
                                     </td>
                                     <td data-name="nome">
