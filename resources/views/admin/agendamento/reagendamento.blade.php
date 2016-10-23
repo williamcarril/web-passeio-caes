@@ -421,22 +421,44 @@ $local = $agendamento->passeios()->first()->local;
             }
         });
         
-        $form.on("change", "input[name='inicio']", function () {
-            var $this = $(this);
-            if($this.val() < "{!! $businessStartingTime !!}") {
-                $this.val("{!! $businessStartingTime !!}");
+        $startingTime.on("change", function () {
+            if(Date.parse("2000-01-01 " + $startingTime.val()) < Date.parse("2000-01-01 {!! $businessStartingTime !!}")) {
+                $startingTime.val("{!! $businessStartingTime !!}");
             }
+        });
+        
+        $startingTime.on("blur", function() {
+            if(validate.empty($startingTime.val())) {
+                setInputStatus($startingTime, "error");
+                return;
+            }
+            if(Date.parse("2000-01-01 " + $startingTime.val()) >= Date.parse("2000-01-01 " + $endingTime.val())) {
+                setInputStatus($startingTime, "error");
+                return;
+            }
+            setInputStatus($startingTime, "success");
             limparEstadoDaTimetable();
             obterEDefinirTotais();
         });
         
-        $form.on("change", "input[name='fim']", function () {
-            var $this = $(this);
-            if($this.val() > "{!! $businessEndingTime !!}") {
-                $this.val("{!! $businessEndingTime !!}");
+        $endingTime.on("blur", function() {
+            if(validate.empty($endingTime.val())) {
+                setInputStatus($endingTime, "error");
+                return;
             }
+            if(Date.parse("2000-01-01 " + $endingTime.val()) <= Date.parse("2000-01-01 " + $startingTime.val())) {
+                setInputStatus($endingTime, "error");
+                return;
+            }
+            setInputStatus($endingTime, "success");
             limparEstadoDaTimetable();
             obterEDefinirTotais();
+        });
+        
+        $endingTime.on("change", function () {            
+            if(Date.parse("2000-01-01 " + $endingTime.val() > Date.parse("2000-01-01 {!! $businessEndingTime !!}"))) {
+                $endingTime.val("{!! $businessEndingTime !!}");
+            }
         });
         
         $timetable.on("click", ".time-label", function () {
@@ -555,8 +577,6 @@ $local = $agendamento->passeios()->first()->local;
             alterarParticipacao($cao, false);
         });
 
-        $form.find("input[name='inicio']").validate("empty", null, "blur");
-        $form.find("input[name='fim']").validate("empty", null, "blur");
         $form.find("select[name='local']").validate("empty", null, "blur");
         $form.find("select[name='modalidade']").validate("empty", null, "blur");
 

@@ -194,50 +194,52 @@ foreach ($passeios as $passeio) {
                 <div id="cao-collapsable" class="collapse in table-responsive">
                     <p class="hidden" data-role="porteDoPasseioWrapper"><b>Porte do passeio: </b><span data-role="porteDoPasseio"></span></p>
                     <p>Selecione quais de seus cachorros participarão do(s) passeio(s) agendado(s):</p>
-                    <table class="table table-striped table-hover">
-                        <thead>
-                            <tr>
-                                <th>Foto</th>
-                                <th>Nome</th>
-                                <th>Porte</th>
-                                <th>Participação</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($caes as $cao)
-                            <tr data-id="{{$cao->idCao}}" data-role="cao" class="_error-color">
-                                <td>
-                                    <img width="100px" height="100px" src='{{$cao->thumbnail}}' />
-                                </td>
-                                <td data-name="nome">
-                                    {{$cao->nome}}
-                                </td>
-                                <td  data-name="porte" data-value="{{$cao->porte}}">
-                                    {{$cao->porteFormatado}}
-                                </td>
-                                <td data-name="participacao">
-                                    <input class="hidden" type="checkbox" name="caes[]" value="{{$cao->idCao}}" data-role="value"/>
-                                    <span data-role="label">
-                                        Não participará
-                                    </span>
-                                </td>
-                                <td>
-                                    <div class="button-group">
-                                        <button class="btn btn-success" type="button" data-action="incluir-cao">
-                                            <i class="glyphicon glyphicon-ok"></i>
-                                            Incluir
-                                        </button>
-                                        <button class="btn btn-danger hidden" type="button" data-action="remover-cao">
-                                            <i class="glyphicon glyphicon-remove"></i>
-                                            Remover
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Foto</th>
+                                    <th>Nome</th>
+                                    <th>Porte</th>
+                                    <th>Participação</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($caes as $cao)
+                                <tr data-id="{{$cao->idCao}}" data-role="cao" class="_error-color">
+                                    <td>
+                                        <img width="100px" height="100px" src='{{$cao->thumbnail}}' />
+                                    </td>
+                                    <td data-name="nome">
+                                        {{$cao->nome}}
+                                    </td>
+                                    <td  data-name="porte" data-value="{{$cao->porte}}">
+                                        {{$cao->porteFormatado}}
+                                    </td>
+                                    <td data-name="participacao">
+                                        <input class="hidden" type="checkbox" name="caes[]" value="{{$cao->idCao}}" data-role="value"/>
+                                        <span data-role="label">
+                                            Não participará
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="button-group">
+                                            <button class="btn btn-success" type="button" data-action="incluir-cao">
+                                                <i class="glyphicon glyphicon-ok"></i>
+                                                Incluir
+                                            </button>
+                                            <button class="btn btn-danger hidden" type="button" data-action="remover-cao">
+                                                <i class="glyphicon glyphicon-remove"></i>
+                                                Remover
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </fieldset>
             <hr/>
@@ -422,21 +424,44 @@ foreach ($passeios as $passeio) {
             }
         });
 
-        $form.on("change", "input[name='inicio']", function () {
-            var $this = $(this);
-            if($this.val() < "{!! $businessStartingTime !!}") {
-                $this.val("{!! $businessStartingTime !!}");
+        $startingTime.on("change", function () {
+            if(Date.parse("2000-01-01 " + $startingTime.val()) < Date.parse("2000-01-01 {!! $businessStartingTime !!}")) {
+                $startingTime.val("{!! $businessStartingTime !!}");
             }
+        });
+        
+        $startingTime.on("blur", function() {
+            if(validate.empty($startingTime.val())) {
+                setInputStatus($startingTime, "error");
+                return;
+            }
+            if(Date.parse("2000-01-01 " + $startingTime.val()) >= Date.parse("2000-01-01 " + $endingTime.val())) {
+                setInputStatus($startingTime, "error");
+                return;
+            }
+            setInputStatus($startingTime, "success");
             limparEstadoDaTimetable();
             obterEDefinirTotais();
         });
-        $form.on("change", "input[name='fim']", function () {
-            var $this = $(this);
-            if($this.val() > "{!! $businessEndingTime !!}") {
-                $this.val("{!! $businessEndingTime !!}");
+        
+        $endingTime.on("blur", function() {
+            if(validate.empty($endingTime.val())) {
+                setInputStatus($endingTime, "error");
+                return;
             }
+            if(Date.parse("2000-01-01 " + $endingTime.val()) <= Date.parse("2000-01-01 " + $startingTime.val())) {
+                setInputStatus($endingTime, "error");
+                return;
+            }
+            setInputStatus($endingTime, "success");
             limparEstadoDaTimetable();
             obterEDefinirTotais();
+        });
+        
+        $endingTime.on("change", function () {            
+            if(Date.parse("2000-01-01 " + $endingTime.val() > Date.parse("2000-01-01 {!! $businessEndingTime !!}"))) {
+                $endingTime.val("{!! $businessEndingTime !!}");
+            }
         });
 
         $timetable.on("click", ".time-label", function () {
@@ -555,8 +580,6 @@ foreach ($passeios as $passeio) {
             alterarParticipacao($cao, false);
         });
 
-        $form.find("input[name='inicio']").validate("empty", null, "blur");
-        $form.find("input[name='fim']").validate("empty", null, "blur");
         $form.find("select[name='local']").validate("empty", null, "blur");
         $form.find("select[name='modalidade']").validate("empty", null, "blur");
 
