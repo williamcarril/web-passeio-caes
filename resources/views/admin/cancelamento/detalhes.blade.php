@@ -123,7 +123,7 @@
         <section>
             <h3>Agendamentos para este passeio</h3>
             <div class="table-responsive">
-                @include("admin.includes.agendamentos-tabela", ["agendamentos" => $agendamentos])
+                @include("admin.includes.agendamentos-tabela", ["agendamentos" => $agendamentos, "passeio" => $passeio])
             </div>
         </section>
     </section>
