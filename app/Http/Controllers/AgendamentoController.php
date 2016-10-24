@@ -123,7 +123,7 @@ class AgendamentoController extends Controller {
         if (date("Y-m-d") >= $primeiroPasseio->data) {
             \DB::beginTransaction();
             try {
-                if (!$this->cancelarAgendamento($agendamento, $administrador, "Data do primeiro passeio expirada.")) {
+                if (!$this->cancelarAgendamento($agendamento, $administrador, "Agendamento inválido: data do primeiro passeio expirada.")) {
                     \DB::rollBack();
                     return $this->defaultJsonResponse(false, trans("alert.error.generic", ["message" => "aceitar o agendamento"]));
                 }
@@ -135,6 +135,31 @@ class AgendamentoController extends Controller {
                 });
                 \DB::commit();
                 return $this->defaultJsonResponse(false, "A data do primeiro passeio programado já passou. "
+                                . "Portanto, o agendamento em questão é considerado inválido e foi cancelado.", [
+                            "messageLevel" => "warning",
+                            "redirect" => true
+                ]);
+            } catch (\Exception $ex) {
+                \DB::rollBack();
+                throw $ex;
+            }
+        }
+        
+        if ($agendamento->passeios()->naoEncerrado()->count() === 0) {
+            \DB::beginTransaction();
+            try {
+                if (!$this->cancelarAgendamento($agendamento, $administrador, "Agendamento inválido: todos os seus passeios já foram encerrados.")) {
+                    \DB::rollBack();
+                    return $this->defaultJsonResponse(false, trans("alert.error.generic", ["message" => "aceitar o agendamento"]));
+                }
+                \Mail::send('emails.cliente.agendamento.cancelamento.imprevisto', [
+                    'agendamento' => $agendamento,
+                    "cliente" => $cliente
+                        ], function ($m) use ($cliente) {
+                    $m->to($cliente->email, $cliente->nome)->subject("Cancelamento de agendamento");
+                });
+                \DB::commit();
+                return $this->defaultJsonResponse(false, "Todos os passeios agendados já foram encerrados. "
                                 . "Portanto, o agendamento em questão é considerado inválido e foi cancelado.", [
                             "messageLevel" => "warning",
                             "redirect" => true

@@ -365,6 +365,9 @@ class PasseioController extends Controller {
         if (is_null($passeio)) {
             return $this->defaultJsonResponse(false, trans("alert.error.generic", ["message" => "cancelar o passeio"]), null);
         }
+        if($passeio->checarStatus([PasseioStatus::CANCELADO, PasseioStatus::FEITO])) {
+            return $this->defaultJsonResponse(false, "Passeios já cancelados ou já feitos não podem ser cancelados.");
+        }
         \DB::beginTransaction();
         try {
             $clientesConfirmados = $passeio->getClientesConfirmados();

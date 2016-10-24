@@ -297,6 +297,7 @@ class Passeio extends \WGPC\Eloquent\Model {
         return $query->where(function($q) {
                     $q->orWhere("status", Status::PENDENTE);
                     $q->orWhere("status", Status::EM_ANDAMENTO);
+                    $q->orWhere("status", Status::EM_ANALISE);
                 });
     }
 

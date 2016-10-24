@@ -1,8 +1,10 @@
 @extends("admin.layouts.default")
 
+@section("title") Passeios confirmados | {{config("app.name")}} @endsection
+
 @section("main")
 <section>
-    <h1>Passeios</h1>
+    <h1>Passeios confirmados</h1>
     <div class="table-responsive">
         <form class="form-inline  pull-right" action="{{route("admin.passeio.marcados.listagem.get")}}" method="GET">
             <div class="form-group">
@@ -14,7 +16,6 @@
                 <label for="filtro-agendamento">Filtro por status:</label>
                 <select id="filtro-agendamento" class="form-control" name="status">
                     <option {!!empty($status) ? "selected" : ""!!} value="">Selecione uma opção</option>
-                    <option {!!$status == "em_analise" ? "selected" : ""!!} value="em_analise">Apenas em análise</option>
                     <option {!!$status == "pendente" ? "selected" : ""!!} value="pendente">Apenas pendentes</option>
                     <option {!!$status == "em_andamento" ? "selected" : ""!!} value="em_andamento">Apenas em andamento</option>
                     <option {!!$status == "feito" ? "selected" : ""!!} value="feito">Apenas realizados</option>
