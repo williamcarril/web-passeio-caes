@@ -34,7 +34,6 @@
     <section>   
         <h2>Solicitante - {{$cancelamento->tipoSolicitanteFormatado}}</h2>
         @if($cancelamento->tipoPessoa === "cliente")
-        <p><b>Tipo: </b> {{$cancelamento->tipoSolicitanteFormatado}}</p>
         <p><b>Nome: </b> {{$solicitante->nome}}</p>
         <p><b>Telefone: </b> {{$solicitante->telefoneFormatado}}</p>
         <p><b>E-mail: </b> {{$solicitante->email}}</p>
