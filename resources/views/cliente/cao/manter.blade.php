@@ -20,7 +20,7 @@
             <tbody>
                 @foreach($caes as $cao)
                 <tr data-id="{{$cao->idCao}}" data-role="cao">
-                    <td>
+                    <td class="image">
                         @include("includes.image-uploader", ["placeholder" => false, "icon" => false, "name" => "imagem", "image" => $cao->thumbnail, "imageDescription" => $cao->nome])
                     </td>
                     <td class="editable-label" data-action="editable-label" data-name="nome">
@@ -65,7 +65,7 @@
                 </tr>
                 @endforeach
                 <tr data-id="" data-role="cao">
-                    <td>
+                    <td class="image">
                         @include("includes.image-uploader", ["placeholder" => false, "icon" => false, "name" => "imagem"])
                     </td>
                     <td>
@@ -107,7 +107,7 @@
 <table>
     <tbody>
         <tr data-id="" data-role="cao" data-template="new-dog">
-            <td>
+            <td class="image">
                 @include("includes.image-uploader", ["placeholder" => false, "icon" => false, "name" => "imagem"])
             </td>
             <td>
@@ -140,7 +140,7 @@
             </td>
         </tr>
         <tr data-id="" data-role="cao" data-template="dog">
-            <td data-name="imagem">
+            <td class="image" data-name="imagem">
                 @include("includes.image-uploader", ["placeholder" => false, "icon" => false, "name" => "imagem"])
             </td>
             <td class="editable-label" data-action="editable-label" data-name="nome">

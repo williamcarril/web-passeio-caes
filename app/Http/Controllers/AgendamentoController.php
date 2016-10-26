@@ -419,6 +419,25 @@ class AgendamentoController extends Controller {
                 throw $ex;
             }
         }
+        
+        if ($agendamento->passeios()->naoEncerrado()->count() === 0) {
+            \DB::beginTransaction();
+            try {
+                if (!$this->cancelarAgendamento($agendamento, $cliente, "Agendamento inválido: todos os seus passeios já foram encerrados.")) {
+                    \DB::rollBack();
+                    return $this->defaultJsonResponse(false, trans("alert.error.generic", ["message" => "aceitar o agendamento"]));
+                }
+                \DB::commit();
+                return $this->defaultJsonResponse(false, "Todos os passeios agendados já foram encerrados. "
+                                . "Portanto, o agendamento em questão é considerado inválido e foi cancelado.", [
+                            "messageLevel" => "warning",
+                            "redirect" => true
+                ]);
+            } catch (\Exception $ex) {
+                \DB::rollBack();
+                throw $ex;
+            }
+        }
 
         \DB::beginTransaction();
         try {
