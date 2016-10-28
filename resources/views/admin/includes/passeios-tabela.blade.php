@@ -64,7 +64,7 @@ $idTabela = uniqid();
                             <i class="glyphicon glyphicon-search"></i>
                             Detalhes
                         </a>
-                        @if(!empty($passeadores) && !$passeio->temPasseador() && !$passeio->checarStatus([$statusPasseio["CANCELADO"], $statusPasseio["FEITO"], $statusPasseio["EM_ANDAMENTO"]]))
+                        @if(!empty($passeadores) && !$passeio->checarStatus([$statusPasseio["CANCELADO"], $statusPasseio["FEITO"], $statusPasseio["EM_ANDAMENTO"]]))
                         <a class="btn btn-default" data-toggle="collapse" data-target="[data-collapse='{{$idTabela}}-{{$passeio->idPasseio}}']">
                             <i class="flaticon-walker"></i>
                             Mostrar
@@ -73,7 +73,7 @@ $idTabela = uniqid();
                     </div>
                 </td>
             </tr>
-            @if(!empty($passeadores) && !$passeio->temPasseador() && !$passeio->checarStatus([$statusPasseio["CANCELADO"], $statusPasseio["FEITO"], $statusPasseio["EM_ANDAMENTO"]]))
+            @if(!empty($passeadores) && !$passeio->checarStatus([$statusPasseio["CANCELADO"], $statusPasseio["FEITO"], $statusPasseio["EM_ANDAMENTO"]]))
                 @foreach($passeadores as $passeador)
                     <tr class="collapse" data-collapse="{{$idTabela}}-{{$passeio->idPasseio}}">
                         <td><b>Passeador:</b></td>
