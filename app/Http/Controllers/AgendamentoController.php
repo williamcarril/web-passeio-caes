@@ -522,6 +522,11 @@ class AgendamentoController extends Controller {
             $agendamento->putErrors(["A data do primeiro passeio programado já passou. Portanto, o agendamento em questão é considerado inválido."]);
             return false;
         }
+        
+        if($agendamento->passeios()->naoEncerrado()->count() === 0) {
+            $agendamento->putErrors(["Todos os passeios agendados já foram encerrados. Portanto, o agendamento em questão é considerado inválido."]);
+            return false;
+        }
 
         $agendamento->status = AgendamentoStatus::FEITO;
         if (!$agendamento->save()) {
