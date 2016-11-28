@@ -595,7 +595,7 @@ class AgendamentoController extends Controller {
                 $agendamento->putErrors(["Todos os cães devem ter o mesmo porte ($porte) em um passeio coletivo."]);
                 return $agendamento;
             }
-            if ($cao->passeios()->daData($passeioColetivo->data)->count() > 0) {
+            if ($cao->passeios()->daData($passeioColetivo->data)->agendamentoConfirmado($cliente)->count() > 0) {
                 $dataFormatada = date("d/m/Y", strtotime($passeioColetivo->data));
                 $message = \fix_article("O agendamento não pôde ser efetuado porque !{a} $cao->nome já possui um passeio marcado para o dia $dataFormatada.", $cao->genero);
                 $agendamento->putErrors([\ucfirst($message)]);
