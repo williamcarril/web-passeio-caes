@@ -236,6 +236,7 @@ input[type=number].-no-spin::-webkit-outer-spin-button {
 }
 #main {
   min-height: 100vh;
+  overflow-x: scroll;
   Ignore: a;margin-bottom:10px;
   Ignore: a;margin-bottom:0.625rem;
 }

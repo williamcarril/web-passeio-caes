@@ -222,6 +222,7 @@ textarea.-error {
 }
 #main {
   min-height: 100vh;
+  overflow-x: scroll;
   Ignore: a;margin-bottom:10px;
   Ignore: a;margin-bottom:0.625rem;
 }
